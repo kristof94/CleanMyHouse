@@ -1,5 +1,4 @@
 const express = require('express')
-const consola = require('consola')
 const { Nuxt, Builder } = require('nuxt')
 const app = express()
 const https = require('https')
@@ -36,8 +35,6 @@ app.get('/hello', function(req, res) {
   res.send('Hello World!')
 })
 
-let message
-
 async function start() {
   // Init Nuxt.js
 
@@ -61,11 +58,5 @@ async function start() {
     message = `Server listening`
     app.listen(port)
   }
-
-  // Give nuxt middleware to express
-  consola.ready({
-    message,
-    badge: true
-  })
 }
 start()
