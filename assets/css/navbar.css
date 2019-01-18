@@ -1,0 +1,70 @@
+nav {
+  background-color: transparent;
+}
+
+.navbar-brand:hover,
+.navbar-light .navbar-brand,
+.navbar-light .navbar-toggler-icon,
+.navbar.navbar-light .navbar-nav .nav-link,
+.navbar.navbar-light .navbar-toggler {
+  color: #fff;
+  text-transform: uppercase;
+}
+.dropdown-menu {
+  background-color: transparent;
+  border-style: none;
+}
+
+.navbar-light .navbar-brand:hover,
+.navbar-light .navbar-brand:focus {
+  color: #fff;
+}
+.dropdown-item:hover,
+.dropdown-item:focus {
+  background-color: transparent;
+  color: #fff;
+}
+
+.link:hover,
+.link:focus,
+.link:active {
+  text-decoration: none;
+  background-color: unset;
+}
+.link {
+  color: #fff;
+  text-decoration: none;
+  transition: color 0.1s, background-color 0.1s;
+}
+
+@media screen and (min-width: 768px) {
+  .link {
+    position: relative;
+    display: block;
+    font-size: 1rem;
+    letter-spacing: 1px;
+    transition: color 0.1s, background-color 0.1s, padding 0.2s ease-in;
+  }
+
+  .link::before {
+    content: '';
+    display: block;
+    position: absolute;
+    bottom: 3px;
+    left: 0;
+    height: 3px;
+    width: 100%;
+    background-color: #fff;
+    transform-origin: right top;
+    transform: scale(0, 1);
+    transition: color 0.1s, transform 0.2s ease-out;
+  }
+  .link:active::before {
+    background-color: #fff;
+  }
+  .link:hover::before,
+  .link:focus::before {
+    transform-origin: left top;
+    transform: scale(1, 1);
+  }
+}

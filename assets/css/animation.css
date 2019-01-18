@@ -1,0 +1,239 @@
+.fadeOpacity-enter-active,
+.fadeOpacity-leave-active {
+  transition: opacity 0.35s ease-out;
+}
+
+.fadeOpacity-enter,
+.fadeOpacity-leave-active {
+  opacity: 0;
+}
+
+.rightToLeft1-enter-active {
+  animation: slidein 3s;
+  -webkit-animation-duration: 1s;
+  -webkit-animation-name: slidein;
+
+  /*for firefox*/
+  -moz-animation-duration: 1s;
+  -moz-animation-name: slidein;
+
+  /* for opera*/
+  -o-animation-duration: 1s;
+  -o-animation-name: slidein;
+
+  /* Standard syntax*/
+  animation-duration: 1s;
+  animation-name: slidein;
+}
+.rightToLeft1-leave-active {
+  animation: translateX(100px) 2s reverse;
+}
+
+.rightToLeft2-enter-active {
+  animation: slidein 2s;
+  animation-delay: 0s;
+  -webkit-animation-duration: 2s;
+  -webkit-animation-name: slidein;
+
+  /*for firefox*/
+  -moz-animation-duration: 2s;
+  -moz-animation-name: slidein;
+
+  /* for opera*/
+  -o-animation-duration: 2s;
+  -o-animation-name: slidein;
+
+  /* Standard syntax*/
+  animation-duration: 2s;
+  animation-name: slidein;
+}
+.rightToLeft2-leave-active {
+  animation: translateX(100px) 2s reverse;
+}
+
+.rightToLeft3-enter-active {
+  animation: slidein 2.5s;
+  animation-delay: 0s;
+  -webkit-animation-duration: 2.5s;
+  -webkit-animation-name: slidein;
+
+  /*for firefox*/
+  -moz-animation-duration: 2.5s;
+  -moz-animation-name: slidein;
+
+  /* for opera*/
+  -o-animation-duration: 2.5s;
+  -o-animation-name: slidein;
+
+  /* Standard syntax*/
+  animation-duration: 2.5s;
+  animation-name: slidein;
+}
+.rightToLeft3-leave-active {
+  animation: translateX(100px) 3s reverse;
+}
+
+@-webkit-keyframes slidein {
+  from {
+    margin-left: 100%;
+    width: 300%;
+  }
+
+  to {
+    margin-left: 0%;
+    width: 100%;
+  }
+}
+
+@-moz-keyframes slidein {
+  from {
+    margin-left: 100%;
+    width: 300%;
+  }
+
+  to {
+    margin-left: 0%;
+    width: 100%;
+  }
+}
+@-o-keyframes slidein {
+  from {
+    margin-left: 100%;
+    width: 300%;
+  }
+
+  to {
+    margin-left: 0%;
+    width: 100%;
+  }
+}
+@keyframes slidein {
+  from {
+    margin-left: 100%;
+    width: 300%;
+  }
+
+  to {
+    margin-left: 0%;
+    width: 100%;
+  }
+}
+.login-enter-active,
+.login-leave-active {
+  transition: opacity 1s;
+}
+.login-enter, .login-leave-to /* .fade-leave-active below version 2.1.8 */ {
+  opacity: 0;
+}
+
+.customIcon:hover {
+  -webkit-animation-play-state: paused;
+  -moz-animation-play-state: paused;
+  -o-animation-play-state: paused;
+  animation-play-state: paused;
+}
+
+@keyframes bounce {
+  10%,
+  90% {
+    transform: translate3d(0, -4px, 0);
+  }
+
+  20%,
+  80% {
+    transform: translate3d(0, 4px, 0);
+  }
+
+  30%,
+  50%,
+  70% {
+    transform: translate3d(0, -4px, 0);
+  }
+
+  40%,
+  60% {
+    transform: translate3d(0, 4px, 0);
+  }
+}
+
+@keyframes shake {
+  10%,
+  90% {
+    transform: translate3d(-2px, 0, 0);
+  }
+
+  20%,
+  80% {
+    transform: translate3d(2px, 0, 0);
+  }
+
+  30%,
+  50%,
+  70% {
+    transform: translate3d(-2px, 0, 0);
+  }
+
+  40%,
+  60% {
+    transform: translate3d(2px, 0, 0);
+  }
+}
+
+@keyframes blink {
+  0% {
+    box-shadow: #f6f9fc 0 0 10px;
+  }
+  50% {
+    box-shadow: #f6f9fc 0 0 25px;
+  }
+  100% {
+    box-shadow: #f6f9fc 0 0 10px;
+  }
+}
+@-webkit-keyframes blink {
+  0% {
+    -moz-box-shadow: 0 0 0 0 #f6f9fc;
+    box-shadow: 0 0 0 0 #f6f9fc;
+  }
+  50% {
+    -moz-box-shadow: 0 0 0 10px #f6f9fc;
+    box-shadow: 0 0 0 10px #f6f9fc;
+  }
+  100% {
+    -moz-box-shadow: 0 0 0 0 #f6f9fc;
+    box-shadow: 0 0 0 0 #f6f9fc;
+  }
+}
+
+@keyframes neon1 {
+  from {
+    text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #fff, 0 0 40px #fff,
+      0 0 70px #fff, 0 0 80px #fff, 0 0 100px #fff, 0 0 150px #fff;
+  }
+  to {
+    text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #fff, 0 0 20px #fff,
+      0 0 35px #fff, 0 0 40px #fff, 0 0 50px #fff, 0 0 75px #fff;
+  }
+}
+
+@-moz-keyframes neon1 {
+  from {
+    text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #fff, 0 0 40px #fff,
+      0 0 70px #fff, 0 0 80px #fff, 0 0 100px #fff, 0 0 150px #fff;
+  }
+  to {
+    text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #fff, 0 0 20px #fff,
+      0 0 35px #fff, 0 0 40px #fff, 0 0 50px #fff, 0 0 75px #fff;
+  }
+}
+
+@-webkit-keyframes neon1 {
+  from {
+    text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #fff, 0 0 40px #fff,
+      0 0 70px #fff, 0 0 80px #fff, 0 0 100px #fff, 0 0 150px #fff;
+  }
+  to {
+    text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #fff, 0 0 20px #fff,
+      0 0 35px #fff, 0 0 40px #fff, 0 0 50px #fff, 0 0 75px #fff;
+  }
+}

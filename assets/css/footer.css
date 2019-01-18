@@ -1,0 +1,10 @@
+.Cookie--custom {
+  > .Cookie__button {
+    background: black;
+    color: yellow;
+  }
+
+  > .Cookie__message {
+    color: yellow;
+  }
+}
