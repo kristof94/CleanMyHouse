@@ -25,7 +25,7 @@ app.use(
     cookie: {
       httpOnly: true,
       secure: true,
-      SameSite: true
+      sameSite: true
     }
   })
 )

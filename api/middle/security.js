@@ -35,7 +35,8 @@ router.use(
     secret: process.env.secretession,
     cookie: {
       secure: true,
-      httpOnly: true
+      httpOnly: true,
+      sameSite: true
     }
   })
 )
