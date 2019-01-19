@@ -56,7 +56,7 @@
           >
             <b-button
               v-if="date && time && address"
-              class="specialbutton longbutton whiteShine"
+              class="specialbutton longbutton smallbutton whiteShine"
               @click="confirm"
             >Confirmer</b-button>
           </b-col>
@@ -83,8 +83,8 @@
             :lg="6"
             :md="6"
             :sm="6"
-            :cols="6"
-            offset="3"
+            :cols="4"
+            offset="4"
             offset-sm="3"
             offset-md="3"
             offset-lg="3"
@@ -92,16 +92,25 @@
           >
             <b-button
               v-if="date && time && address"
-              class="specialbutton longbutton whiteShine"
+              class="specialbutton longbutton smallbutton whiteShine"
               @click="pay"
             >Payer</b-button>
           </b-col>
         </b-row>
         <b-row>
-          <b-col :lg="6" :md="8" :sm="12" :cols="12" offset-md="2" offset-lg="3" class="text-center">
+          <b-col
+            :lg="6"
+            :md="8"
+            :sm="12"
+            :cols="10"
+            offset="1"
+            offset-md="2"
+            offset-lg="3"
+            class="text-center"
+          >
             <b-button
               v-if="date && time && address"
-              class="specialbutton longbutton whiteShine"
+              class="specialbutton longbutton smallbutton whiteShine"
               @click="modify"
             >Modifier ma commande</b-button>
           </b-col>

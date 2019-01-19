@@ -166,6 +166,7 @@ h4 {
 }
 
 .specialbutton {
+  border-color: unset !important;
   color: rgba(6, 175, 218, 0.8);
   background-color: #f6f9fc;
   display: inline-block;

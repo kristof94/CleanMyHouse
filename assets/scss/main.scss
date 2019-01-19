@@ -45,14 +45,19 @@
 
 .resume {
   flex-flow: row;
+
   @include sm {
-    flex-flow: column;
+  }
+  @include md {
+  }
+  @include lg {
+    font-size: xx-large;
   }
 }
 
 h1 {
   @include sm {
-    font-size: 20px;
+    font-size: medium;
     line-height: 20px;
   }
   @include land_sm {
@@ -242,10 +247,6 @@ h2 {
 
 .smallbutton {
   @include sm {
-    width: 45%;
-  }
-  @include md {
-    width: 48%;
-    font-size: 16px;
+    font-size: medium;
   }
 }
