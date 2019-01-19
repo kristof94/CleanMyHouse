@@ -1,7 +1,7 @@
 <template>
   <div class="flexparent" style="height: 100vh;">
     <nav-bar/>
-    <section id="order" class="homepage order column">
+    <section v-if="!displayPrice" id="order" class="order column">
       <b-container class="book">
         <b-row>
           <b-col :lg="lg[0]" :md="lg[0]" :sm="lg[0]" :cols="lg[0]">
@@ -42,12 +42,71 @@
             </transition>
           </b-col>
         </b-row>
+        <b-row>
+          <b-col
+            :lg="6"
+            :md="6"
+            :sm="6"
+            :cols="6"
+            offset="3"
+            offset-sm="3"
+            offset-md="3"
+            offset-lg="3"
+            class="text-center"
+          >
+            <b-button
+              v-if="date && time && address"
+              class="specialbutton longbutton whiteShine"
+              @click="confirm"
+            >Confirmer</b-button>
+          </b-col>
+        </b-row>
       </b-container>
-      <b-button
-        v-if="date && time && address"
-        class="smallbutton whiteShine"
-        @click="confirm"
-      >Confirmer</b-button>
+    </section>
+
+    <section v-else class="order column">
+      <b-container fluid class="book">
+        <b-row>
+          <b-col :lg="12" :md="12" :sm="12" :cols="12">
+            <b-form class="text-center">
+              <b-form-group>
+                <h1>Prix</h1>
+                <span :class="{ customIconAnimated: displayPrice }" class="customIcon">25
+                  <font-awesome-icon :icon="['fas', 'euro-sign']"/>
+                </span>
+              </b-form-group>
+            </b-form>
+          </b-col>
+        </b-row>
+        <b-row>
+          <b-col
+            :lg="6"
+            :md="6"
+            :sm="6"
+            :cols="6"
+            offset="3"
+            offset-sm="3"
+            offset-md="3"
+            offset-lg="3"
+            class="text-center"
+          >
+            <b-button
+              v-if="date && time && address"
+              class="specialbutton longbutton whiteShine"
+              @click="pay"
+            >Payer</b-button>
+          </b-col>
+        </b-row>
+        <b-row>
+          <b-col :lg="6" :md="8" :sm="12" :cols="12" offset-md="2" offset-lg="3" class="text-center">
+            <b-button
+              v-if="date && time && address"
+              class="specialbutton longbutton whiteShine"
+              @click="modify"
+            >Modifier ma commande</b-button>
+          </b-col>
+        </b-row>
+      </b-container>
     </section>
     <my-footer/>
     <adress v-if="showModal" @setPlace="setPlace" @close="showModal = false">
@@ -64,7 +123,20 @@
 			-->
       <div slot="header">Ménage ou Repassage</div>
     </choice-task>
-
+    <no-ssr>
+      <vue-stripe-checkout
+        ref="checkoutRef"
+        :name="title"
+        :email="$store.getters.getUser.email"
+        :currency="currency"
+        :amount="price"
+        :allow-remember-me="true"
+        @done="done"
+        @opened="opened"
+        @closed="closed"
+        @canceled="canceled"
+      />
+    </no-ssr>
     <no-ssr>
       <datetime
         ref="datepicker"
@@ -131,8 +203,14 @@ export default {
   },
   data() {
     return {
+      title: 'Clean my house',
+      informations: null,
+      price: 2500,
+      rememberMe: false,
+      currency: 'EUR',
       showModal: false,
       showChoiceModal: false,
+      displayPrice: false,
       date:
         this.$store.getters.getDate == null
           ? null
@@ -152,8 +230,49 @@ export default {
       )
     }
   },
-  computed: {},
+  computed: {
+    modalPaiement: {
+      set() {},
+      get() {
+        return this.$store.getters.getErrorPaiment != null
+      }
+    }
+  },
   methods: {
+    async pay() {
+      await this.$refs.checkoutRef.open()
+    },
+    done({ token }) {
+      const order = {
+        token: token,
+        email: this.$store.getters.getUser.email,
+        address: this.$store.getters.getAddress,
+        date: this.$store.getters.getDate,
+        time: this.$store.getters.getTime,
+        task: this.$store.getters.getTask
+      }
+      this.$axios
+        .post('/processpayment', { order })
+        .then(response => {
+          console.log(response)
+          this.$store.commit('setErrorPaiment', 'Problème lors du paiement')
+        })
+        .catch(err => {
+          this.$store.commit('setErrorPaiment', err)
+        })
+    },
+    opened() {
+      // do stuff
+    },
+    closed() {
+      // do stuff
+    },
+    canceled() {
+      // do stuff
+    },
+    modify() {
+      this.displayPrice = false
+    },
     confirmChoice(event) {
       this.showChoiceModal = false
       if (!event) {
@@ -163,7 +282,7 @@ export default {
       this.$store.commit('setChoice', event)
       this.$store.commit('setDate', this.date)
       this.$store.commit('setTime', this.time)
-      this.$router.push('/confirmbooking')
+      this.displayPrice = true
     },
     confirm() {
       this.showChoiceModal = true
@@ -205,18 +324,6 @@ export default {
 </script>
 
 <style>
-.slide-fade-enter-active {
-  transition: all 0.5s ease;
-}
-.slide-fade-leave-active {
-  transition: all 1s cubic-bezier(1, 0.5, 0.8, 1);
-}
-.slide-fade-enter, .slide-fade-leave-to
-/* .slide-fade-leave-active below version 2.1.8 */ {
-  transform: translateX(50px);
-  opacity: 0;
-}
-
 .theme-blue .vdatetime-popup__header,
 .theme-blue .vdatetime-calendar__month__day--selected > span > span,
 .theme-blue .vdatetime-calendar__month__day--selected:hover > span > span {

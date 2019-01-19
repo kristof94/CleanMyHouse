@@ -1,6 +1,7 @@
 const state = () => ({
   info: null,
   error: null,
+  errorPaiment: null,
   show: false,
   modal: 'login',
   title: 'Se connecter'
@@ -19,6 +20,9 @@ const mutations = {
   setError(state, payload) {
     state.error = payload
   },
+  setErrorPaiment(state, payload) {
+    state.errorPaiment = payload
+  },
   setInfo(state, payload) {
     state.info = payload
   }
@@ -30,6 +34,9 @@ const getters = {
   },
   getError: state => {
     return state.error
+  },
+  getErrorPaiment: state => {
+    return state.errorPaiment
   },
   getModal: state => {
     return state.modal

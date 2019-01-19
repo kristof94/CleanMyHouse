@@ -1,7 +1,13 @@
 @import 'mixins';
 @import 'breakpoints';
 
-.wrapper {
+.longbutton {
+  @include sm {
+    width: 100%;
+  }
+  @include md {
+    width: 100%;
+  }
 }
 
 .flexparent {

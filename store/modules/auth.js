@@ -165,7 +165,7 @@ const actions = {
   sendSMS({ dispatch, commit }, { loading }) {
     loading.start()
     dispatch('clearMessage')
-    const phone = '+1 650-555-3434' //this.getters.getPhoneNumber
+    const phone = this.getters.getPhoneNumber //'+1 650-555-3434'
     var appVerifier = window.recaptchaVerifier
     commit('setShow', false)
     Auth.currentUser

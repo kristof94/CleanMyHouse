@@ -220,19 +220,6 @@ router.post('/processpayment', (req, res) => {
     })
 })
 
-router.get('/processpayment', (req, res, next) => {
-  const sessionCookie = req.session.sessionCookie || ''
-  admin
-    .auth()
-    .verifySessionCookie(sessionCookie, true /** checkRevoked */)
-    .then(decodedClaims => {
-      next()
-    })
-    .catch(error => {
-      res.redirect('/login')
-    })
-})
-
 router.get('/booktaskMobile', (req, res, next) => {
   const sessionCookie = req.session.sessionCookie || ''
   if (sessionCookie) {

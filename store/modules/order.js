@@ -35,7 +35,15 @@ const getters = {
   }
 }
 
-const actions = {}
+const actions = {
+  /*processPayment({ order }) {
+    /*return this.axios.post('/processpayment', {
+      order
+    })
+    console.log()
+    console.log(this)
+  }*/
+}
 
 export default {
   state,

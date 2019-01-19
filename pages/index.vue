@@ -6,7 +6,7 @@
         <h1>{{ title }}</h1>
         <h2>La propreté à votre service</h2>
         <h2>Nous nettoyons votre logement en 3 clics.</h2>
-        <b-button class="smallbutton whiteShine" @click="book">Réserver</b-button>
+        <b-button class="specialbutton longbutton whiteShine" @click="book">Réserver</b-button>
       </div>
     </section>
     <my-footer/>
@@ -30,11 +30,14 @@ export default {
   methods: {
     book() {
       if (this.$store.getters.getUser) {
+        this.$router.push('/book')
+        /*
         if (this.$device.isMobile) {
           this.$router.push('/bookmobile')
         } else {
           this.$router.push('/book')
         }
+        */
       } else {
         this.$router.push('/login')
       }
