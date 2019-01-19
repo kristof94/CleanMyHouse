@@ -19,9 +19,6 @@ module.exports = {
     MESSAGING_SENDER_ID: '207720984881',
     NODE_TLS_REJECT_UNAUTHORIZED: '0'
   },
-  /*
-  ** Headers of the page
-  */
   head: {
     title: pkg.name,
     meta: [
@@ -35,9 +32,8 @@ module.exports = {
         src: 'https://js.stripe.com/v3/'
       },
       {
-        src: 'https://www.google.com/recaptcha/api.js',
-        async: true,
-        defer: true
+        src:
+          'https://maps.googleapis.com/maps/api/js?key=AIzaSyAWmSTK_5vW944i8kUyotoFxJaTRlr61ns&libraries=places'
       }
     ]
   },

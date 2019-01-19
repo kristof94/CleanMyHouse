@@ -43,7 +43,11 @@
           </b-col>
         </b-row>
       </b-container>
-      <b-button v-if="address" class="smallbutton whiteShine" @click="confirm">Confirmer</b-button>
+      <b-button
+        v-if="date && time && address"
+        class="smallbutton whiteShine"
+        @click="confirm"
+      >Confirmer</b-button>
     </section>
     <my-footer/>
     <adress v-if="showModal" @setPlace="setPlace" @close="showModal = false">
@@ -155,17 +159,20 @@ export default {
       if (!event) {
         return
       }
-      this.$router.push('/confirmbooking')
       this.$store.commit('setAddress', this.address)
       this.$store.commit('setChoice', event)
       this.$store.commit('setDate', this.date)
       this.$store.commit('setTime', this.time)
+      this.$router.push('/confirmbooking')
     },
     confirm() {
       this.showChoiceModal = true
     },
     setPlace(place) {
       this.address = place
+      this.lg[0] = 4
+      this.lg[1] = 4
+      this.lg[2] = 4
     },
     open(event) {
       this.$emit('open', event)
@@ -190,9 +197,6 @@ export default {
         const time = DateTime.fromISO(event)
         if (time && time.get('hour') != 0) {
           this.time = time
-          this.lg[0] = 4
-          this.lg[1] = 4
-          this.lg[2] = 4
         }
       }
     }

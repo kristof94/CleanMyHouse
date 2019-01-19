@@ -41,7 +41,7 @@ export default {
       time: DateTime.fromISO(this.$cookies.get('vuex').Order.time),
       address: this.$cookies.get('vuex').Order.address,
       choice:
-        this.$cookies.get('vuex').Order.choice == 0 ? 'Ménage' : 'Repassage'
+        this.$cookies.get('vuex').Order.choice == 1 ? 'Ménage' : 'Repassage'
     }
   }
 }

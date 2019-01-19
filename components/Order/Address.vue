@@ -8,13 +8,14 @@
           </div>
           <div class="modal-body">
             <slot name="body">
-              <no-ssr>
-                <GmapAutocomplete
-                  :value="description"
-                  class="form-control gmapautocomplete"
-                  @place_changed="setPlace"
-                />
-              </no-ssr>
+              <vue-google-autocomplete
+                id="map"
+                ref="address"
+                class="form-control"
+                placeholder="Entrer votre addresse"
+                country="fr"
+                @placechanged="getAddressData"
+              />
             </slot>
           </div>
           <div class="modal-footer">
@@ -31,29 +32,13 @@
 
 <script>
 const getMapFromAddress = place => {
-  var map = new Map()
-  const arrayKey = ['street_number', 'route', 'locality']
-  place.address_components.forEach(el => {
-    if (el.types.length >= 1) {
-      arrayKey.forEach(name => {
-        if (el.types[0] === name) {
-          map.set(el.types[0], el.long_name)
-        }
-      })
-    }
-  })
-  const description = map
-    .get('street_number')
+  const description = place['street_number']
     .concat(', ')
-    .concat(map.get('route'))
+    .concat(place['route'])
     .concat(' ')
-    .concat(map.get('locality'))
-  return {
-    street_number: map.get('street_number'),
-    route: map.get('route'),
-    locality: map.get('locality'),
-    description: description
-  }
+    .concat(place['locality'])
+  place.description = description
+  return place
 }
 
 export default {
@@ -69,10 +54,18 @@ export default {
           : this.$store.getters.getAddress.description
     }
   },
+  mounted() {
+    // To demonstrate functionality of exposed component functions
+    // Here we make focus on the user input
+    this.$refs.address.focus()
+  },
   methods: {
-    setPlace(place) {
-      if (place) {
-        this.defaultAddress = getMapFromAddress(place)
+    getAddressData: function(addressData, placeResultData, id) {
+      console.log(addressData)
+      console.log(placeResultData)
+      console.log(id)
+      if (addressData) {
+        this.defaultAddress = getMapFromAddress(addressData)
         this.description = this.defaultAddress.description
       }
     },

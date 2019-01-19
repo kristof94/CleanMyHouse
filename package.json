@@ -56,6 +56,7 @@
     "vue-datetime-custom": "^1.0.7",
     "vue-eslint-parser": "^4.0.3",
     "vue-flickity": "^1.1.2",
+    "vue-google-autocomplete": "^1.1.0",
     "vue-recaptcha": "^1.1.1",
     "vue-scrollto": "^2.13.0",
     "vue-stripe-checkout": "^1.2.1",

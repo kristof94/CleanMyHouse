@@ -15,7 +15,7 @@
       <b-row class="align-items-center">
         <b-col :lg="lg[0]" :md="lg[0]" :sm="lg[0]" :cols="lg[0] " class="mx-auto">
           <transition name="slide-fade">
-            <book-adress v-if="time" :is-active="address == null" @open="showModal = true"/>
+            <book-adress v-if="date" :is-active="date == null" @open="showModal = true"/>
           </transition>
         </b-col>
         <b-col :lg="lg[0]" :md="lg[0]" :sm="lg[0]" :cols="lg[0]" class="mx-auto">
@@ -31,7 +31,7 @@
       <b-row class="align-items-center">
         <b-col :lg="lg[0]" :md="lg[0]" :sm="lg[0]" :cols="lg[0]" class="mx-auto">
           <transition name="slide-fade">
-            <book-time v-if="date" :is-active="time == null" @open="openTime"/>
+            <book-time v-if="address" :is-active="address == null" @open="openTime"/>
           </transition>
         </b-col>
         <b-col :lg="lg[0]" :md="lg[0]" :sm="lg[0]" :cols="lg[0]" class="mx-auto">
@@ -47,7 +47,7 @@
         <b-col :lg="12" :md="12" :sm="12" :cols="12" class="mx-auto" style="text-align: center;">
           <transition name="slide-fade">
             <b-button
-              v-if="address"
+              v-if="date && time && address"
               class="smallbutton whiteShine justify-content-center align-self-center"
               @click="confirm"
             >Confirmer</b-button>

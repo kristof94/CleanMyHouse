@@ -56,11 +56,11 @@ export default {
     },
     confirm() {
       if (this.menage_checked) {
-        this.$emit('closeChoiceModal', 0)
+        this.$emit('closeChoiceModal', 1)
         return
       }
       if (this.repassage_checked) {
-        this.$emit('closeChoiceModal', 1)
+        this.$emit('closeChoiceModal', 2)
       }
     }
   }
