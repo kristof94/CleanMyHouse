@@ -60,10 +60,8 @@ export default {
     this.$refs.address.focus()
   },
   methods: {
+    // eslint-disable-next-line no-unused-vars
     getAddressData: function(addressData, placeResultData, id) {
-      console.log(addressData)
-      console.log(placeResultData)
-      console.log(id)
       if (addressData) {
         this.defaultAddress = getMapFromAddress(addressData)
         this.description = this.defaultAddress.description

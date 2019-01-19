@@ -8,7 +8,13 @@ const router = express.Router()
 
 // router.use(helmet())
 // router.use(helmet.noCache())
-
+router.use(helmet.xssFilter())
+const sixtyDaysInSeconds = 5184000
+router.use(
+  helmet.hsts({
+    maxAge: sixtyDaysInSeconds
+  })
+)
 router.use(function(err, req, res, next) {
   if (err.code !== 'EBADCSRFTOKEN') {
     return next(err)

@@ -20,7 +20,14 @@ var parseForm = bodyParser.urlencoded({ extended: false })
 app.use(bodyParser.json()) // handle json data
 app.use(cookieParser())
 app.use(parseForm) // handle URL-encoded data
-app.use(csrf({ cookie: true }))
+app.use(
+  csrf({
+    cookie: {
+      httpOnly: true,
+      secure: true
+    }
+  })
+)
 app.use(securityMiddleWare)
 app.use(authRoute)
 app.set('port', port)
