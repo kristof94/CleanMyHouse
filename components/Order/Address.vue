@@ -7,7 +7,16 @@
             <slot name="header">default header</slot>
           </div>
           <div class="modal-body">
-            <slot name="body">coucou</slot>
+            <slot name="body">
+              <vue-google-autocomplete
+                id="map"
+                ref="address"
+                class="form-control"
+                placeholder="Entrer votre addresse"
+                country="fr"
+                @placechanged="getAddressData"
+              />
+            </slot>
           </div>
           <div class="modal-footer">
             <slot name="footer">
@@ -48,7 +57,7 @@ export default {
   mounted() {
     // To demonstrate functionality of exposed component functions
     // Here we make focus on the user input
-    // this.$refs.address.focus()
+    this.$refs.address.focus()
   },
   methods: {
     getAddressData: function(addressData, placeResultData, id) {
