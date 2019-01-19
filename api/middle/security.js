@@ -15,6 +15,9 @@ router.use(
     maxAge: sixtyDaysInSeconds
   })
 )
+router.use(helmet.noSniff())
+router.use(helmet.frameguard({ action: 'sameorigin' }))
+
 router.use(function(err, req, res, next) {
   if (err.code !== 'EBADCSRFTOKEN') {
     return next(err)

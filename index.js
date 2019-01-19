@@ -24,7 +24,8 @@ app.use(
   csrf({
     cookie: {
       httpOnly: true,
-      secure: true
+      secure: true,
+      SameSite: true
     }
   })
 )
