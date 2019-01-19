@@ -7,7 +7,16 @@
             <slot name="header">default header</slot>
           </div>
           <div class="modal-body">
-            <slot name="body"/>
+            <slot name="body">
+              <vue-google-autocomplete
+                id="map"
+                ref="address"
+                class="form-control"
+                placeholder="Entrer votre addresse"
+                country="fr"
+                @placechanged="getAddressData"
+              />
+            </slot>
           </div>
           <div class="modal-footer">
             <slot name="footer">
