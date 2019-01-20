@@ -11,6 +11,8 @@ const { taskMap } = require('../../services/map.1')
 var db = admin.database()
 var ref = db.ref('users')
 
+const price = 2000
+
 const checkSession = function(req, res, next) {
   const sessionCookie = req.session.sessionCookie || ''
   admin
@@ -23,14 +25,13 @@ const checkSession = function(req, res, next) {
         emailVerified: decodedData.emailVerified,
         phoneNumber: decodedData.phoneNumber
       }
-      res.locals.decodedClaims = decodedClaims
+      req.session.decodedClaims = decodedClaims
       next()
     })
     .catch(() => {
       console.log('expired')
       res.clearCookie('session')
       res.clearCookie('idToken')
-      res.locals = {}
       res.status(401).send('UNAUTHORIZED REQUEST!')
     })
 }
@@ -48,14 +49,13 @@ router.get('/', (req, res, next) => {
           emailVerified: decodedData.email_verified,
           phoneNumber: decodedData.phone_number
         }
-        res.locals.decodedClaims = decodedClaims
+        req.session.decodedClaims = decodedClaims
         console.log('laaaaaaaa')
       })
       .catch(() => {
         console.log('expired')
         res.clearCookie('session')
         res.clearCookie('idToken')
-        res.locals = null
       })
       .finally(() => {
         next()
@@ -109,188 +109,77 @@ function getStringFromDate(date) {
   return { weekdayLong, day, monthLong, year, hours, minutes }
 }
 
-router.get('/getorders', (req, res) => {
-  const sessionCookie = req.session.sessionCookie || ''
-  admin
-    .auth()
-    .verifySessionCookie(sessionCookie, true /** checkRevoked */)
-    .then(decodedClaims => {
-      const orders = []
-      db.ref('/users/' + decodedClaims.uid).once(
-        'value',
-        function(snapshot) {
-          snapshot.forEach(function(childSnapshot) {
-            const copyChild = childSnapshot.exportVal()
-            delete copyChild.customer
-            orders.push(copyChild)
-          })
-          orders.sort(function(a, b) {
-            return b.orders.sinceDate - a.orders.sinceDate
-          })
-          res.status(200).send(orders)
-        },
-        function(errorObject) {
-          console.log('The read failed: ' + errorObject.code)
-        }
-      )
-    })
-    .catch(err => {
-      console.log(err)
-      res.status(401).send('UNAUTHORIZED REQUEST!')
-    })
+router.get('/getorders', checkSession, (req, res) => {
+  const orders = []
+  db.ref('/users/' + req.session.decodedClaims.uid).once(
+    'value',
+    function(snapshot) {
+      snapshot.forEach(function(childSnapshot) {
+        const copyChild = childSnapshot.exportVal()
+        delete copyChild.customer
+        orders.push(copyChild)
+      })
+      orders.sort(function(a, b) {
+        return b.order.sinceDate - a.order.sinceDate
+      })
+      res.status(200).send(orders)
+    },
+    function(errorObject) {
+      console.log('The read failed: ' + errorObject.code)
+      res.status(400).send('UNAUTHORIZED REQUEST!')
+    }
+  )
 })
 
-router.post('/processpayment', (req, res) => {
+router.post('/preparepaiement', checkSession, (req, res) => {
   const order = req.body.order
-  const sessionCookie = req.session.sessionCookie || ''
-  admin
-    .auth()
-    .verifySessionCookie(sessionCookie, true /** checkRevoked */)
-    .then(decodedClaims => {
-      const time = DateTime.fromMillis(order.time)
-      const date = DateTime.fromMillis(order.date)
-      const dateObj = getStringFromDate(date)
-
-      const address = order.address
-      const addressStr = address['street_number']
-        .concat(' ')
-        .concat(address['route'])
-        .concat(' ')
-        .concat(address['locality'])
-
-      const hours = time.get('hour')
-      const minutes = time.get('minute') == 0 ? 0 : 0.5
-
-      const description = taskMap
-        .get(order.task)
-        .concat(';')
-        .concat(hours)
-        .concat('h')
-        .concat(time.get('minute'))
-        .concat(';')
-        .concat(dateObj['weekdayLong'])
-        .concat(' ')
-        .concat(dateObj['day'])
-        .concat(' ')
-        .concat(dateObj['monthLong'])
-        .concat(' ')
-        .concat(dateObj['year'])
-        .concat(' ')
-        .concat(dateObj['hours'])
-        .concat('h')
-        .concat(dateObj['minutes'])
-        .concat(';')
-        .concat(addressStr)
-
-      const price = 3000 * (hours + minutes)
-      // console.log(price)
-
-      let amount = price
-      return stripe.customers
-        .create({
-          email: req.body.order.email,
-          source: req.body.order.token.id
-        })
-        .then(customer => {
-          var usersRef = ref.child(decodedClaims.uid)
-          usersRef
-            .push()
-            .set({
-              orders: req.body.order,
-              customer: customer
-            })
-            .then(() => {
-              console.log(customer)
-            })
-            .catch(err => {
-              console.log(err)
-            })
-        })
-    })
-    .then(() => {
-      res
-        .status(200)
-        .send(
-          "Paiement enregistré. Vous serez débité après que nous vous ayons rendu visite. Nous recherchons activement une aide ménagère. Si aucune aide ménagère n'est trouvée dans 2 heures , vous ne serez pas débité!"
-        )
-    })
-    .catch(err => {
-      console.log(err)
-      res.status(403).send("can't process payment")
-    })
-})
-
-router.get('/booktaskMobile', (req, res, next) => {
-  const sessionCookie = req.session.sessionCookie || ''
-  if (sessionCookie) {
-    admin
-      .auth()
-      .verifySessionCookie(sessionCookie, true /** checkRevoked */)
-      .then(decodedData => {
-        const decodedClaims = {
-          uid: decodedData.uid,
-          email: decodedData.email,
-          emailVerified: decodedData.email_verified,
-          phoneNumber: decodedData.phone_number
-        }
-        res.locals.decodedClaims = decodedClaims
-        next()
-      })
-      .catch(() => {
-        res.redirect('/login')
-      })
+  const time = DateTime.fromISO(order.time)
+  const date = DateTime.fromISO(order.date)
+  const hour = time.hour
+  const minute = time.minute == 30 ? 0.5 : 0
+  if (hour + minute < 1) {
+    res.status(400).send('UNAUTHORIZED REQUEST!')
   } else {
-    res.redirect('/login')
+    res.status(200).send({ price: hour * price + minute * price })
   }
 })
 
-router.get('/confirmbooking', (req, res, next) => {
-  const sessionCookie = req.session.sessionCookie || ''
-  if (sessionCookie) {
-    admin
-      .auth()
-      .verifySessionCookie(sessionCookie, true /** checkRevoked */)
-      .then(decodedData => {
-        const decodedClaims = {
-          uid: decodedData.uid,
-          email: decodedData.email,
-          emailVerified: decodedData.email_verified,
-          phoneNumber: decodedData.phone_number
-        }
-        res.locals.decodedClaims = decodedClaims
-        next()
-      })
-      .catch(() => {
-        console.log('expired confirmbooking')
-        res.redirect('/login')
-      })
+router.post('/processpayment', checkSession, (req, res) => {
+  const order = req.body.order
+  const time = DateTime.fromISO(order.time)
+  const date = DateTime.fromISO(order.date)
+  const hour = time.hour
+  const minute = time.minute == 30 ? 0.5 : 0
+  if (hour + minute < 1) {
+    res.status(400).send('UNAUTHORIZED REQUEST!')
   } else {
-    res.redirect('/login')
-  }
-})
-
-router.get('/bookmobile', (req, res, next) => {
-  const sessionCookie = req.session.sessionCookie || ''
-  if (sessionCookie) {
-    admin
-      .auth()
-      .verifySessionCookie(sessionCookie, true /** checkRevoked */)
-      .then(decodedData => {
-        const decodedClaims = {
-          uid: decodedData.uid,
-          email: decodedData.email,
-          emailVerified: decodedData.email_verified,
-          phoneNumber: decodedData.phone_number
-        }
-        res.locals.decodedClaims = decodedClaims
-        next()
+    stripe.customers
+      .create({
+        email: order.email,
+        source: order.token.id
       })
-      .catch(() => {
-        console.log('expired book')
-        res.redirect('/login')
+      .then(customer => {
+        var usersRef = ref.child(req.session.decodedClaims.uid)
+        order.sinceDate = DateTime.local().toMillis()
+        order.time = time.toMillis()
+        order.date = date.toMillis()
+        order.status = 'waiting'
+        return usersRef.push().set({
+          order: order,
+          customer: customer
+        })
       })
-  } else {
-    res.redirect('/login')
+      .then(() => {
+        res
+          .status(200)
+          .send(
+            "Paiement enregistré. Vous serez débité après que nous vous ayons rendu visite. Nous recherchons activement une aide ménagère. Si aucune aide ménagère n'est trouvée dans 2 heures , vous ne serez pas débité!"
+          )
+      })
+      .catch(err => {
+        console.log(err)
+        res.status(400).send('UNAUTHORIZED REQUEST!')
+      })
   }
 })
 
@@ -307,7 +196,7 @@ router.get('/book', (req, res, next) => {
           emailVerified: decodedData.email_verified,
           phoneNumber: decodedData.phone_number
         }
-        res.locals.decodedClaims = decodedClaims
+        req.session.decodedClaims = decodedClaims
         next()
       })
       .catch(() => {
@@ -319,40 +208,29 @@ router.get('/book', (req, res, next) => {
   }
 })
 
-router.get('/payment', (req, res, next) => {
+router.get('/orders', (req, res, next) => {
   const sessionCookie = req.session.sessionCookie || ''
-  admin
-    .auth()
-    .verifySessionCookie(sessionCookie, true /** checkRevoked */)
-    .then(decodedClaims => {
-      res.locals.decodedClaims = decodedClaims
-      var sessData = req.session
-      const order = sessData.order
-      const time = DateTime.fromMillis(order.time)
-      const date = DateTime.fromMillis(order.date)
-      const dateObj = getStringFromDate(date)
-
-      const address = order.address
-      const addressStr = address['street_number']
-        .concat(' ')
-        .concat(address['route'])
-        .concat(' ')
-        .concat(address['locality'])
-
-      const hours = time.get('hour')
-      const minutes = time.get('minute') == 0 ? 0 : 0.5
-      const price = 2500 * (hours + minutes)
-      if (hours <= 0) {
-        res.sendStatus(500)
-        return
-      }
-      res.locals.price = price
-
-      next()
-    })
-    .catch(error => {
-      res.redirect('/login')
-    })
+  if (sessionCookie) {
+    admin
+      .auth()
+      .verifySessionCookie(sessionCookie, true /** checkRevoked */)
+      .then(decodedData => {
+        const decodedClaims = {
+          uid: decodedData.uid,
+          email: decodedData.email,
+          emailVerified: decodedData.email_verified,
+          phoneNumber: decodedData.phone_number
+        }
+        req.session.decodedClaims = decodedClaims
+        next()
+      })
+      .catch(() => {
+        console.log('expired book')
+        res.redirect('/login')
+      })
+  } else {
+    res.redirect('/login')
+  }
 })
 
 router.get('/verifySession', checkSession, (req, res) => {
@@ -362,7 +240,7 @@ router.get('/verifySession', checkSession, (req, res) => {
     .auth()
     .verifySessionCookie(sessionCookie, true /** checkRevoked */)
     .then(decodedClaims => {
-      res.locals.decodedClaims = decodedClaims
+      req.session.decodedClaims = decodedClaims
       res.status(200).send('ok')
     })
     .catch(error => {
@@ -391,7 +269,7 @@ router.post('/sessionToken', function(req, res) {
         emailVerified: userRecord.emailVerified,
         phoneNumber: userRecord.phoneNumber
       }
-      res.locals.decodedClaims = decodedClaims
+      req.session.decodedClaims = decodedClaims
       return admin.auth().createSessionCookie(idToken, { expiresIn })
     })
     .then(sessionCookie => {
@@ -405,7 +283,6 @@ router.post('/sessionToken', function(req, res) {
       console.log(error)
       res.clearCookie('session')
       res.clearCookie('idToken')
-      res.locals = {}
       res.status(401).send('UNAUTHORIZED REQUEST!')
     })
 })

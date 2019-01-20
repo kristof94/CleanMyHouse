@@ -71,7 +71,8 @@
             <b-form class="text-center">
               <b-form-group>
                 <h1>Prix</h1>
-                <span :class="{ customIconAnimated: displayPrice }" class="customIcon">25
+                <span :class="{ customIconAnimated: displayPrice }" class="customIcon">
+                  {{ price / 100 }}
                   <font-awesome-icon :icon="['fas', 'euro-sign']"/>
                 </span>
               </b-form-group>
@@ -101,9 +102,10 @@
           <b-col
             :lg="6"
             :md="8"
-            :sm="12"
+            :sm="8"
             :cols="10"
             offset="1"
+            offset-sm="2"
             offset-md="2"
             offset-lg="3"
             class="text-center"
@@ -173,6 +175,22 @@
         @input="onTimeChanged"
       />
     </no-ssr>
+    <modal-info v-if="showModalInfo" @close="redirectOrder">
+      <!--
+      you can use custom content here to overwrite
+      default content
+			-->
+      <div slot="header">{{ infoPaymentHeader }}</div>
+      <div slot="body">{{ infoPaymentMessage }}</div>
+    </modal-info>
+    <modal-error v-if="showModalError" @close="redirectLogin">
+      <!--
+      you can use custom content here to overwrite
+      default content
+			-->
+      <div slot="header">{{ this.$store.getters.getErrorPaiment.header }}</div>
+      <div slot="body">{{ this.$store.getters.getErrorPaiment.message }}</div>
+    </modal-error>
   </div>
 </template>
 
@@ -187,6 +205,8 @@ import { DateTime } from 'luxon'
 import Date from '~/components/Order/Date'
 import Adress from '~/components/Order/Address'
 import ChoiceTask from '~/components/Order/ChoiceTask'
+import ModalError from '~/components/Modal/ModalError'
+import ModalInfo from '~/components/Modal/ModalInfo'
 
 const buildColumn = (date, time, address) => {
   if (date && time && address) {
@@ -208,17 +228,23 @@ export default {
     ChoiceTask,
     BookAdress,
     BookTask,
+    ModalError,
+    ModalInfo,
     MyFooter
   },
   data() {
     return {
       title: 'Clean my house',
+      infoPaymentHeader: null,
+      infoPaymentMessage: null,
       informations: null,
-      price: 2500,
+      price: null,
       rememberMe: false,
       currency: 'EUR',
       showModal: false,
       showChoiceModal: false,
+      showModalError: false,
+      showModalInfo: false,
       displayPrice: false,
       date:
         this.$store.getters.getDate == null
@@ -239,35 +265,48 @@ export default {
       )
     }
   },
-  computed: {
-    modalPaiement: {
-      set() {},
-      get() {
-        return this.$store.getters.getErrorPaiment != null
-      }
-    }
-  },
   methods: {
+    redirectLogin() {
+      this.showModalError = false
+      if (this.$store.getters.getErrorPaiment.code === 401) {
+        this.$router.push('/login')
+      }
+      if (this.$store.getters.getErrorPaiment.code === 400) {
+        this.date = null
+        this.time = null
+        this.address = null
+      }
+    },
+    redirectOrder() {
+      this.showModalInfo = false
+      this.$router.push('/orders')
+    },
     async pay() {
       await this.$refs.checkoutRef.open()
     },
     done({ token }) {
+      this.$nuxt.$loading.start()
       const order = {
         token: token,
         email: this.$store.getters.getUser.email,
         address: this.$store.getters.getAddress,
         date: this.$store.getters.getDate,
         time: this.$store.getters.getTime,
-        task: this.$store.getters.getTask
+        task: this.$store.getters.getChoice
       }
+
       this.$axios
         .post('/processpayment', { order })
         .then(response => {
-          console.log(response)
-          this.$store.commit('setErrorPaiment', 'Problème lors du paiement')
+          this.infoPaymentHeader = 'Paiement réussi.'
+          this.infoPaymentMessage = response.data
+          this.showModalInfo = true
         })
         .catch(err => {
           this.$store.commit('setErrorPaiment', err)
+        })
+        .finally(() => {
+          this.$nuxt.$loading.finish()
         })
     },
     opened() {
@@ -287,11 +326,45 @@ export default {
       if (!event) {
         return
       }
+      this.$nuxt.$loading.start()
       this.$store.commit('setAddress', this.address)
       this.$store.commit('setChoice', event)
       this.$store.commit('setDate', this.date)
       this.$store.commit('setTime', this.time)
-      this.displayPrice = true
+
+      const order = {
+        address: this.address,
+        choice: event,
+        date: this.date,
+        time: this.time
+      }
+      this.$axios
+        .post('/preparepaiement', { order })
+        .then(response => {
+          this.price = response.data.price
+          this.displayPrice = true
+        })
+        .catch(err => {
+          this.showModalError = true
+          if (err.response.status == 401) {
+            this.$store.commit('setErrorPaiment', {
+              code: err.response.status,
+              header: 'Votre session a expiré.',
+              message: 'Vous allez être redirigé vers une page de reconnexion.'
+            })
+          }
+          if (err.response.status == 400) {
+            this.$store.commit('setErrorPaiment', {
+              code: err.response.status,
+              header: 'Erreur interne.',
+              message:
+                'Il y a eu un problème lors de la création de votre commande. Veuillez recommencer.'
+            })
+          }
+        })
+        .finally(() => {
+          this.$nuxt.$loading.finish()
+        })
     },
     confirm() {
       this.showChoiceModal = true
