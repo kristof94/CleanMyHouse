@@ -147,10 +147,22 @@ router.post('/processpayment', checkSession, (req, res) => {
             order
           })
         } else {
-          return stripe.customers.create({
-            email: order.email,
-            source: order.token.id
-          })
+          return stripe.customers
+            .create({
+              email: order.email,
+              source: order.token.id
+            })
+            .then(customer => {
+              usersRef
+                .set({
+                  customer
+                })
+                .then(() => {
+                  return usersRef.push().set({
+                    order
+                  })
+                })
+            })
         }
       })
       .then(() => {
@@ -162,7 +174,7 @@ router.post('/processpayment', checkSession, (req, res) => {
       })
       .catch(err => {
         console.log(err)
-        res.status(400).send('UNAUTHORIZED REQUEST!')
+        res.status(401).send('UNAUTHORIZED REQUEST!')
       })
   }
 })

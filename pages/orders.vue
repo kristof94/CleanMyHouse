@@ -12,7 +12,7 @@
       </modal-error>
       <div v-else class="orders">
         <div class="signinTitle">Mes commandes</div>
-        <order v-for="(order) in orders" :key="order.date" :order="order"/>
+        <order v-for="(order) in orders" :key="order.sinceDate" :order="order"/>
       </div>
     </section>
   </div>
