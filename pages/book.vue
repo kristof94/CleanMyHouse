@@ -75,31 +75,23 @@
         </b-row>
         <b-row>
           <b-col :lg="lg[0]" :md="lg[0]" :sm="lg[0]" :cols="lg[0]">
-            <transition name="fadeOpacity">
-              <div v-if="date" class="resume">
-                <div class="resume-text">
-                  Le {{ date.get('weekdayLong') }} {{ date.get('day') }} {{ date.get('monthLong') }}
-                  A {{ date.get('hour')=='0' ? '00' : date.get('hour') }}h{{ date.get('minute')=='0' ? '00' : date.get('minute') }}
-                </div>
-              </div>
-            </transition>
+            <div v-if="date" class="resume">
+              <div class="resume-text">{{ getStringDate() }}</div>
+              <div class="resume-text">{{ getStringDateHour() }}</div>
+            </div>
           </b-col>
           <b-col :lg="lg[1]" :md="lg[1]" :sm="lg[1]" :cols="lg[1]">
-            <transition name="fadeOpacity">
-              <div v-if="address">
-                <div class="resume">
-                  <div class="resume-text">{{ address.description }}</div>
-                </div>
+            <div v-if="address">
+              <div class="resume">
+                <div class="resume-text">{{ address.description }}</div>
               </div>
-            </transition>
+            </div>
           </b-col>
           <b-col :lg="lg[2]" :md="lg[2]" :sm="lg[2]" :cols="lg[2]">
-            <transition name="fadeOpacity">
-              <div
-                v-if="time"
-                class="resume"
-              >{{ time.get('hour')+'h' }}{{ time.get('minute') == 0 ? '00':'30' }}</div>
-            </transition>
+            <div
+              v-if="time"
+              class="resume"
+            >{{ time.get('hour')+'h' }}{{ time.get('minute') == 0 ? '00':'30' }}</div>
           </b-col>
         </b-row>
         <b-row>
@@ -129,14 +121,14 @@
       <!--
       you can use custom content here to overwrite
       default content
-      -->
+			-->
       <div slot="header">Choisissez une addresse</div>
     </adress>
     <choice-task v-if="showChoiceModal" @closeChoiceModal="confirmChoice">
       <!--
       you can use custom content here to overwrite
       default content
-      -->
+			-->
       <div slot="header">Ménage ou Repassage</div>
     </choice-task>
     <no-ssr>
@@ -184,7 +176,7 @@
       <!--
       you can use custom content here to overwrite
       default content
-      -->
+			-->
       <div slot="header">{{ infoPaymentHeader }}</div>
       <div slot="body">{{ infoPaymentMessage }}</div>
     </modal-info>
@@ -192,7 +184,7 @@
       <!--
       you can use custom content here to overwrite
       default content
-      -->
+			-->
       <div slot="header">{{ this.$store.getters.getErrorPaiment.header }}</div>
       <div slot="body">{{ this.$store.getters.getErrorPaiment.message }}</div>
     </modal-error>
@@ -272,6 +264,18 @@ export default {
     }
   },
   methods: {
+    getStringDate() {
+      const date = this.date
+      return `Le ${date.get('weekdayLong')} ${date.get('day')} ${date.get(
+        'monthLong'
+      )}`
+    },
+    getStringDateHour() {
+      const date = this.date
+      return `A ${date.get('hour') == '0' ? '00' : date.get('hour')}h${
+        date.get('minute') == '0' ? '00' : date.get('minute')
+      }`
+    },
     redirectLogin() {
       this.showModalError = false
       if (this.$store.getters.getErrorPaiment.code === 401) {
