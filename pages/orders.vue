@@ -51,7 +51,7 @@ export default {
         return { orders: res.data, showModalError: false }
       })
       .catch(err => {
-        if (err.response == null || err.response.status) {
+        if (err.response == null || err.response.status == null) {
           context.store.commit('setError', {
             code: 500,
             header: 'Erreur Interne.',
