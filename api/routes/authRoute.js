@@ -93,7 +93,7 @@ router.get('/getorders', checkSession, (req, res) => {
         if (b) {
           return b.sinceDate - a.sinceDate
         }
-        return -1
+        return 1
       })
       res.status(200).send(orders)
     },
