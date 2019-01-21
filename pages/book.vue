@@ -325,10 +325,10 @@ export default {
       this.$router.push('/orders')
     },
     async pay() {
+      this.$nuxt.$loading.start()
       await this.$refs.checkoutRef.open()
     },
     done({ token }) {
-      this.$nuxt.$loading.start()
       const order = {
         token: token,
         email: this.$store.getters.getUser.email,
@@ -375,6 +375,7 @@ export default {
     },
     canceled() {
       // do stuff
+      this.$nuxt.$loading.finish()
     },
     modify() {
       this.displayPrice = false

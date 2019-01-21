@@ -132,11 +132,10 @@ h2 {
   font-size: 60px;
 
   @include sm {
-    font-size: 20px;
+    font-size: 40px;
   }
 
   @include md {
-    font-size: 40px;
   }
 }
 
@@ -167,13 +166,13 @@ h2 {
   }
 
   @include md {
-    height: unset;
-    margin: 10px 10px 10px 10px;
-    padding: 0px 20px 20px 20px;
-    width: unset;
+    overflow-y: scroll;
+    width: 80%;
+    height: 80%;
   }
 
   @include lg {
+    overflow-y: scroll;
     width: 80%;
     height: 80%;
   }

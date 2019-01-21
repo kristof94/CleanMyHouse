@@ -26,8 +26,8 @@ const checkSession = function(req, res, next) {
         const decodedClaims = {
           uid: decodedData.uid,
           email: decodedData.email,
-          emailVerified: decodedData.emailVerified,
-          phoneNumber: decodedData.phoneNumber
+          emailVerified: decodedData.email_verified,
+          phoneNumber: decodedData.phone_number
         }
         req.session.decodedClaims = decodedClaims
         next()
