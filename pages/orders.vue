@@ -13,6 +13,7 @@
       <div v-else class="orders">
         <div class="signinTitle">Mes commandes</div>
         <order v-for="(order) in orders" :key="order.sinceDate" :order="order"/>
+        <div v-if="orders.length === 0" class="text-center noorder">Vous n'avez pas de commande.</div>
       </div>
     </section>
   </div>
@@ -82,4 +83,9 @@ export default {
 </script>
 
 <style>
+.noorder {
+  margin-top: 200px;
+  font-size: 20px;
+  color: rgba(6, 175, 218, 1);
+}
 </style>
