@@ -50,7 +50,9 @@ export default {
   },
   data() {
     return {
-      date: DateTime.fromMillis(this.order.order.date)
+      date: DateTime.fromMillis(this.order.order.date, {
+        zone: 'Europe/Paris'
+      })
     }
   },
   computed: {

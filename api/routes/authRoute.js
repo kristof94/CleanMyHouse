@@ -6,34 +6,41 @@ const keySecret = process.env.SECRET_KEY
 const stripe = require('stripe')(keySecret)
 const expiresIn = 60 * 1000 * 5 // 10 min
 var router = express.Router()
-const { DateTime } = require('luxon')
+const { DateTime, Settings } = require('luxon')
 const { taskMap } = require('../../services/map.1')
 var db = admin.database()
 var ref = db.ref('users')
+Settings.defaultLocale = 'fr'
+Settings.defaultZoneName = 'Europe/Paris'
+console.log(Settings.defaultZone)
 
 const price = 2000
 
 const checkSession = function(req, res, next) {
   const sessionCookie = req.session.sessionCookie || ''
-  admin
-    .auth()
-    .verifySessionCookie(sessionCookie, true /** checkRevoked */)
-    .then(decodedData => {
-      const decodedClaims = {
-        uid: decodedData.uid,
-        email: decodedData.email,
-        emailVerified: decodedData.emailVerified,
-        phoneNumber: decodedData.phoneNumber
-      }
-      req.session.decodedClaims = decodedClaims
-      next()
-    })
-    .catch(() => {
-      console.log('expired')
-      res.clearCookie('session')
-      res.clearCookie('idToken')
-      res.status(401).send('UNAUTHORIZED REQUEST!')
-    })
+  if (sessionCookie) {
+    admin
+      .auth()
+      .verifySessionCookie(sessionCookie, true /** checkRevoked */)
+      .then(decodedData => {
+        const decodedClaims = {
+          uid: decodedData.uid,
+          email: decodedData.email,
+          emailVerified: decodedData.emailVerified,
+          phoneNumber: decodedData.phoneNumber
+        }
+        req.session.decodedClaims = decodedClaims
+        next()
+      })
+      .catch(() => {
+        console.log('expired')
+        res.clearCookie('session')
+        res.clearCookie('idToken')
+        res.status(401).send('UNAUTHORIZED REQUEST!')
+      })
+  } else {
+    res.status(403).send('FORBIDDENT REQUEST!')
+  }
 }
 
 router.get('/', (req, res, next) => {
@@ -125,7 +132,7 @@ router.get('/getorders', checkSession, (req, res) => {
     },
     function(errorObject) {
       console.log('The read failed: ' + errorObject.code)
-      res.status(400).send('UNAUTHORIZED REQUEST!')
+      res.status(401).send('UNAUTHORIZED REQUEST!')
     }
   )
 })
@@ -189,20 +196,7 @@ router.post('/processpayment', checkSession, (req, res) => {
   }
 })
 
-router.get('/verifySession', checkSession, (req, res) => {
-  console.log('verifySession')
-  const sessionCookie = req.session.sessionCookie || ''
-  admin
-    .auth()
-    .verifySessionCookie(sessionCookie, true /** checkRevoked */)
-    .then(decodedClaims => {
-      req.session.decodedClaims = decodedClaims
-      res.status(200).send('ok')
-    })
-    .catch(error => {
-      res.status(401).send('UNAUTHORIZED REQUEST!')
-    })
-})
+router.get('/verifySession', checkSession)
 
 router.post('/sessionToken', function(req, res) {
   const idToken = req.body.idToken

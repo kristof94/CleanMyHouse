@@ -236,7 +236,10 @@ export default {
       infoPaymentMessage: null,
       informations: null,
       price: null,
-      email: this.$store.getters.getUser.email,
+      email:
+        this.$store.getters.getUser == null
+          ? null
+          : this.$store.getters.getUser.email,
       rememberMe: false,
       currency: 'EUR',
       showModal: false,
@@ -247,11 +250,15 @@ export default {
       date:
         this.$store.getters.getDate == null
           ? null
-          : DateTime.fromISO(this.$store.getters.getDate),
+          : DateTime.fromISO(this.$store.getters.getDate, {
+              zone: 'Europe/Paris'
+            }),
       time:
         this.$store.getters.getTime == null
           ? null
-          : DateTime.fromISO(this.$store.getters.getTime),
+          : DateTime.fromISO(this.$store.getters.getTime, {
+              zone: 'Europe/Paris'
+            }),
       address:
         this.$store.getters.getAddress == null
           ? null
@@ -273,6 +280,14 @@ export default {
         })
         return { showModalError: true }
       }
+      if (err.response.status == 403) {
+        context.store.commit('setError', {
+          code: err.response.status,
+          header: 'Vous devez être connecté pour accéder à cette page.',
+          message: 'Vous allez être redirigé vers une page de reconnexion.'
+        })
+        return { showModalError: true }
+      }
     })
   },
   methods: {
@@ -290,7 +305,10 @@ export default {
     },
     redirectLogin() {
       this.showModalError = false
-      if (this.$store.getters.getError.code === 401) {
+      if (
+        this.$store.getters.getError.code === 403 ||
+        this.$store.getters.getError.code === 401
+      ) {
         this.$store.dispatch('clearMessage')
         this.$router.push('/login')
         return
@@ -328,7 +346,22 @@ export default {
           this.showModalInfo = true
         })
         .catch(err => {
-          this.$store.commit('setError', err)
+          if (err.response.status == 401) {
+            this.$store.commit('setError', {
+              code: err.response.status,
+              header: 'Votre session a expiré.',
+              message: 'Vous allez être redirigé vers une page de reconnexion.'
+            })
+            return { showModalError: true }
+          }
+          if (err.response.status == 403) {
+            this.$store.commit('setError', {
+              code: err.response.status,
+              header: 'Vous devez être connecté pour accéder à cette page.',
+              message: 'Vous allez être redirigé vers une page de reconnexion.'
+            })
+            return { showModalError: true }
+          }
         })
         .finally(() => {
           this.$nuxt.$loading.finish()
@@ -408,7 +441,9 @@ export default {
     },
     onDateChanged(event) {
       if (event) {
-        const date = DateTime.fromISO(event)
+        const date = DateTime.fromISO(event, {
+          zone: 'Europe/Paris'
+        })
         if (date && !this.time) {
           this.date = date
           this.lg[0] = 6
@@ -420,7 +455,9 @@ export default {
     },
     onTimeChanged(event) {
       if (event) {
-        const time = DateTime.fromISO(event)
+        const time = DateTime.fromISO(event, {
+          zone: 'Europe/Paris'
+        })
         if (time && time.get('hour') != 0) {
           this.time = time
         }

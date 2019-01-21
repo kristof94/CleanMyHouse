@@ -55,14 +55,26 @@ export default {
           })
           return { orders: null, showModalError: true }
         }
+        if (err.response.status == 403) {
+          context.store.commit('setError', {
+            code: err.response.status,
+            header: 'Vous devez être connecté pour accéder à cette page.',
+            message: 'Vous allez être redirigé vers une page de reconnexion.'
+          })
+          return { orders: null, showModalError: true }
+        }
       })
   },
   methods: {
     redirectLogin() {
       this.showModalError = false
-      if (this.$store.getters.getError.code === 401) {
+      if (
+        this.$store.getters.getError.code === 403 ||
+        this.$store.getters.getError.code === 401
+      ) {
         this.$store.dispatch('clearMessage')
         this.$router.push('/login')
+        return
       }
     },
     formatAdress(address) {
