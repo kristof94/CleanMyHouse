@@ -36,9 +36,17 @@ function manageAuth(promise, commit, dispatch, axios, root) {
     .catch(error => {
       console.log(error)
       if (error.message) {
-        commit('setError', error.message)
+        commit('setError', {
+          code: 'auth/wrong-password',
+          header: "Erreur d'identifiants.",
+          message: error.message
+        })
       } else {
-        commit('setError', error)
+        commit('setError', {
+          code: '500',
+          header: 'Erreur interne.',
+          message: 'Erreur interne.'
+        })
       }
       commit('setShow', true)
     })
