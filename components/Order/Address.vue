@@ -31,16 +31,6 @@
 </template>
 
 <script>
-const getMapFromAddress = place => {
-  const description = place['street_number']
-    .concat(', ')
-    .concat(place['route'])
-    .concat(' ')
-    .concat(place['locality'])
-  place.description = description
-  return place
-}
-
 export default {
   data() {
     return {
@@ -58,12 +48,21 @@ export default {
     // To demonstrate functionality of exposed component functions
     // Here we make focus on the user input
     this.$refs.address.focus()
+    /*if (
+      this.$store.getters.getAddress &&
+      this.$store.getters.getAddress.description
+    ) {
+      document.getElementById(
+        'map'
+      ).value = this.$store.getters.getAddress.description
+    }*/
   },
   methods: {
     // eslint-disable-next-line no-unused-vars
     getAddressData: function(addressData, placeResultData, id) {
       if (addressData) {
-        this.defaultAddress = getMapFromAddress(addressData)
+        addressData.description = this.$refs.address.$el.value
+        this.defaultAddress = addressData
         this.description = this.defaultAddress.description
       }
     },
