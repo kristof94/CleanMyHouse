@@ -1,9 +1,9 @@
 export default function(ctx) {
-  const { store, res } = ctx
+  const { store, req } = ctx
   if (process.server) {
-    if (res.locals.decodedClaims) {
-      console.log(res.locals)
-      store.commit('setUser', res.locals.decodedClaims)
+    if (req.session.decodedClaims) {
+      console.log(req.session.decodedClaims)
+      store.commit('setUser', req.session.decodedClaims)
     } else {
       store.commit('setUser', null)
     }

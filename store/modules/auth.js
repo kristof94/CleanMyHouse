@@ -218,19 +218,18 @@ const actions = {
   },
   signOut({ commit }) {
     commit('setModal', 'login')
-    commit('setUser', null)
-    commit('setAddress', null)
-    commit('setDate', null)
-    commit('setTime', null)
     this.$cookies.remove('vuex')
 
     return Auth.signOut()
       .then(() => {
-        commit('setUser', null)
         return this.app.$axios.post('/sessionLogout')
       })
       .catch(err => console.log(err))
       .finally(() => {
+        commit('setUser', null)
+        commit('setAddress', null)
+        commit('setDate', null)
+        commit('setTime', null)
         this.app.router.push('/login')
       })
   }

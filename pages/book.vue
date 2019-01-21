@@ -1,70 +1,7 @@
 <template>
   <div class="flexparent" style="height: 100vh;">
     <nav-bar/>
-    <section v-if="!displayPrice" id="order" class="order column">
-      <b-container class="book">
-        <b-row>
-          <b-col :lg="lg[0]" :md="lg[0]" :sm="lg[0]" :cols="lg[0]">
-            <book-date @open="open"/>
-          </b-col>
-          <b-col :lg="lg[1]" :md="lg[1]" :sm="lg[1]" :cols="lg[1]">
-            <transition name="slide-fade">
-              <book-adress v-if="date" @open="showModal = true"/>
-            </transition>
-          </b-col>
-          <b-col :lg="lg[2]" :md="lg[2]" :sm="lg[2]" :cols="lg[2]">
-            <transition name="slide-fade">
-              <book-time v-if="address" @open="openTime"/>
-            </transition>
-          </b-col>
-        </b-row>
-        <b-row>
-          <b-col :lg="lg[0]" :md="lg[0]" :sm="lg[0]" :cols="lg[0]">
-            <transition name="fadeOpacity">
-              <date v-if="date != null" :date="date"/>
-            </transition>
-          </b-col>
-          <b-col :lg="lg[1]" :md="lg[1]" :sm="lg[1]" :cols="lg[1]">
-            <transition name="fadeOpacity">
-              <div v-if="address">
-                <div class="resume">
-                  <div class="resume-text">{{ address.description }}</div>
-                </div>
-              </div>
-            </transition>
-          </b-col>
-          <b-col :lg="lg[2]" :md="lg[2]" :sm="lg[2]" :cols="lg[2]">
-            <transition name="fadeOpacity">
-              <div
-                v-if="time"
-                class="resume"
-              >{{ time.get('hour')+'h' }}{{ time.get('minute') == 0 ? '00':'30' }}</div>
-            </transition>
-          </b-col>
-        </b-row>
-        <b-row>
-          <b-col
-            :lg="6"
-            :md="6"
-            :sm="6"
-            :cols="6"
-            offset="3"
-            offset-sm="3"
-            offset-md="3"
-            offset-lg="3"
-            class="text-center"
-          >
-            <b-button
-              v-if="date && time && address"
-              class="specialbutton longbutton smallbutton whiteShine"
-              @click="confirm"
-            >Confirmer</b-button>
-          </b-col>
-        </b-row>
-      </b-container>
-    </section>
-
-    <section v-else class="order column">
+    <section v-if="displayPrice" class="order column">
       <b-container fluid class="book">
         <b-row>
           <b-col :lg="12" :md="12" :sm="12" :cols="12">
@@ -119,26 +56,94 @@
         </b-row>
       </b-container>
     </section>
+    <section v-else id="order" class="order column">
+      <b-container class="book">
+        <b-row>
+          <b-col :lg="lg[0]" :md="lg[0]" :sm="lg[0]" :cols="lg[0]">
+            <book-date :is-active="!date" @open="open"/>
+          </b-col>
+          <b-col :lg="lg[1]" :md="lg[1]" :sm="lg[1]" :cols="lg[1]">
+            <transition name="slide-fade">
+              <book-adress v-if="date" :is-active="!address" @open="showModal = true"/>
+            </transition>
+          </b-col>
+          <b-col :lg="lg[2]" :md="lg[2]" :sm="lg[2]" :cols="lg[2]">
+            <transition name="slide-fade">
+              <book-time v-if="address" :is-active="!time" @open="openTime"/>
+            </transition>
+          </b-col>
+        </b-row>
+        <b-row>
+          <b-col :lg="lg[0]" :md="lg[0]" :sm="lg[0]" :cols="lg[0]">
+            <transition name="fadeOpacity">
+              <div v-if="date" class="resume">
+                <div class="resume-text">
+                  Le {{ date.get('weekdayLong') }} {{ date.get('day') }} {{ date.get('monthLong') }}
+                  A {{ date.get('hour')=='0' ? '00' : date.get('hour') }}h{{ date.get('minute')=='0' ? '00' : date.get('minute') }}
+                </div>
+              </div>
+            </transition>
+          </b-col>
+          <b-col :lg="lg[1]" :md="lg[1]" :sm="lg[1]" :cols="lg[1]">
+            <transition name="fadeOpacity">
+              <div v-if="address">
+                <div class="resume">
+                  <div class="resume-text">{{ address.description }}</div>
+                </div>
+              </div>
+            </transition>
+          </b-col>
+          <b-col :lg="lg[2]" :md="lg[2]" :sm="lg[2]" :cols="lg[2]">
+            <transition name="fadeOpacity">
+              <div
+                v-if="time"
+                class="resume"
+              >{{ time.get('hour')+'h' }}{{ time.get('minute') == 0 ? '00':'30' }}</div>
+            </transition>
+          </b-col>
+        </b-row>
+        <b-row>
+          <b-col
+            :lg="6"
+            :md="6"
+            :sm="6"
+            :cols="6"
+            offset="3"
+            offset-sm="3"
+            offset-md="3"
+            offset-lg="3"
+            class="text-center"
+          >
+            <b-button
+              v-if="date && time && address"
+              class="specialbutton longbutton smallbutton whiteShine"
+              @click="confirm"
+            >Confirmer</b-button>
+          </b-col>
+        </b-row>
+      </b-container>
+    </section>
+
     <my-footer/>
     <adress v-if="showModal" @setPlace="setPlace" @close="showModal = false">
       <!--
       you can use custom content here to overwrite
       default content
-			-->
+      -->
       <div slot="header">Choisissez une addresse</div>
     </adress>
     <choice-task v-if="showChoiceModal" @closeChoiceModal="confirmChoice">
       <!--
       you can use custom content here to overwrite
       default content
-			-->
+      -->
       <div slot="header">Ménage ou Repassage</div>
     </choice-task>
     <no-ssr>
       <vue-stripe-checkout
         ref="checkoutRef"
         :name="title"
-        :email="$store.getters.getUser.email"
+        :email="email"
         :currency="currency"
         :amount="price"
         :allow-remember-me="true"
@@ -179,7 +184,7 @@
       <!--
       you can use custom content here to overwrite
       default content
-			-->
+      -->
       <div slot="header">{{ infoPaymentHeader }}</div>
       <div slot="body">{{ infoPaymentMessage }}</div>
     </modal-info>
@@ -187,7 +192,7 @@
       <!--
       you can use custom content here to overwrite
       default content
-			-->
+      -->
       <div slot="header">{{ this.$store.getters.getErrorPaiment.header }}</div>
       <div slot="body">{{ this.$store.getters.getErrorPaiment.message }}</div>
     </modal-error>
@@ -239,6 +244,7 @@ export default {
       infoPaymentMessage: null,
       informations: null,
       price: null,
+      email: this.$store.getters.getUser.email,
       rememberMe: false,
       currency: 'EUR',
       showModal: false,
