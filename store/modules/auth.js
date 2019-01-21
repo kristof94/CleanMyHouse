@@ -196,7 +196,11 @@ const actions = {
       !window.confirmationResult ||
       !this.getters.couldSignInWithPhoneNumber
     ) {
-      commit('setError', 'Problème interne')
+      commit('setError', {
+        code: 500,
+        header: 'Erreur',
+        message: 'Erreur Interne'
+      })
       commit('setShow', true)
       return Promise.reject('error')
     }

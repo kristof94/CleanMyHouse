@@ -50,7 +50,6 @@ router.get('/', (req, res, next) => {
           phoneNumber: decodedData.phone_number
         }
         req.session.decodedClaims = decodedClaims
-        console.log('laaaaaaaa')
       })
       .catch(() => {
         console.log('expired')
@@ -180,56 +179,6 @@ router.post('/processpayment', checkSession, (req, res) => {
         console.log(err)
         res.status(400).send('UNAUTHORIZED REQUEST!')
       })
-  }
-})
-
-router.get('/book', (req, res, next) => {
-  const sessionCookie = req.session.sessionCookie || ''
-  if (sessionCookie) {
-    admin
-      .auth()
-      .verifySessionCookie(sessionCookie, true /** checkRevoked */)
-      .then(decodedData => {
-        const decodedClaims = {
-          uid: decodedData.uid,
-          email: decodedData.email,
-          emailVerified: decodedData.email_verified,
-          phoneNumber: decodedData.phone_number
-        }
-        req.session.decodedClaims = decodedClaims
-        next()
-      })
-      .catch(() => {
-        console.log('expired book')
-        res.redirect('/login')
-      })
-  } else {
-    res.redirect('/login')
-  }
-})
-
-router.get('/orders', (req, res, next) => {
-  const sessionCookie = req.session.sessionCookie || ''
-  if (sessionCookie) {
-    admin
-      .auth()
-      .verifySessionCookie(sessionCookie, true /** checkRevoked */)
-      .then(decodedData => {
-        const decodedClaims = {
-          uid: decodedData.uid,
-          email: decodedData.email,
-          emailVerified: decodedData.email_verified,
-          phoneNumber: decodedData.phone_number
-        }
-        req.session.decodedClaims = decodedClaims
-        next()
-      })
-      .catch(() => {
-        console.log('expired book')
-        res.redirect('/login')
-      })
-  } else {
-    res.redirect('/login')
   }
 })
 

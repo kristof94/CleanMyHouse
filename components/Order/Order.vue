@@ -41,16 +41,6 @@
 <script>
 import { DateTime } from 'luxon'
 
-const getStringFromDate = date => {
-  const weekdayLong = date.get('weekdayLong')
-  const day = date.get('day')
-  const monthLong = date.get('monthLong')
-  const year = date.get('year')
-  const hours = date.get('hour')
-  const minutes = date.get('minute')
-  return { weekdayLong, day, monthLong, year, hours, minutes }
-}
-
 export default {
   props: {
     order: {
@@ -66,29 +56,23 @@ export default {
   computed: {
     since: function() {
       const now = DateTime.local().toMillis()
+      const sinceDate = DateTime.fromMillis(this.order.order.sinceDate)
+      console.log(sinceDate.get('year'))
       const delta = DateTime.fromMillis(now - this.order.order.sinceDate)
-      const dateMap = getStringFromDate(delta)
-      if (delta.get('hour') > 12) {
-        return (
-          'Le' +
-          dateMap.weekdayLong +
-          ' ' +
-          dateMap.day +
-          ' ' +
-          dateMap.monthLong +
-          ' ' +
-          dateMap.year
-        )
+      if (delta.get('hour') >= 12) {
+        return `Le ${sinceDate.get('weekdayLong')} ${sinceDate.get(
+          'day'
+        )} ${sinceDate.get('monthLong')} ${sinceDate.get('year')}`
       } else if (delta.get('hour') > 1) {
-        return (
-          'Il y a ' +
-          dateMap.hours +
-          ' heures et ' +
-          dateMap.minutes +
-          ' minutes.'
-        )
+        return `Il y a ${delta.get('hour')} heures et ${
+          delta.get('minute') < 10
+            ? `0${delta.get('minute')}`
+            : delta.get('minute')
+        } ${delta.get('minute') > 1 ? 'minutes' : 'minute'}.`
       } else {
-        return 'Il y a ' + dateMap.minutes + ' minutes.'
+        return `Il y a ${delta.get('minute')} ${
+          delta.get('minute') > 1 ? 'minutes' : 'minute'
+        }.`
       }
     }
   },

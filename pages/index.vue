@@ -31,6 +31,9 @@ export default {
     book() {
       if (this.$store.getters.getUser) {
         this.$router.push('/book')
+        this.$store.commit('setAddress', null)
+        this.$store.commit('setDate', null)
+        this.$store.commit('setTime', null)
         /*
         if (this.$device.isMobile) {
           this.$router.push('/bookmobile')

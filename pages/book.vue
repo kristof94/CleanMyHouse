@@ -180,13 +180,13 @@
       <div slot="header">{{ infoPaymentHeader }}</div>
       <div slot="body">{{ infoPaymentMessage }}</div>
     </modal-info>
-    <modal-error v-if="showModalError" @close="redirectLogin">
+    <modal-error v-if="showModalError && this.$store.getters.getError" @close="redirectLogin">
       <!--
       you can use custom content here to overwrite
       default content
 			-->
-      <div slot="header">{{ this.$store.getters.getErrorPaiment.header }}</div>
-      <div slot="body">{{ this.$store.getters.getErrorPaiment.message }}</div>
+      <div slot="header">{{ this.$store.getters.getError.header }}</div>
+      <div slot="body">{{ this.$store.getters.getError.message }}</div>
     </modal-error>
   </div>
 </template>
@@ -263,6 +263,18 @@ export default {
       )
     }
   },
+  asyncData(context) {
+    return context.$axios.get('/verifySession').catch(err => {
+      if (err.response.status == 401) {
+        context.store.commit('setError', {
+          code: err.response.status,
+          header: 'Votre session a expiré.',
+          message: 'Vous allez être redirigé vers une page de reconnexion.'
+        })
+        return { showModalError: true }
+      }
+    })
+  },
   methods: {
     getStringDate() {
       const date = this.date
@@ -278,10 +290,13 @@ export default {
     },
     redirectLogin() {
       this.showModalError = false
-      if (this.$store.getters.getErrorPaiment.code === 401) {
+      if (this.$store.getters.getError.code === 401) {
+        this.$store.dispatch('clearMessage')
         this.$router.push('/login')
+        return
       }
-      if (this.$store.getters.getErrorPaiment.code === 400) {
+      if (this.$store.getters.getError.code === 400) {
+        this.$store.dispatch('clearMessage')
         this.date = null
         this.time = null
         this.address = null
@@ -313,7 +328,7 @@ export default {
           this.showModalInfo = true
         })
         .catch(err => {
-          this.$store.commit('setErrorPaiment', err)
+          this.$store.commit('setError', err)
         })
         .finally(() => {
           this.$nuxt.$loading.finish()
@@ -357,14 +372,14 @@ export default {
         .catch(err => {
           this.showModalError = true
           if (err.response.status == 401) {
-            this.$store.commit('setErrorPaiment', {
+            this.$store.commit('setError', {
               code: err.response.status,
               header: 'Votre session a expiré.',
               message: 'Vous allez être redirigé vers une page de reconnexion.'
             })
           }
           if (err.response.status == 400) {
-            this.$store.commit('setErrorPaiment', {
+            this.$store.commit('setError', {
               code: err.response.status,
               header: 'Erreur interne.',
               message:

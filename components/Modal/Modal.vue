@@ -4,7 +4,7 @@
       v-if="$store.getters.getError"
       id="input1LiveFeedback"
       class="d-block"
-    >{{ $store.getters.getError }}</b-form-invalid-feedback>
+    >{{ $store.getters.getError.message }}</b-form-invalid-feedback>
     <info-valid v-if="$store.getters.getInfo" :data-obj="$store.getters.getInfo"/>
     <transition name="register">
       <register-form v-if="modalName=='register'" v-show="modalName=='register'"/>

@@ -8,7 +8,7 @@
           v-if="$store.getters.getError"
           id="input1LiveFeedback"
           class="d-block"
-        >{{ $store.getters.getError }}</b-form-invalid-feedback>
+        >{{ $store.getters.getError.message }}</b-form-invalid-feedback>
         <b-form-valid-feedback
           v-if="$store.getters.getInfo"
           class="d-block"
