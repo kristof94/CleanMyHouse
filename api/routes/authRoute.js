@@ -76,8 +76,8 @@ router.post('/order', checkSession, (req, res) => {
   var sessData = req.session
   const order = req.body.order
   sessData.order = order
-  const time = DateTime.fromMillis(order.time)
-  const date = DateTime.fromMillis(order.date)
+  const time = DateTime.fromMillis(order.time, { zone: 'Europe/Paris' })
+  const date = DateTime.fromMillis(order.date, { zone: 'Europe/Paris' })
   const dateObj = getStringFromDate(date)
 
   const address = order.address
@@ -132,22 +132,26 @@ router.get('/getorders', checkSession, (req, res) => {
 
 router.post('/preparepaiement', checkSession, (req, res) => {
   const order = req.body.order
-  const time = DateTime.fromISO(order.time)
-  const date = DateTime.fromISO(order.date)
+  const time = DateTime.fromISO(order.time, { zone: 'Europe/Paris' })
+  const date = DateTime.fromISO(order.date, { zone: 'Europe/Paris' })
   const hour = time.hour
   const minute = time.minute == 30 ? 0.5 : 0
   if (hour + minute < 1) {
     res.status(400).send('UNAUTHORIZED REQUEST!')
   } else {
-    const price = hour * price + minute * price
-    res.status(200).send({ price, hour, minute })
+    res.status(200).send({
+      price: hour * price + minute * price,
+      hour,
+      minute,
+      zone: time.get('defaultZone')
+    })
   }
 })
 
 router.post('/processpayment', checkSession, (req, res) => {
   const order = req.body.order
-  const time = DateTime.fromISO(order.time)
-  const date = DateTime.fromISO(order.date)
+  const time = DateTime.fromISO(order.time, { zone: 'Europe/Paris' })
+  const date = DateTime.fromISO(order.date, { zone: 'Europe/Paris' })
   const hour = time.hour
   const minute = time.minute == 30 ? 0.5 : 0
   if (hour + minute < 1) {
@@ -160,7 +164,9 @@ router.post('/processpayment', checkSession, (req, res) => {
       })
       .then(customer => {
         var usersRef = ref.child(req.session.decodedClaims.uid)
-        order.sinceDate = DateTime.local().toMillis()
+        order.sinceDate = DateTime.local()
+          .setZone('Europe/Paris')
+          .toMillis()
         order.time = time.toMillis()
         order.date = date.toMillis()
         order.status = 'waiting'

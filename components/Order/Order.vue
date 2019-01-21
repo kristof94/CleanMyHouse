@@ -55,10 +55,15 @@ export default {
   },
   computed: {
     since: function() {
-      const now = DateTime.local().toMillis()
-      const sinceDate = DateTime.fromMillis(this.order.order.sinceDate)
-      console.log(sinceDate.get('year'))
-      const delta = DateTime.fromMillis(now - this.order.order.sinceDate)
+      const now = DateTime.local()
+        .setZone('Europe/Paris')
+        .toMillis()
+      const sinceDate = DateTime.fromMillis(this.order.order.sinceDate, {
+        zone: 'Europe/Paris'
+      })
+      const delta = DateTime.fromMillis(now - this.order.order.sinceDate, {
+        zone: 'Europe/Paris'
+      })
       if (delta.get('hour') >= 12) {
         return `Le ${sinceDate.get('weekdayLong')} ${sinceDate.get(
           'day'
