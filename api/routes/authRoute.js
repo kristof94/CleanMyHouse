@@ -122,11 +122,16 @@ router.get('/getorders', checkSession, (req, res) => {
     function(snapshot) {
       snapshot.forEach(function(childSnapshot) {
         const copyChild = childSnapshot.exportVal()
-        delete copyChild.customer
-        orders.push(copyChild)
+        if (copyChild && copyChild.order) {
+          delete copyChild.customer
+          orders.push(copyChild.order)
+        }
       })
       orders.sort(function(a, b) {
-        return b.order.sinceDate - a.order.sinceDate
+        if (b) {
+          return b.sinceDate - a.sinceDate
+        }
+        return -1
       })
       res.status(200).send(orders)
     },
@@ -164,23 +169,27 @@ router.post('/processpayment', checkSession, (req, res) => {
   if (hour + minute < 1) {
     res.status(400).send('UNAUTHORIZED REQUEST!')
   } else {
-    stripe.customers
-      .create({
-        email: order.email,
-        source: order.token.id
-      })
-      .then(customer => {
-        var usersRef = ref.child(req.session.decodedClaims.uid)
-        order.sinceDate = DateTime.local()
-          .setZone('Europe/Paris')
-          .toMillis()
-        order.time = time.toMillis()
-        order.date = date.toMillis()
-        order.status = 'waiting'
-        return usersRef.push().set({
-          order: order,
-          customer: customer
-        })
+    order.sinceDate = DateTime.local()
+      .setZone('Europe/Paris')
+      .toMillis()
+    order.time = time.toMillis()
+    order.date = date.toMillis()
+    order.status = 'waiting'
+    const usersRef = ref.child(req.session.decodedClaims.uid)
+    usersRef
+      .once('value')
+      .then(function(dataSnapshot) {
+        const userData = dataSnapshot.val()
+        if (userData.customer) {
+          return usersRef.push().set({
+            order
+          })
+        } else {
+          return stripe.customers.create({
+            email: order.email,
+            source: order.token.id
+          })
+        }
       })
       .then(() => {
         res
@@ -196,7 +205,9 @@ router.post('/processpayment', checkSession, (req, res) => {
   }
 })
 
-router.get('/verifySession', checkSession)
+router.get('/verifySession', checkSession, (req, res) => {
+  res.status(200).send({ verifySession: 'true' })
+})
 
 router.post('/sessionToken', function(req, res) {
   const idToken = req.body.idToken

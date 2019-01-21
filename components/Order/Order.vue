@@ -9,15 +9,15 @@
           </div>
         </b-col>
         <b-col offset-lg="3" lg="3">
-          <div class="timeSince">{{ since }}</div>
+          <div class="timeSince">{{ since() }}</div>
         </b-col>
       </b-row>
       <b-row>
         <b-col lg="6" md="8" cols="12">
           <font-awesome-icon :icon="['fas', 'map-marker-alt']"/>
-          {{ order.order.address.description }}
+          {{ order.address.description }}
         </b-col>
-        <b-col lg="3" cols="12" md="4" offset-lg="3">{{ order.order.status }}</b-col>
+        <b-col lg="3" cols="12" md="4" offset-lg="3">{{ order.status }}</b-col>
       </b-row>
       <b-row>
         <b-col cols-lg="12" cols="12">
@@ -50,20 +50,20 @@ export default {
   },
   data() {
     return {
-      date: DateTime.fromMillis(this.order.order.date, {
+      date: DateTime.fromMillis(this.order.date, {
         zone: 'Europe/Paris'
       })
     }
   },
-  computed: {
+  methods: {
     since: function() {
       const now = DateTime.local()
         .setZone('Europe/Paris')
         .toMillis()
-      const sinceDate = DateTime.fromMillis(this.order.order.sinceDate, {
+      const sinceDate = DateTime.fromMillis(this.order.sinceDate, {
         zone: 'Europe/Paris'
       })
-      const delta = DateTime.fromMillis(now - this.order.order.sinceDate, {
+      const delta = DateTime.fromMillis(now - this.order.sinceDate, {
         zone: 'Europe/Paris'
       })
       if (delta.get('hour') >= 12) {
@@ -81,11 +81,9 @@ export default {
           delta.get('minute') > 1 ? 'minutes' : 'minute'
         }.`
       }
-    }
-  },
-  methods: {
+    },
     getHour: function() {
-      const time = DateTime.fromMillis(this.order.order.time)
+      const time = DateTime.fromMillis(this.order.time)
       const hours = time.get('hour')
       const minute = time.get('minute')
       return hours + 'h' + (minute == 0 ? '00' : '30')
@@ -95,7 +93,7 @@ export default {
       taskMap.set(1, 'Ménage')
       taskMap.set(2, 'Repassage')
       taskMap.set(3, 'Ménage et Repassage')
-      return taskMap.get(this.order.order.task)
+      return taskMap.get(this.order.task)
     }
   }
 }
