@@ -13,7 +13,10 @@
       <div v-else class="orders">
         <div class="signinTitle">Mes commandes</div>
         <order v-for="(order) in orders" :key="order.sinceDate" :order="order"/>
-        <div v-if="orders.length === 0" class="text-center noorder">Vous n'avez pas de commande.</div>
+        <div
+          v-if="orders==null || orders.length === 0"
+          class="text-center noorder"
+        >Vous n'avez pas de commande.</div>
       </div>
     </section>
   </div>
@@ -48,6 +51,14 @@ export default {
         return { orders: res.data, showModalError: false }
       })
       .catch(err => {
+        if (err.response == null || err.response.status) {
+          context.store.commit('setError', {
+            code: 500,
+            header: 'Erreur Interne.',
+            message: 'Vous allez être redirigé vers une page de reconnexion.'
+          })
+          return { orders: null, showModalError: true }
+        }
         if (err.response.status == 401) {
           context.store.commit('setError', {
             code: err.response.status,
