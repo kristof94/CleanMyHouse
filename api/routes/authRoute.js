@@ -77,44 +77,6 @@ router.post('/profile', checkSession, (req, res) => {
   res.status(200).send('ok')
 })
 
-router.post('/order', checkSession, (req, res) => {
-  // Verify the session cookie. In this case an additional check is added to detect
-  // if the user's Firebase session was revoked, user deleted/disabled, etc.
-  var sessData = req.session
-  const order = req.body.order
-  sessData.order = order
-  const time = DateTime.fromMillis(order.time, { zone: 'Europe/Paris' })
-  const date = DateTime.fromMillis(order.date, { zone: 'Europe/Paris' })
-  const dateObj = getStringFromDate(date)
-
-  const address = order.address
-  const addressStr = address['street_number']
-    .concat(' ')
-    .concat(address['route'])
-    .concat(' ')
-    .concat(address['locality'])
-
-  const hours = time.get('hour')
-  const minutes = time.get('minute') == 0 ? 0 : 0.5
-  const price = 3000 * (hours + minutes)
-  // console.log(price)
-  if (hours <= 0) {
-    res.sendStatus(500)
-    return
-  }
-  res.send({ price })
-})
-
-function getStringFromDate(date) {
-  const weekdayLong = date.get('weekdayLong')
-  const day = date.get('day')
-  const monthLong = date.get('monthLong')
-  const year = date.get('year')
-  const hours = date.get('hour')
-  const minutes = date.get('minute')
-  return { weekdayLong, day, monthLong, year, hours, minutes }
-}
-
 router.get('/getorders', checkSession, (req, res) => {
   const orders = []
   db.ref('/users/' + req.session.decodedClaims.uid).once(

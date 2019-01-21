@@ -76,14 +76,6 @@ export default {
         this.$router.push('/login')
         return
       }
-    },
-    formatAdress(address) {
-      const map = address
-      return map.street_number
-        .concat(', ')
-        .concat(map.route)
-        .concat(' ')
-        .concat(map.locality)
     }
   }
 }
