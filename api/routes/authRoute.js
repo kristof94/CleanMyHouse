@@ -139,7 +139,8 @@ router.post('/preparepaiement', checkSession, (req, res) => {
   if (hour + minute < 1) {
     res.status(400).send('UNAUTHORIZED REQUEST!')
   } else {
-    res.status(200).send({ price: hour * price + minute * price })
+    const price = hour * price + minute * price
+    res.status(200).send({ price, hour, minute })
   }
 })
 
