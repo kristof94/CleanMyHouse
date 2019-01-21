@@ -51,6 +51,7 @@ export default {
         return { orders: res.data, showModalError: false }
       })
       .catch(err => {
+        console.log(err)
         if (err.response == null || err.response.status == null) {
           context.store.commit('setError', {
             code: 500,
@@ -82,7 +83,8 @@ export default {
       this.showModalError = false
       if (
         this.$store.getters.getError.code === 403 ||
-        this.$store.getters.getError.code === 401
+        this.$store.getters.getError.code === 401 ||
+        this.$store.getters.getError.code === 500
       ) {
         this.$store.dispatch('clearMessage')
         this.$router.push('/login')
