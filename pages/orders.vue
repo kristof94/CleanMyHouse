@@ -44,11 +44,9 @@ export default {
       showModalError: false
     }
   },
-  asyncData({ app, store }) {
-    console.log(process.env.HOST)
-    console.log(process.client)
-    console.log(process.server)
-    return app.$axios
+  asyncData({ $axios, store }) {
+    console.log($axios.defaults.baseURL)
+    return $axios
       .get('/getorders')
       .then(res => {
         return { orders: res.data, showModalError: false }
