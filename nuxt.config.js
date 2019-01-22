@@ -92,9 +92,8 @@ module.exports = {
   axios: {
     https: true,
     proxy: true,
-    baseURL: `http://${process.env.WEBSITE_HOSTNAME ||
-      process.env.HOST ||
-      'localhost'}:${process.env.PORT || 3000}`
+    baseURL: `http://${process.env.HOST || 'localhost'}:${process.env.PORT ||
+      3000}`
   },
   /*
   ** Build configuration
