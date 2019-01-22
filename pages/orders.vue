@@ -44,8 +44,8 @@ export default {
       showModalError: false
     }
   },
-  asyncData(context) {
-    return context.$axios
+  asyncData({ app, store }) {
+    return app.$axios
       .get('/getorders')
       .then(res => {
         return { orders: res.data, showModalError: false }
@@ -53,7 +53,7 @@ export default {
       .catch(err => {
         console.log(err)
         if (err.response == null || err.response.status == null) {
-          context.store.commit('setError', {
+          store.commit('setError', {
             code: 500,
             header: 'Erreur Interne.',
             message: 'Vous allez être redirigé vers une page de reconnexion.'
@@ -61,7 +61,7 @@ export default {
           return { orders: null, showModalError: true }
         }
         if (err.response.status == 401) {
-          context.store.commit('setError', {
+          store.commit('setError', {
             code: err.response.status,
             header: 'Votre session a expiré.',
             message: 'Vous allez être redirigé vers une page de reconnexion.'
@@ -69,7 +69,7 @@ export default {
           return { orders: null, showModalError: true }
         }
         if (err.response.status == 403) {
-          context.store.commit('setError', {
+          store.commit('setError', {
             code: err.response.status,
             header: 'Vous devez être connecté pour accéder à cette page.',
             message: 'Vous allez être redirigé vers une page de reconnexion.'

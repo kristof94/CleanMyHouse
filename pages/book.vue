@@ -180,7 +180,7 @@
       <div slot="header">{{ infoPaymentHeader }}</div>
       <div slot="body">{{ infoPaymentMessage }}</div>
     </modal-info>
-    <modal-error v-if="showModalError && this.$store.getters.getError" @close="redirectLogin">
+    <modal-error v-if="this.$store.getters.getError" @close="redirectLogin">
       <!--
       you can use custom content here to overwrite
       default content
@@ -270,23 +270,21 @@ export default {
       )
     }
   },
-  asyncData(context) {
-    return context.$axios.get('/verifySession').catch(err => {
+  fetch({ store, $axios }) {
+    return $axios.get('/verifySession').catch(err => {
       if (err.response.status == 401) {
-        context.store.commit('setError', {
+        store.commit('setError', {
           code: err.response.status,
           header: 'Votre session a expiré.',
           message: 'Vous allez être redirigé vers une page de reconnexion.'
         })
-        return { showModalError: true }
       }
       if (err.response.status == 403) {
-        context.store.commit('setError', {
+        store.commit('setError', {
           code: err.response.status,
           header: 'Vous devez être connecté pour accéder à cette page.',
           message: 'Vous allez être redirigé vers une page de reconnexion.'
         })
-        return { showModalError: true }
       }
     })
   },

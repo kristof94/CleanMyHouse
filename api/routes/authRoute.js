@@ -141,8 +141,8 @@ router.post('/processpayment', checkSession, (req, res) => {
     usersRef
       .once('value')
       .then(function(dataSnapshot) {
-        const userData = dataSnapshot.val()
-        if (userData.customer) {
+        const userData = dataSnapshot.val()        
+        if (userData && userData.customer) {
           return usersRef.push().set({
             order
           })
