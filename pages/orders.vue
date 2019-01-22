@@ -45,6 +45,9 @@ export default {
     }
   },
   asyncData({ app, store }) {
+    console.log(process.env.HOST)
+    console.log(process.client)
+    console.log(process.server)
     return app.$axios
       .get('/getorders')
       .then(res => {
