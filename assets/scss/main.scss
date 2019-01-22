@@ -160,6 +160,20 @@ h2 {
   }
 }
 
+.noorder {
+  @include sm {
+    margin-top: 50px;
+  }
+
+  @include md {
+    margin-top: 100px;
+  }
+
+  @include lg {
+    margin-top: 200px;
+  }
+}
+
 .orders {
   padding: 20px 20px 20px 20px;
   @include sm {

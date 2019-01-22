@@ -97,7 +97,6 @@ export default {
 
 <style>
 .noorder {
-  margin-top: 200px;
   font-size: 20px;
   color: rgba(6, 175, 218, 1);
 }

@@ -270,6 +270,7 @@ export default {
       )
     }
   },
+  /*
   asyncData(context) {
     return context.$axios.get('/verifySession').catch(err => {
       if (err.response.status == 401) {
@@ -289,7 +290,7 @@ export default {
         return { showModalError: true }
       }
     })
-  },
+  },*/
   methods: {
     getStringDate() {
       const date = this.date
