@@ -12,7 +12,7 @@ const authRoute = require('./api/routes/authRoute')
 dotenv.config()
 
 const host = process.env.HOST || '127.0.0.1'
-const port = process.env.PORT || 3000
+const port = process.env.WEBSITES_PORT || 3000
 
 // Create express instnace
 // Import API Routes
@@ -59,11 +59,13 @@ async function start() {
     app.use(nuxt.render)
     server = https.createServer(httpsOptions, app)
     server.listen(port, host)
-    message = `Server listening on https://${host}:${port}`
+    const message = `Server listening on https://${host}:${port}`
+    console.log(message)
   } else {
     app.use(nuxt.render)
     // Listen the server
-    message = `Server listening`
+    const message = `Server listening`
+    console.log(message)
     app.listen(port)
   }
 }

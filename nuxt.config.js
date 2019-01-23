@@ -17,7 +17,8 @@ module.exports = {
     PROJECT_ID: 'cleanmyhouse-221915',
     STORAGE_BUCKET: 'cleanmyhouse-221915.appspot.com',
     MESSAGING_SENDER_ID: '207720984881',
-    NODE_TLS_REJECT_UNAUTHORIZED: '0'
+    NODE_TLS_REJECT_UNAUTHORIZED:
+      process.env.NODE_ENV !== 'production' ? '0' : '1'
   },
   head: {
     title: pkg.name,
@@ -92,8 +93,8 @@ module.exports = {
   axios: {
     https: true,
     proxy: true,
-    baseURL: `http://${process.env.HOST || 'localhost'}:${process.env.PORT ||
-      3000}`
+    baseURL: `http://${process.env.HOST || 'localhost'}:${process.env
+      .WEBSITES_PORT || 3000}`
   },
   /*
   ** Build configuration
