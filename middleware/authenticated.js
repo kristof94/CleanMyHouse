@@ -8,15 +8,13 @@ export default function({ route, $axios, store }) {
             header: 'Vous devez être connecté pour accéder à cette page.',
             message: 'Vous allez être redirigé vers une page de reconnexion.'
           })
-        }
-        if (err.response.status == 401) {
+        } else if (err.response.status == 401) {
           store.commit('setError', {
             code: err.response.status,
             header: 'Votre session a expiré.',
             message: 'Vous allez être redirigé vers une page de reconnexion.'
           })
-        }
-        if (err.response.status == 403) {
+        } else if (err.response.status == 403) {
           store.commit('setError', {
             code: err.response.status,
             header: 'Vous devez être connecté pour accéder à cette page.',
