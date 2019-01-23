@@ -8,18 +8,32 @@
           </div>
           <div class="modal-body">
             <slot name="body">
-              <div class="text-center">
-                <label class="checkbox_container">
-                  Ménage
-                  <input v-model="menage_checked" type="checkbox" @change="chooseClean">
-                  <span class="checkmark"/>
-                </label>
-                <label class="checkbox_container">
-                  Repassage
-                  <input v-model="repassage_checked" type="checkbox" @change="chooseIron">
-                  <span class="checkmark"/>
-                </label>
-              </div>
+              <b-container>
+                <b-row>
+                  <b-col cols-lg="6" cols="6">
+                    <div class="text-center">
+                      <label class="checkbox_container">
+                        Ménage
+                        <input v-model="menage_checked" type="checkbox" @change="chooseClean">
+                        <span class="checkmark"/>
+                      </label>
+                    </div>
+                  </b-col>
+                  <b-col cols-lg="6" cols="6">
+                    <div class="text-center">
+                      <label class="checkbox_container">
+                        Repassage
+                        <input
+                          v-model="repassage_checked"
+                          type="checkbox"
+                          @change="chooseIron"
+                        >
+                        <span class="checkmark"/>
+                      </label>
+                    </div>
+                  </b-col>
+                </b-row>
+              </b-container>
             </slot>
           </div>
           <div class="modal-footer">

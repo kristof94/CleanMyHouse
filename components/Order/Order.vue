@@ -28,7 +28,7 @@
       </b-row>
       <b-row>
         <b-col cols="3" lg="6" align="center">
-          <b-button class="orderButton">Noter</b-button>
+          <b-button class="orderButton" @click="noter">Noter</b-button>
         </b-col>
         <b-col cols="9" lg="6" align="center">
           <b-button class="orderButton">Annuler la commande</b-button>
@@ -94,6 +94,9 @@ export default {
       taskMap.set(2, 'Repassage')
       taskMap.set(3, 'Ménage et Repassage')
       return taskMap.get(this.order.task)
+    },
+    noter() {
+      console.log('noter')
     }
   }
 }
@@ -104,6 +107,13 @@ export default {
   background-color: transparent;
   border-style: none;
   color: rgba(6, 175, 218, 0.8);
+}
+
+.orderButton:hover,
+.orderButton:active {
+  background-color: transparent !important;
+  color: rgba(6, 175, 218, 0.8) !important;
+  text-decoration: underline;
 }
 
 .order_ {
