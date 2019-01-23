@@ -5,7 +5,7 @@
   "author": "kristof",
   "private": true,
   "engines": {
-    "node": "8.10.0",
+    "node": ">=10.6.0",
     "npm": ">=6.1.0"
   },
   "scripts": {
