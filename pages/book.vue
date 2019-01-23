@@ -121,14 +121,14 @@
       <!--
       you can use custom content here to overwrite
       default content
-      -->
+			-->
       <div slot="header">Choisissez une addresse</div>
     </adress>
     <choice-task v-if="showChoiceModal" @closeChoiceModal="confirmChoice">
       <!--
       you can use custom content here to overwrite
       default content
-      -->
+			-->
       <div slot="header">Ménage ou Repassage</div>
     </choice-task>
     <no-ssr>
@@ -176,7 +176,7 @@
       <!--
       you can use custom content here to overwrite
       default content
-      -->
+			-->
       <div slot="header">{{ infoPaymentHeader }}</div>
       <div slot="body">{{ infoPaymentMessage }}</div>
     </modal-info>
@@ -184,7 +184,7 @@
       <!--
       you can use custom content here to overwrite
       default content
-      -->
+			-->
       <div slot="header">{{ this.$store.getters.getError.header }}</div>
       <div slot="body">{{ this.$store.getters.getError.message }}</div>
     </modal-error>
@@ -269,33 +269,6 @@ export default {
         this.$store.getters.getAddress
       )
     }
-  },
-  fetch({ store, $axios }) {
-    return $axios.get('/verifySession').catch(err => {
-      if (err.response == null || err.response.status == null) {
-        console.log(err)
-        store.commit('setError', {
-          code: 500,
-          header: 'Vous devez être connecté pour accéder à cette page.',
-          message: 'Vous allez être redirigé vers une page de reconnexion.'
-        })
-        return { showModalError: true }
-      }
-      if (err.response.status == 401) {
-        store.commit('setError', {
-          code: err.response.status,
-          header: 'Votre session a expiré.',
-          message: 'Vous allez être redirigé vers une page de reconnexion.'
-        })
-      }
-      if (err.response.status == 403) {
-        store.commit('setError', {
-          code: err.response.status,
-          header: 'Vous devez être connecté pour accéder à cette page.',
-          message: 'Vous allez être redirigé vers une page de reconnexion.'
-        })
-      }
-    })
   },
   methods: {
     getStringDate() {

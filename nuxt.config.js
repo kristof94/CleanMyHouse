@@ -71,7 +71,7 @@ module.exports = {
     { src: '~/plugins/fontAwesome' }
   ],
   router: {
-    middleware: 'auth-check'
+    middleware: ['auth-check', 'authenticated']
   },
   /*
   ** Nuxt.js modules
