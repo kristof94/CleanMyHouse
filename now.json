@@ -3,10 +3,7 @@
   "builds": [
     {
       "src": "package.json",
-      "use": "@now/static-build",
-      "config": {
-        "useBuildUtils": "@now/node-server"
-      }
+      "use": "@now/node-server"
     }
   ]
 }
