@@ -285,6 +285,7 @@ export default {
     },
     redirectLogin() {
       this.showModalError = false
+      console.log(this.$store.getters.getError.code)
       if (
         this.$store.getters.getError.code === 403 ||
         this.$store.getters.getError.code === 401
@@ -332,7 +333,6 @@ export default {
               header: 'Votre session a expiré.',
               message: 'Vous allez être redirigé vers une page de reconnexion.'
             })
-            return { showModalError: true }
           }
           if (err.response.status == 403) {
             this.$store.commit('setError', {
@@ -340,7 +340,6 @@ export default {
               header: 'Vous devez être connecté pour accéder à cette page.',
               message: 'Vous allez être redirigé vers une page de reconnexion.'
             })
-            return { showModalError: true }
           }
         })
         .finally(() => {
