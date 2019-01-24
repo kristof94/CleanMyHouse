@@ -1,10 +1,12 @@
 export default function({ route, $axios, store, env }) {
   if (process.server) {
     if (route.name === 'book') {
+      console.log('ici')
       console.log(process.env.PORT)
       console.log(env.PORT)
+      console.log('la')
       return $axios.get('/verifySession').catch(err => {
-        console.log(err.response)
+        console.log(err.response ? err.response.status : 'no status')
         if (err.response == null || err.response.status == null) {
           store.commit('setError', {
             code: 500,
