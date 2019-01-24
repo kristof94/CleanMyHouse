@@ -2,7 +2,7 @@
   <div class="flexsignin">
     <nav-bar/>
     <section id="home" class="homepage">
-      <modal-error v-if="showModalError" @close="redirectLogin">
+      <modal-error v-if="this.$store.getters.getError" @close="redirectLogin">
         <!--
       you can use custom content here to overwrite
       default content
@@ -38,12 +38,6 @@ export default {
     MyFooter
   },
   transition: 'fadeOpacity',
-  data() {
-    return {
-      isOpen: false,
-      showModalError: false
-    }
-  },
   asyncData({ $axios }) {
     return $axios
       .get('/getorders')
@@ -56,7 +50,6 @@ export default {
   },
   methods: {
     redirectLogin() {
-      this.showModalError = false
       if (
         this.$store.getters.getError.code === 403 ||
         this.$store.getters.getError.code === 401 ||
