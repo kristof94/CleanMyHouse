@@ -2,7 +2,6 @@ export default function({ $axios, redirect }) {
   // The server-side needs a full url to works
   $axios.onRequest(config => {
     console.log('Making request to ' + config.url)
-    console.log(config)
   })
 
   $axios.onError(error => {

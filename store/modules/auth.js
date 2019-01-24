@@ -23,7 +23,6 @@ function manageAuth(promise, commit, dispatch, axios, root) {
     })
     .then(idToken => {
       if (idToken) {
-        console.log(process.env.HOST)
         return axios
           .post('/sessionToken', {
             idToken
