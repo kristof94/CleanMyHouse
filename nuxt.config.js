@@ -93,8 +93,11 @@ module.exports = {
   axios: {
     https: true,
     proxy: true,
-    baseURL: `http://${process.env.HOST || 'localhost'}:${process.env.PORT ||
-      3000}`
+    baseURL:
+      process.env.NODE_ENV === 'production'
+        ? `https://${process.env.HOST || 'localhost'}`
+        : `http://${process.env.HOST || 'localhost'}:${process.env.PORT ||
+            3000}`
   },
   /*
   ** Build configuration
