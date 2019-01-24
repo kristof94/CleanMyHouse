@@ -1,6 +1,6 @@
 export default function({ route, $axios, store }) {
   if (process.server) {
-    if (route.name === 'book' || route.name === 'orders') {
+    if (route.name === 'book') {
       return $axios.get('/verifySession').catch(err => {
         if (err.response == null || err.response.status == null) {
           store.commit('setError', {
