@@ -95,7 +95,7 @@ module.exports = {
     proxy: true,
     baseURL:
       process.env.NODE_ENV === 'production'
-        ? `https://${process.env.HOST || 'localhost'}`
+        ? `https://${process.env.HOST || 'cleanmyhouse.azurewebsites.net'}`
         : `http://${process.env.HOST || 'localhost'}:${process.env.PORT ||
             3000}`
   },
