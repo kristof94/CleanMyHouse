@@ -12,27 +12,32 @@
 
     <b-collapse id="nav_collapse" is-nav>
       <b-navbar-nav class="ml-auto">
-        <b-nav-item
-          v-scroll-to="{ element: item.sectionRef, duration: 1000 }"
-          v-for="item in items"
-          :key="item.sectionRef"
-        >{{ item.text }}</b-nav-item>
-        <b-nav-item v-for="link in rlinks" :key="link.link" :to="link.link" class="link">{{ link.text }}</b-nav-item>
-
-        <b-nav-item-dropdown
-          v-if="$store.getters.getUser"
-          text="Mon compte"
-          class="link accountmenu"
-          right
-        >
-          <b-dropdown-item class="link" to="/orders">Mes commandes</b-dropdown-item>
-          <b-dropdown-item class="link" to="/profile">Mes informations</b-dropdown-item>
-          <b-dropdown-item class="link" @click="logOut">Se déconnecter</b-dropdown-item>
-        </b-nav-item-dropdown>
-        <b-nav-item-dropdown v-else text="Mon compte" class="link accountmenu" right>
-          <b-dropdown-item class="link" @click="showLoginModal">Se connecter</b-dropdown-item>
-          <b-dropdown-item class="link" @click="showRegisterModal">Créer un compte</b-dropdown-item>
-        </b-nav-item-dropdown>
+        <div v-if="this.$device.isMobile">
+          <div v-if="$store.getters.getUser">
+            <b-nav-item class="link" to="/orders">Mes commandes</b-nav-item>
+            <b-nav-item class="link" to="/profile">Mes informations</b-nav-item>
+          </div>
+          <div v-else>
+            <b-nav-item class="link" @click="showLoginModal">Se connecter</b-nav-item>
+            <b-nav-item class="link" @click="showRegisterModal">Créer un compte</b-nav-item>
+          </div>
+        </div>
+        <div v-else>
+          <b-nav-item-dropdown
+            v-if="$store.getters.getUser"
+            text="Mon compte"
+            class="link accountmenu"
+            right
+          >
+            <b-dropdown-item class="link" to="/orders">Mes commandes</b-dropdown-item>
+            <b-dropdown-item class="link" to="/profile">Mes informations</b-dropdown-item>
+            <b-dropdown-item class="link" @click="logOut">Se déconnecter</b-dropdown-item>
+          </b-nav-item-dropdown>
+          <b-nav-item-dropdown v-else text="Mon compte" class="link accountmenu" right>
+            <b-dropdown-item class="link" @click="showLoginModal">Se connecter</b-dropdown-item>
+            <b-dropdown-item class="link" @click="showRegisterModal">Créer un compte</b-dropdown-item>
+          </b-nav-item-dropdown>
+        </div>
       </b-navbar-nav>
     </b-collapse>
   </b-navbar>
