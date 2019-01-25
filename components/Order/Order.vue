@@ -8,22 +8,26 @@
             {{ getHour() }} heures de {{ task() }}
           </div>
         </b-col>
-        <b-col offset-lg="3" lg="3">
+        <b-col offset-lg="2" lg="4">
           <div class="timeSince">{{ since() }}</div>
         </b-col>
+      </b-row>
+      <b-row>
+        <b-col lg="6">
+          <font-awesome-icon :icon="['fa', 'calendar-alt']"/>
+          Le {{ date.get('weekdayLong') }} {{ date.get('day') }} {{ date.get('monthLong') }}
+          à {{ date.get('hour') == '0' ? '00' : date.get('hour') }}h{{ date.get('minute')=='0' ? '00' : date.get('minute') }}
+        </b-col>
+        <b-col
+          :class="{ statussuccess: status === 'confirmed', statuswaiting: status === 'waiting' , statuscanceled: status === 'canceled' }"
+          offset-lg="2"
+          lg="4"
+        >{{ getStatus() }}</b-col>
       </b-row>
       <b-row>
         <b-col lg="6" md="8" cols="12">
           <font-awesome-icon :icon="['fas', 'map-marker-alt']"/>
           {{ order.address.description }}
-        </b-col>
-        <b-col lg="3" cols="12" md="4" offset-lg="3">{{ order.status }}</b-col>
-      </b-row>
-      <b-row>
-        <b-col cols-lg="12" cols="12">
-          <font-awesome-icon :icon="['fa', 'calendar-alt']"/>
-          Le {{ date.get('weekdayLong') }} {{ date.get('day') }} {{ date.get('monthLong') }}
-          à {{ date.get('hour') == '0' ? '00' : date.get('hour') }}h{{ date.get('minute')=='0' ? '00' : date.get('minute') }}
         </b-col>
       </b-row>
       <b-row>
@@ -41,6 +45,16 @@
 <script>
 import { DateTime } from 'luxon'
 
+function statusMap() {
+  const map = new Map()
+  map.set('waiting', "Recherche d'aide ménagère en cours.")
+  map.set('confirmed', 'Confirmé')
+  map.set('canceled', 'Annulé')
+  return map
+}
+
+const map = statusMap()
+
 export default {
   props: {
     order: {
@@ -52,10 +66,14 @@ export default {
     return {
       date: DateTime.fromMillis(this.order.date, {
         zone: 'Europe/Paris'
-      })
+      }),
+      status: this.order.status
     }
   },
   methods: {
+    getStatus() {
+      return map.get(this.status)
+    },
     since: function() {
       const now = DateTime.local()
         .setZone('Europe/Paris')
@@ -103,6 +121,18 @@ export default {
 </script>
 
 <style>
+.statuswaiting {
+  color: orange;
+}
+
+.statussuccess {
+  color: green;
+}
+
+.statuscanceled {
+  color: red;
+}
+
 .orderButton {
   background-color: transparent;
   border-style: none;

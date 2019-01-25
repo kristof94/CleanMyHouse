@@ -144,7 +144,6 @@ router.post('/processpayment', checkSession, (req, res) => {
         const userData = dataSnapshot.val()
         if (userData && userData.customer) {
           const customerId = userData.customer.id
-          console.log(customerId)
           if (userData.customer.id) {
             return stripe.customers.retrieve(customerId).then(() => {
               return usersRef.push().set({
