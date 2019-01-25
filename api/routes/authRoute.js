@@ -141,11 +141,17 @@ router.post('/processpayment', checkSession, (req, res) => {
     usersRef
       .once('value')
       .then(function(dataSnapshot) {
-        const userData = dataSnapshot.val()        
+        const userData = dataSnapshot.val()
         if (userData && userData.customer) {
-          return usersRef.push().set({
-            order
-          })
+          const customerId = userData.customer.id
+          console.log(customerId)
+          if (userData.customer.id) {
+            return stripe.customers.retrieve(customerId).then(() => {
+              return usersRef.push().set({
+                order
+              })
+            })
+          }
         } else {
           return stripe.customers
             .create({
@@ -173,7 +179,9 @@ router.post('/processpayment', checkSession, (req, res) => {
           )
       })
       .catch(err => {
-        console.log(err)
+        if (err.code === 'resource_missing') {
+          res.status(500).send('Internal error!')
+        }
         res.status(401).send('UNAUTHORIZED REQUEST!')
       })
   }

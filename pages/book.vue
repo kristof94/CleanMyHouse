@@ -244,7 +244,6 @@ export default {
       currency: 'EUR',
       showModal: false,
       showChoiceModal: false,
-      showModalError: false,
       showModalInfo: false,
       displayPrice: false,
       date:
@@ -284,8 +283,6 @@ export default {
       }`
     },
     redirectLogin() {
-      this.showModalError = false
-      console.log(this.$store.getters.getError.code)
       if (
         this.$store.getters.getError.code === 403 ||
         this.$store.getters.getError.code === 401
@@ -294,8 +291,13 @@ export default {
         this.$router.push('/login')
         return
       }
-      if (this.$store.getters.getError.code === 400) {
+      if (
+        this.$store.getters.getError.code === 400 ||
+        this.$store.getters.getError.code === 500
+      ) {
         this.$store.dispatch('clearMessage')
+        this.lg = buildColumn(null, null, null)
+        this.displayPrice = false
         this.date = null
         this.time = null
         this.address = null
@@ -341,6 +343,14 @@ export default {
               message: 'Vous allez être redirigé vers une page de reconnexion.'
             })
           }
+          if (err.response.status == 500) {
+            this.$store.commit('setError', {
+              code: err.response.status,
+              header: 'Erreur interne',
+              message:
+                "Votre paiement n'a pas été enregistré. Veuillez réessayer."
+            })
+          }
         })
         .finally(() => {
           this.$nuxt.$loading.finish()
@@ -383,7 +393,6 @@ export default {
           this.displayPrice = true
         })
         .catch(err => {
-          this.showModalError = true
           if (err.response.status == 401) {
             this.$store.commit('setError', {
               code: err.response.status,
