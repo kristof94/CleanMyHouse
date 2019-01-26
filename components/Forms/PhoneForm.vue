@@ -30,6 +30,7 @@
       <b-button
         id="get-code"
         :disabled="$v.form.$invalid"
+        class="submitButton"
         type="submit"
         variant="primary"
         style="width:100%"
@@ -59,6 +60,7 @@
       </b-form-group>
       <b-button
         :disabled="$v.codeForm.$invalid"
+        class="submitButton"
         type="submit"
         variant="primary"
         style="width:100%"

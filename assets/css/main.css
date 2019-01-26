@@ -196,7 +196,7 @@ h4 {
 
 .bigbutton:hover,
 .specialbutton:hover {
-  color: rgb(123, 191, 207);
+  color: rgb(87, 145, 158);
   background-color: #f6f9fc;
   box-shadow: #f6f9fc 0 0 10px;
 }
@@ -224,13 +224,13 @@ h4 {
 
 .submitButton {
   color: #f6f9fc;
-  background-color: rgb(123, 191, 207);
+  background-color: rgb(87, 145, 158);
   border-color: unset;
 }
 
 .submitButton:hover,
 .submitButton:focus {
-  color: rgb(123, 191, 207) !important;
+  color: rgb(87, 145, 158) !important;
   background-color: #f6f9fc !important;
   border-color: unset !important;
   box-shadow: unset !important;

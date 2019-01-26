@@ -87,8 +87,8 @@
     </b-form-group>
     <b-button
       :disabled="$v.form.$invalid"
+      class="submitButton"
       type="submit"
-      variant="primary"
       style="width:100%"
     >Créer un compte</b-button>
     <b-container class="bv-example-row text-center">
