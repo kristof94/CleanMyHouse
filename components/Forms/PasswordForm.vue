@@ -25,7 +25,6 @@
       :disabled="$v.form.$invalid"
       class="submitButton"
       type="submit"
-      variant="primary"
       style="width:100%"
     >Modifier le mot de passe</b-button>
     <b-container class="bv-example-row text-center">

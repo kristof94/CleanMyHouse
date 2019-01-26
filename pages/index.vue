@@ -1,5 +1,5 @@
 <template>
-  <div class="flexparent" style="height: 100vh;">
+  <div class="flexparent">
     <nav-bar/>
     <section id="home" class="homepage">
       <div style="text-align: center;">
@@ -19,6 +19,7 @@ export default {
     NavBar,
     MyFooter
   },
+  transition: 'fadeOpacity',
   props: {
     title: {
       type: String,

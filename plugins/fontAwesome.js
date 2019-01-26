@@ -12,7 +12,8 @@ import {
   faCreditCard,
   faMapMarkerAlt,
   faQuestion,
-  faEuroSign
+  faEuroSign,
+  faSignInAlt
 } from '@fortawesome/free-solid-svg-icons'
 import { faClock, faUser } from '@fortawesome/free-regular-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
@@ -24,6 +25,7 @@ import brands, {
 } from '@fortawesome/fontawesome-free-brands'
 config.autoAddCss = false
 
+library.add(faSignInAlt)
 library.add(faEuroSign)
 library.add(faQuestion)
 library.add(faMapMarkerAlt)

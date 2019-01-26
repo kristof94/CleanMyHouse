@@ -2,7 +2,7 @@
   <div class="flexparent">
     <nav-bar/>
     <section id="home" class="login">
-      <div class="signin form-custom">
+      <div class="signin">
         <div class="signinTitle">{{ this.$store.getters.getTitle }}</div>
         <b-form-invalid-feedback
           v-if="$store.getters.getError"
@@ -88,6 +88,8 @@ export default {
     PhoneForm,
     MyFooter
   },
+  transition: 'fadeOpacity',
+
   props: {},
   methods: {
     googleSignUpPopup() {

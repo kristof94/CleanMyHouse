@@ -12,7 +12,6 @@
 
     <b-collapse id="nav_collapse" is-nav>
       <b-navbar-nav class="ml-auto">
-        <b-nav-item class="link" to="/cleaners">Nos aides ménagères</b-nav-item>
         <div v-if="this.$device.isMobile">
           <div v-if="$store.getters.getUser">
             <b-nav-item class="link" to="/orders">Mes commandes</b-nav-item>
@@ -32,12 +31,15 @@
           >
             <b-dropdown-item class="link" to="/orders">Mes commandes</b-dropdown-item>
             <b-dropdown-item class="link" to="/profile">Mes informations</b-dropdown-item>
+            <b-dropdown-item class="link" to="/cleaners">Nos aides ménagères</b-dropdown-item>
             <b-dropdown-item class="link" @click="logOut">Se déconnecter</b-dropdown-item>
           </b-nav-item-dropdown>
-          <b-nav-item-dropdown v-else text="Mon compte" class="link accountmenu" right>
-            <b-dropdown-item class="link" @click="showLoginModal">Se connecter</b-dropdown-item>
-            <b-dropdown-item class="link" @click="showRegisterModal">Créer un compte</b-dropdown-item>
-          </b-nav-item-dropdown>
+          <div v-else>
+            <b-nav-item class="link" to="/cleaners" style="display: inline-block;">Nos aides ménagères</b-nav-item>
+            <a class="loginButton" @click="showLoginModal">Se connecter
+              <font-awesome-icon :icon="['fas', 'sign-in-alt']"/>
+            </a>
+          </div>
         </div>
       </b-navbar-nav>
     </b-collapse>
@@ -45,7 +47,6 @@
 </template>
 <script>
 export default {
-  components: {},
   props: {
     items: {
       type: Array,
@@ -81,3 +82,23 @@ export default {
   }
 }
 </script>
+<style>
+.loginButton {
+  background-color: #e882c4;
+  -moz-border-radius: 42px;
+  -webkit-border-radius: 42px;
+  border-radius: 42px;
+  display: inline-block;
+  cursor: pointer;
+  color: #ffffff !important;
+  font-size: 16px;
+  padding: 10px 15px;
+  padding-top: 3px;
+  padding-bottom: 3px;
+  text-decoration: none;
+}
+.loginButton:hover {
+  background-color: #ffffff;
+  color: #e882c4 !important;
+}
+</style>

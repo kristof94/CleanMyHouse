@@ -25,6 +25,10 @@ nav {
   color: #fff;
 }
 
+.dropdown-toggle::after {
+  margin-left: 1em;
+}
+
 .link:hover,
 .link:focus,
 .link:active {
