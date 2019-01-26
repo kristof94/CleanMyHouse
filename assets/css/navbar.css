@@ -29,9 +29,15 @@ nav {
   margin-left: 1em;
 }
 
+.dropdown-item.active,
+.dropdown-item:active {
+  background-color: unset;
+}
+
 .link:hover,
 .link:focus,
 .link:active {
+  width: -webkit-fill-available;
   text-decoration: none;
   background-color: unset;
 }
@@ -42,6 +48,14 @@ nav {
 }
 
 @media screen and (min-width: 768px) {
+  .dropdownItem {
+    width: -webkit-fill-available;
+  }
+
+  .dropdown-menu {
+    background-color: blueviolet;
+  }
+
   .link {
     position: relative;
     display: block;
@@ -57,7 +71,7 @@ nav {
     bottom: 3px;
     left: 0;
     height: 3px;
-    width: 100%;
+    width: -webkit-fill-available;
     background-color: #fff;
     transform-origin: right top;
     transform: scale(0, 1);

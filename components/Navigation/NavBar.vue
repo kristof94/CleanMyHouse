@@ -29,10 +29,10 @@
             class="link accountmenu"
             right
           >
-            <b-dropdown-item class="link" to="/orders">Mes commandes</b-dropdown-item>
-            <b-dropdown-item class="link" to="/profile">Mes informations</b-dropdown-item>
-            <b-dropdown-item class="link" to="/cleaners">Nos aides ménagères</b-dropdown-item>
-            <b-dropdown-item class="link" @click="logOut">Se déconnecter</b-dropdown-item>
+            <b-dropdown-item class="link dropdownItem" to="/orders">Mes commandes</b-dropdown-item>
+            <b-dropdown-item class="link dropdownItem" to="/profile">Mes informations</b-dropdown-item>
+            <b-dropdown-item class="link dropdownItem" to="/cleaners">Nos aides ménagères</b-dropdown-item>
+            <b-dropdown-item class="link dropdownItem" @click="logOut">Se déconnecter</b-dropdown-item>
           </b-nav-item-dropdown>
           <div v-else>
             <b-nav-item class="link" to="/cleaners" style="display: inline-block;">Nos aides ménagères</b-nav-item>
