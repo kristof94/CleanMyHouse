@@ -45,7 +45,7 @@ export default {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(6, 175, 218, 0.8);
+  background-color: rgb(123, 191, 207);
 }
 
 .lds-ellipsis div {

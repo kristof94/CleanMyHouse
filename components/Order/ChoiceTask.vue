@@ -23,11 +23,7 @@
                     <div class="text-center">
                       <label class="checkbox_container">
                         Repassage
-                        <input
-                          v-model="repassage_checked"
-                          type="checkbox"
-                          @change="chooseIron"
-                        >
+                        <input v-model="repassage_checked" type="checkbox" @change="chooseIron">
                         <span class="checkmark"/>
                       </label>
                     </div>
@@ -83,7 +79,7 @@ export default {
 
 <style>
 .checkbox_container {
-  color: rgba(6, 175, 218, 0.8);
+  color: rgb(123, 191, 207);
   display: inline-flex;
   position: relative;
   padding-left: 35px;
@@ -113,7 +109,7 @@ export default {
   width: 25px;
   background-color: white;
   border: solid 1px;
-  border-color: rgba(6, 175, 218, 0.8);
+  border-color: rgb(123, 191, 207);
 }
 
 /* On mouse-over, add a grey background color */
@@ -144,7 +140,7 @@ export default {
   top: 0px;
   width: 15px;
   height: 17px;
-  border: solid rgba(6, 175, 218, 0.8);
+  border: solid rgb(123, 191, 207);
   border-width: 0 3px 3px 0;
   -webkit-transform: rotate(45deg);
   -ms-transform: rotate(45deg);
@@ -190,7 +186,7 @@ export default {
 
 .modal-header {
   margin-top: 0;
-  background-color: rgba(6, 175, 218, 0.8);
+  background-color: rgb(123, 191, 207);
   padding-right: 10px;
   padding-left: 10px;
   font-size: 32px;
@@ -206,7 +202,7 @@ export default {
   padding: 10px 20px;
   background: transparent;
   font-size: 16px;
-  color: rgba(6, 175, 218, 0.8);
+  color: rgb(123, 191, 207);
   cursor: pointer;
   transition: color 0.3s;
   float: right;

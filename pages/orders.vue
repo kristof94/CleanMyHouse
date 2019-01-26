@@ -3,22 +3,42 @@
     <nav-bar/>
     <section id="home" class="homepage">
       <modal-error v-if="this.$store.getters.getError" @close="redirectLogin">
-        <!--
-      you can use custom content here to overwrite
-      default content
-				-->
         <div slot="header">{{ this.$store.getters.getError.header }}</div>
         <div slot="body">{{ this.$store.getters.getError.message }}</div>
       </modal-error>
-      <div v-else class="orders">
+      <div v-else class="orders style-2">
         <div class="signinTitle">Mes commandes</div>
-        <order v-for="(order) in orders" :key="order.sinceDate" :order="order"/>
+        <order
+          v-for="(order) in orders"
+          :key="order.sinceDate"
+          :order="order"
+          @rateOrder="rateOrder_"
+          @cancelOrder="cancel"
+        />
         <div
           v-if="orders==null || orders.length === 0"
           class="text-center noorder"
         >Vous n'avez pas de commande.</div>
       </div>
     </section>
+    <modal-info v-if="showModalInfo">
+      <div slot="header">Etes-vous sur ?</div>
+      <div slot="body">Cette opération est irréversible</div>
+      <div slot="footer">
+        <button class="modal-default-button" @click="cancelOrder">Oui</button>
+        <button class="modal-default-button" @click="noCancel">Non</button>
+      </div>
+    </modal-info>
+    <modal-info v-if="showModalRate">
+      <div slot="header">Un avis ?</div>
+      <div slot="body">
+        <star-rating/>
+      </div>
+      <div slot="footer">
+        <button class="modal-default-button" @click="rate">Confirmer</button>
+        <button class="modal-default-button" @click="showModalRate = false">Annuler</button>
+      </div>
+    </modal-info>
   </div>
 </template>
 
@@ -28,16 +48,28 @@ import MyFooter from '~/components/Footer/Footer'
 import InformationForm from '~/components/Forms/InformationForm'
 import Order from '~/components/Order/Order'
 import ModalError from '~/components/Modal/ModalError'
+import ModalInfo from '~/components/Modal/ModalInfo'
+import StarRating from 'vue-star-rating'
 
 export default {
   components: {
     NavBar,
     Order,
     ModalError,
+    ModalInfo,
+    StarRating,
     InformationForm,
     MyFooter
   },
   transition: 'fadeOpacity',
+  data() {
+    return {
+      showModalInfo: false,
+      showModalRate: false,
+      rateOrder: null,
+      canceledOrder: null
+    }
+  },
   asyncData({ $axios, store }) {
     return $axios
       .get('/getorders')
@@ -68,6 +100,7 @@ export default {
       })
   },
   methods: {
+    rate() {},
     redirectLogin() {
       if (
         this.$store.getters.getError.code === 403 ||
@@ -78,6 +111,27 @@ export default {
         this.$router.push('/login')
         return
       }
+    },
+    noCancel() {
+      this.showModalInfo = false
+      this.canceledOrder = null
+    },
+    cancel(order) {
+      this.canceledOrder = order
+      this.showModalInfo = true
+    },
+    rateOrder_(order) {
+      this.rateOrder = order
+      this.showModalRate = true
+    },
+    cancelOrder() {
+      this.showModalInfo = false
+      this.$nuxt.$loading.start()
+      this.$store
+        .dispatch('cancelOrder', { order: this.canceledOrder })
+        .finally(() => {
+          window.location.reload(true)
+        })
     }
   }
 }
@@ -86,6 +140,22 @@ export default {
 <style>
 .noorder {
   font-size: 20px;
-  color: rgba(6, 175, 218, 1);
+  color: rgb(123, 191, 207);
+}
+
+.style-2::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  border-radius: 0px;
+  background-color: transparent;
+}
+
+.style-2::-webkit-scrollbar {
+  width: 8px;
+}
+
+.style-2::-webkit-scrollbar-thumb {
+  border-radius: 0px;
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  background-color: rgb(123, 191, 207);
 }
 </style>

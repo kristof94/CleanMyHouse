@@ -12,6 +12,7 @@
 
     <b-collapse id="nav_collapse" is-nav>
       <b-navbar-nav class="ml-auto">
+        <b-nav-item class="link" to="/cleaners">Nos aides ménagères</b-nav-item>
         <div v-if="this.$device.isMobile">
           <div v-if="$store.getters.getUser">
             <b-nav-item class="link" to="/orders">Mes commandes</b-nav-item>

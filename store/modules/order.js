@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 const state = () => ({
   address: null,
   time: null,
@@ -36,13 +37,29 @@ const getters = {
 }
 
 const actions = {
-  /*processPayment({ order }) {
-    /*return this.axios.post('/processpayment', {
-      order
+  cancelOrder({ commit }, { order }) {
+    return this.app.$axios.post('/cancelorder', { order }).catch(err => {
+      if (err.response == null || err.response.status == null) {
+        commit('setError', {
+          code: 500,
+          header: 'Vous devez être connecté pour accéder à cette page.',
+          message: 'Vous allez être redirigé vers une page de reconnexion.'
+        })
+      } else if (err.response.status == 401) {
+        commit('setError', {
+          code: err.response.status,
+          header: 'Votre session a expiré.',
+          message: 'Vous allez être redirigé vers une page de reconnexion.'
+        })
+      } else if (err.response.status == 403) {
+        commit('setError', {
+          code: err.response.status,
+          header: 'Vous devez être connecté pour accéder à cette page.',
+          message: 'Vous allez être redirigé vers une page de reconnexion.'
+        })
+      }
     })
-    console.log()
-    console.log(this)
-  }*/
+  }
 }
 
 export default {

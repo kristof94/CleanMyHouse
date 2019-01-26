@@ -4,7 +4,7 @@ const admin = require('../../services/firebase-admin-init.js')
 
 const keySecret = process.env.SECRET_KEY
 const stripe = require('stripe')(keySecret)
-const expiresIn = 60 * 1000 * 5 // 10 min
+const expiresIn = 60 * 1000 * 20 // 10 min
 var router = express.Router()
 const { DateTime, Settings } = require('luxon')
 const { taskMap } = require('../../services/map.1')
@@ -85,8 +85,9 @@ router.get('/getorders', checkSession, (req, res) => {
       snapshot.forEach(function(childSnapshot) {
         const copyChild = childSnapshot.exportVal()
         if (copyChild && copyChild.order) {
-          delete copyChild.customer
-          orders.push(copyChild.order)
+          if (copyChild.order.status != 'removed') {
+            orders.push(copyChild.order)
+          }
         }
       })
       orders.sort(function(a, b) {
@@ -122,6 +123,23 @@ router.post('/preparepaiement', checkSession, (req, res) => {
   }
 })
 
+router.post('/cancelorder', checkSession, (req, res) => {
+  const order = req.body.order
+  const usersRef = ref.child(req.session.decodedClaims.uid)
+  usersRef
+    .child(order.idOrder)
+    .child('order')
+    .update({
+      status: 'removed'
+    })
+    .then(() => {
+      res.status(200).send('Order removed')
+    })
+    .catch(err => {
+      res.status(500).send('Internal error!')
+    })
+})
+
 router.post('/processpayment', checkSession, (req, res) => {
   const order = req.body.order
   const time = DateTime.fromISO(order.time, { zone: 'Europe/Paris' })
@@ -146,7 +164,10 @@ router.post('/processpayment', checkSession, (req, res) => {
           const customerId = userData.customer.id
           if (userData.customer.id) {
             return stripe.customers.retrieve(customerId).then(() => {
-              return usersRef.push().set({
+              var refObj = usersRef.push()
+              var postId = refObj.key
+              order.idOrder = postId
+              return refObj.set({
                 order
               })
             })
@@ -163,7 +184,10 @@ router.post('/processpayment', checkSession, (req, res) => {
                   customer
                 })
                 .then(() => {
-                  return usersRef.push().set({
+                  var refObj = usersRef.push()
+                  var postId = refObj.key
+                  order.idOrder = postId
+                  return refObj.set({
                     order
                   })
                 })

@@ -23,6 +23,7 @@
     </b-form-group>
     <b-button
       :disabled="$v.form.$invalid"
+      class="submitButton"
       type="submit"
       variant="primary"
       style="width:100%"
@@ -32,7 +33,7 @@
         <b-col lg="5" sm="3" cols="12" offset-md="0">
           <b-button variant="link" class="btn-link" @click="displayLogin">Se connecter</b-button>
         </b-col>
-        <b-col lg="5" sm="3" cols="12" offset-md="2">
+        <b-col lg="5" sm="3" cols="12" offset-md="1">
           <b-button variant="link" class="btn-link" @click="displayRegister">Pas de compte ?</b-button>
         </b-col>
       </b-row>
@@ -91,4 +92,9 @@ export default {
 </script>
 
 <style>
+.submitButton:active {
+  color: #f6f9fc;
+  background-color: rgb(123, 191, 207);
+  border-color: unset;
+}
 </style>

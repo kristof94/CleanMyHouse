@@ -6,7 +6,7 @@ body {
   font-family: 'Roboto', sans-serif;
   margin: 0;
   background-size: cover;
-  background-color: rgba(6, 175, 218, 1);
+  background-color: rgb(123, 191, 207);
   background-position: center center;
   background-size: cover;
 }
@@ -20,9 +20,6 @@ body {
 .orders {
   border-color: #f6f9fc;
   background-color: #f6f9fc;
-  border-style: solid 4px;
-  border-radius: 4px;
-  box-shadow: rgba(0, 0, 0, 0.8) 0 0 10px;
 }
 
 .signinTitle {
@@ -152,7 +149,7 @@ h4 {
 }
 
 .bigbutton {
-  color: rgba(6, 175, 218, 0.8);
+  color: rgb(123, 191, 207);
   background-color: #f6f9fc;
   display: inline-block;
   font-size: 14px;
@@ -167,7 +164,7 @@ h4 {
 
 .specialbutton {
   border-color: unset !important;
-  color: rgba(6, 175, 218, 0.8);
+  color: rgb(123, 191, 207);
   background-color: #f6f9fc;
   display: inline-block;
   font-size: 10px;
@@ -181,6 +178,15 @@ h4 {
   margin-bottom: 10px;
 }
 
+.whiteShine:active {
+  background-color: #f6f9fc !important;
+  border-color: unset !important;
+}
+
+.whiteShine:focus {
+  box-shadow: unset !important;
+}
+
 .whiteShine:enabled {
   -webkit-animation: neon1 1.5s ease-in-out infinite alternate;
   -moz-animation: neon1 1.5s ease-in-out infinite alternate;
@@ -190,7 +196,7 @@ h4 {
 
 .bigbutton:hover,
 .specialbutton:hover {
-  color: rgba(6, 175, 218, 0.8);
+  color: rgb(123, 191, 207);
   background-color: #f6f9fc;
   box-shadow: #f6f9fc 0 0 10px;
 }
@@ -218,8 +224,24 @@ h4 {
 
 .submitButton {
   color: #f6f9fc;
+  background-color: rgb(123, 191, 207);
+  border-color: unset;
+}
+
+.submitButton:hover,
+.submitButton:focus {
+  color: rgb(123, 191, 207) !important;
+  background-color: #f6f9fc !important;
+  border-color: unset !important;
+  box-shadow: unset !important;
+}
+
+.submitButton:active {
+  color: #f6f9fc;
+  background-color: rgb(123, 191, 207);
+  border-color: unset;
 }
 
 .flexsignin {
-  background-color: rgba(6, 175, 218, 0.8);
+  background-color: rgb(123, 191, 207);
 }

@@ -70,7 +70,7 @@ export default {
 
 .modal-header {
   margin-top: 0;
-  background-color: rgba(6, 175, 218, 0.8);
+  background-color: rgb(123, 191, 207);
   padding-right: 10px;
   padding-left: 10px;
   font-size: 32px;
@@ -86,7 +86,7 @@ export default {
   padding: 10px 20px;
   background: transparent;
   font-size: 16px;
-  color: rgba(6, 175, 218, 0.8);
+  color: rgb(123, 191, 207);
   cursor: pointer;
   transition: color 0.3s;
   float: right;

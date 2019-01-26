@@ -31,11 +31,8 @@
         </b-col>
       </b-row>
       <b-row>
-        <b-col cols="3" lg="6" align="center">
-          <b-button class="orderButton" @click="noter">Noter</b-button>
-        </b-col>
-        <b-col cols="9" lg="6" align="center">
-          <b-button class="orderButton">Annuler la commande</b-button>
+        <b-col v-if="order.status=='waiting' || order.status=='confirmed'" cols="12" align="center">
+          <button class="orderButton" @click="cancel">Annuler la commande</button>
         </b-col>
       </b-row>
     </b-container>
@@ -44,6 +41,7 @@
 
 <script>
 import { DateTime } from 'luxon'
+import StarRating from 'vue-star-rating'
 
 function statusMap() {
   const map = new Map()
@@ -56,6 +54,9 @@ function statusMap() {
 const map = statusMap()
 
 export default {
+  components: {
+    StarRating
+  },
   props: {
     order: {
       type: Object,
@@ -115,6 +116,12 @@ export default {
     },
     noter() {
       console.log('noter')
+    },
+    cancel() {
+      this.$emit('cancelOrder', this.order)
+    },
+    rate() {
+      this.$emit('rateOrder', this.order)
     }
   }
 }
@@ -137,21 +144,24 @@ export default {
   background-color: transparent;
   border-style: none;
   color: rgba(6, 175, 218, 0.8);
+  cursor: pointer;
 }
 
 .orderButton:hover,
+.orderButton:focus,
 .orderButton:active {
+  box-shadow: none !important;
+  border-style: none !important;
   background-color: transparent !important;
   color: rgba(6, 175, 218, 0.8) !important;
   text-decoration: underline;
 }
 
 .order_ {
-  border-color: #f6f9fc;
+  border-color: grey;
   background-color: #f6f9fc;
-  border-style: solid 4px;
-  border-radius: 4px;
-  box-shadow: rgba(0, 0, 0, 0.8) 0 0 3px;
+  border-bottom-style: solid;
+  border-bottom-width: 1px;
   padding: 5px 5px 5px 5px;
   margin: 10px 5px 10px 5px;
 }

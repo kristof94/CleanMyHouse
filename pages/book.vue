@@ -460,12 +460,12 @@ export default {
 .theme-blue .vdatetime-popup__header,
 .theme-blue .vdatetime-calendar__month__day--selected > span > span,
 .theme-blue .vdatetime-calendar__month__day--selected:hover > span > span {
-  background: rgba(6, 175, 218, 0.8);
+  background: rgb(123, 191, 207);
 }
 
 .theme-blue .vdatetime-year-picker__item--selected,
 .theme-blue .vdatetime-time-picker__item--selected,
 .theme-blue .vdatetime-popup__actions__button {
-  color: rgba(6, 175, 218, 0.8);
+  color: rgb(123, 191, 207);
 }
 </style>

@@ -3,9 +3,7 @@
     <nav-bar/>
     <section id="home" class="homepage">
       <div style="text-align: center;">
-        <h1>{{ title }}</h1>
-        <h2>La propreté à votre service</h2>
-        <h2>Nous nettoyons votre logement en 3 clics.</h2>
+        <h2>Trouvez une aide ménagère en moins d'une minute</h2>
         <b-button class="specialbutton smallbutton whiteShine" @click="book">Réserver</b-button>
       </div>
     </section>
