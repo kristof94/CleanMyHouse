@@ -15,7 +15,7 @@
       <b-row>
         <b-col lg="6">
           <font-awesome-icon :icon="['fa', 'calendar-alt']"/>
-          Le {{ date.get('weekdayLong') }} {{ date.get('day') }} {{ date.get('monthLong') }}
+          Le {{ `${date.setLocale('fr').toFormat('cccc dd LLLL yyyy')}` }}
           à {{ date.get('hour') == '0' ? '00' : date.get('hour') }}h{{ date.get('minute')=='0' ? '00' : date.get('minute') }}
         </b-col>
         <b-col
@@ -76,19 +76,19 @@ export default {
       return map.get(this.status)
     },
     since: function() {
-      const now = DateTime.local()
-        .setZone('Europe/Paris')
-        .toMillis()
+      const nowDate = DateTime.local().setZone('Europe/Paris')
+      const now = nowDate.toMillis()
       const sinceDate = DateTime.fromMillis(this.order.sinceDate, {
         zone: 'Europe/Paris'
       })
       const delta = DateTime.fromMillis(now - this.order.sinceDate, {
         zone: 'Europe/Paris'
       })
-      if (delta.get('hour') >= 12) {
-        return `Le ${sinceDate.get('weekdayLong')} ${sinceDate.get(
-          'day'
-        )} ${sinceDate.get('monthLong')} ${sinceDate.get('year')}`
+      if (
+        delta.get('hour') >= 12 ||
+        sinceDate.get('weekdayLong') > nowDate.get('weekdayLong')
+      ) {
+        return `Le ${sinceDate.setLocale('fr').toFormat('cccc dd LLLL yyyy')}.`
       } else if (delta.get('hour') > 1) {
         return `Il y a ${delta.get('hour')} heures et ${
           delta.get('minute') < 10

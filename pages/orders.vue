@@ -74,7 +74,14 @@ export default {
     return $axios
       .get('/getorders')
       .then(res => {
-        return { orders: res.data }
+        const orders = res.data
+        /*orders.sort(function(a, b) {
+          if (b) {
+            return b.sinceDate - a.sinceDate
+          }
+          return 1
+        })*/
+        return { orders }
       })
       .catch(err => {
         if (err.response == null || err.response.status == null) {

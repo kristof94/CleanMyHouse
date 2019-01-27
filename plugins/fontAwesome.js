@@ -13,7 +13,8 @@ import {
   faMapMarkerAlt,
   faQuestion,
   faEuroSign,
-  faSignInAlt
+  faSignInAlt,
+  faUsers
 } from '@fortawesome/free-solid-svg-icons'
 import { faClock, faUser } from '@fortawesome/free-regular-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
@@ -30,6 +31,7 @@ library.add(faEuroSign)
 library.add(faQuestion)
 library.add(faMapMarkerAlt)
 library.add(faUser)
+library.add(faUsers)
 library.add(faCreditCard)
 library.add(faPaypal)
 library.add(faCcMastercard)

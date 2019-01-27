@@ -8,7 +8,7 @@
             <b-form class="text-center">
               <b-form-group>
                 <h1>Prix</h1>
-                <span :class="{ customIconAnimated: displayPrice }" class="customIcon">
+                <span :class="{ customIconAnimated: !this.$device.isMobile }" class="customIcon">
                   {{ price / 100 }}
                   <font-awesome-icon :icon="['fas', 'euro-sign']"/>
                 </span>

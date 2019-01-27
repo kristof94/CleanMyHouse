@@ -8,7 +8,7 @@ nav {
 .navbar.navbar-light .navbar-nav .nav-link,
 .navbar.navbar-light .navbar-toggler {
   color: #fff;
-  text-transform: uppercase;
+  /* text-transform: uppercase; */
 }
 .dropdown-menu {
   background-color: transparent;
@@ -37,7 +37,6 @@ nav {
 .link:hover,
 .link:focus,
 .link:active {
-  width: -webkit-fill-available;
   text-decoration: none;
   background-color: unset;
 }
@@ -53,7 +52,7 @@ nav {
   }
 
   .dropdown-menu {
-    background-color: blueviolet;
+    background-color: #f794e1;
   }
 
   .link {

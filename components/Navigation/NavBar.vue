@@ -13,32 +13,48 @@
     <b-collapse id="nav_collapse" is-nav>
       <b-navbar-nav class="ml-auto">
         <div v-if="this.$device.isMobile">
+          <b-nav-item class="link" to="/cleaners" style="display: inline-block;">Nos aides ménagères
+            <font-awesome-icon :icon="['fas', 'users']"/>
+          </b-nav-item>
           <div v-if="$store.getters.getUser">
             <b-nav-item class="link" to="/orders">Mes commandes</b-nav-item>
             <b-nav-item class="link" to="/profile">Mes informations</b-nav-item>
+            <b-nav-item class="link" @click="logOut">Se déconnecter
+              <font-awesome-icon :icon="['fas', 'sign-in-alt']"/>
+            </b-nav-item>
           </div>
           <div v-else>
-            <b-nav-item class="link" @click="showLoginModal">Se connecter</b-nav-item>
+            <b-nav-item class="link" @click="showLoginModal">Se connecter
+              <font-awesome-icon :icon="['fas', 'sign-in-alt']" :rotation="180"/>
+            </b-nav-item>
             <b-nav-item class="link" @click="showRegisterModal">Créer un compte</b-nav-item>
           </div>
         </div>
         <div v-else>
-          <b-nav-item-dropdown
-            v-if="$store.getters.getUser"
-            text="Mon compte"
-            class="link accountmenu"
-            right
-          >
-            <b-dropdown-item class="link dropdownItem" to="/orders">Mes commandes</b-dropdown-item>
-            <b-dropdown-item class="link dropdownItem" to="/profile">Mes informations</b-dropdown-item>
-            <b-dropdown-item class="link dropdownItem" to="/cleaners">Nos aides ménagères</b-dropdown-item>
-            <b-dropdown-item class="link dropdownItem" @click="logOut">Se déconnecter</b-dropdown-item>
-          </b-nav-item-dropdown>
+          <div v-if="$store.getters.getUser">
+            <b-nav-item class="link" to="/cleaners" style="display: inline-block;">Nos aides ménagères
+              <font-awesome-icon :icon="['fas', 'users']"/>
+            </b-nav-item>
+            <b-nav-item-dropdown
+              text="Mon compte"
+              class="link accountmenu"
+              style="display: inline-block;"
+              right
+            >
+              <b-dropdown-item class="link dropdownItem" to="/orders">Mes commandes</b-dropdown-item>
+              <b-dropdown-item class="link dropdownItem" to="/profile">Mes informations</b-dropdown-item>
+              <b-dropdown-item class="link dropdownItem" @click="logOut">Se déconnecter
+                <font-awesome-icon :icon="['fas', 'sign-in-alt']"/>
+              </b-dropdown-item>
+            </b-nav-item-dropdown>
+          </div>
           <div v-else>
-            <b-nav-item class="link" to="/cleaners" style="display: inline-block;">Nos aides ménagères</b-nav-item>
-            <a class="loginButton" @click="showLoginModal">Se connecter
-              <font-awesome-icon :icon="['fas', 'sign-in-alt']"/>
-            </a>
+            <b-nav-item class="link" to="/cleaners" style="display: inline-block;">Nos aides ménagères
+              <font-awesome-icon :icon="['fas', 'users']"/>
+            </b-nav-item>
+            <b-nav-item class="link" style="display: inline-block;" @click="showLoginModal">Se connecter
+              <font-awesome-icon :icon="['fas', 'sign-in-alt']" :rotation="180"/>
+            </b-nav-item>
           </div>
         </div>
       </b-navbar-nav>

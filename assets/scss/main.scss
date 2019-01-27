@@ -105,14 +105,13 @@ h2 {
   padding: 16px 0;
   margin: 0 12px;
   line-height: 30px;
+  font-size: 12px;
   @include sm {
-    font-size: 12px;
     line-height: 16px;
     margin-top: 5px;
     padding: 5px 0;
   }
   @include land_sm {
-    font-size: 14px;
     padding: 5px 0;
   }
 }

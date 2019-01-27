@@ -1,11 +1,9 @@
 <template>
   <div class="resume">
+    <div class="resume-text">Le {{ `Le ${date.setLocale('fr').toFormat('cccc dd LLLL')}.` }}</div>
     <div
       class="resume-text"
-    >Le {{ date.get('weekdayLong') }} {{ date.get('day') }} {{ date.get('monthLong') }}</div>
-    <div
-      class="resume-text"
-    >A {{ date.get('hour')=='0' ? '00' : date.get('hour') }}h{{ date.get('minute')=='0' ? '00' : date.get('minute') }}</div>
+    >A {{ date.setLocale('fr').toFormat('hh') }}h{{ date.setLocale('fr').toFormat('mm') }}</div>
   </div>
 </template>
 
