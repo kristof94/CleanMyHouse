@@ -14,9 +14,14 @@ import {
   faQuestion,
   faEuroSign,
   faSignInAlt,
-  faUsers
+  faUsers,
+  faBriefcase
 } from '@fortawesome/free-solid-svg-icons'
-import { faClock, faUser } from '@fortawesome/free-regular-svg-icons'
+import {
+  faClock,
+  faUser,
+  faAddressCard
+} from '@fortawesome/free-regular-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import brands, {
   faPaypal,
@@ -26,6 +31,8 @@ import brands, {
 } from '@fortawesome/fontawesome-free-brands'
 config.autoAddCss = false
 
+library.add(faBriefcase)
+library.add(faAddressCard)
 library.add(faSignInAlt)
 library.add(faEuroSign)
 library.add(faQuestion)

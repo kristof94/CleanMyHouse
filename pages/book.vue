@@ -107,7 +107,7 @@
             class="text-center"
           >
             <b-button
-              v-if="date && time && address"
+              v-if="displayConfirmButton"
               class="specialbutton longbutton smallbutton whiteShine"
               @click="confirm"
             >Confirmer</b-button>
@@ -170,6 +170,7 @@
         auto
         class="theme-blue"
         @input="onTimeChanged"
+        @close="closeTimePicker"
       />
     </no-ssr>
     <modal-info v-if="showModalInfo" @close="redirectOrder">
@@ -232,6 +233,7 @@ export default {
   data() {
     return {
       title: 'Clean my house',
+      displayConfirmButton: false,
       infoPaymentHeader: null,
       infoPaymentMessage: null,
       informations: null,
@@ -270,6 +272,9 @@ export default {
     }
   },
   methods: {
+    closeTimePicker() {
+      this.displayConfirmButton = this.date && this.address && this.time
+    },
     getStringDate() {
       const date = this.date
       return `Le ${date.get('weekdayLong')} ${date.get('day')} ${date.get(
@@ -329,6 +334,13 @@ export default {
           this.showModalInfo = true
         })
         .catch(err => {
+          if (!err.response.status) {
+            this.$store.commit('setError', {
+              code: err.response.status,
+              header: 'Erreur interne',
+              message: 'Vous allez être redirigé vers une page de reconnexion.'
+            })
+          }
           if (err.response.status == 401) {
             this.$store.commit('setError', {
               code: err.response.status,

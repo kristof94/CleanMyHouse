@@ -198,7 +198,7 @@ router.post('/processpayment', checkSession, (req, res) => {
         res
           .status(200)
           .send(
-            "Paiement enregistré. Vous serez débité après que nous vous ayons rendu visite. Nous recherchons activement une aide ménagère. Si aucune aide ménagère n'est trouvée dans 2 heures , vous ne serez pas débité!"
+            'Paiement enregistré. Vous serez débité après que nous vous ayons rendu visite! Nous vous contacterons quand nous auront trouvé une femme de ménage.'
           )
       })
       .catch(err => {

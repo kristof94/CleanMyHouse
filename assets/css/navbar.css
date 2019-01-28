@@ -2,6 +2,18 @@ nav {
   background-color: transparent;
 }
 
+.navbar-brand {
+  text-transform: uppercase;
+}
+
+.navbar-toggler:focus {
+  outline-color: transparent;
+}
+
+.navbar-light .navbar-toggler {
+  border-color: transparent;
+}
+
 .navbar-brand:hover,
 .navbar-light .navbar-brand,
 .navbar-light .navbar-toggler-icon,

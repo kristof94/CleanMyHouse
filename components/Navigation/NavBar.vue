@@ -41,8 +41,12 @@
               style="display: inline-block;"
               right
             >
-              <b-dropdown-item class="link dropdownItem" to="/orders">Mes commandes</b-dropdown-item>
-              <b-dropdown-item class="link dropdownItem" to="/profile">Mes informations</b-dropdown-item>
+              <b-dropdown-item class="link dropdownItem" to="/orders">Mes commandes
+                <font-awesome-icon :icon="['fas', 'briefcase']"/>
+              </b-dropdown-item>
+              <b-dropdown-item class="link dropdownItem" to="/profile">Mes informations
+                <font-awesome-icon :icon="['far', 'address-card']"/>
+              </b-dropdown-item>
               <b-dropdown-item class="link dropdownItem" @click="logOut">Se déconnecter
                 <font-awesome-icon :icon="['fas', 'sign-in-alt']"/>
               </b-dropdown-item>
