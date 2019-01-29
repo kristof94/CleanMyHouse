@@ -293,6 +293,7 @@ export default {
         this.$store.getters.getError.code === 401
       ) {
         this.$store.dispatch('clearMessage')
+        this.$store.dispatch('displayLoginForm')
         this.$router.push('/login')
         return
       }
@@ -328,9 +329,9 @@ export default {
 
       this.$axios
         .post('/processpayment', { order })
-        .then(response => {
+        .then(() => {
           this.infoPaymentHeader = 'Paiement réussi.'
-          this.infoPaymentMessage = response.data
+          this.infoPaymentMessage = 'Le paiement a été accepté.'
           this.showModalInfo = true
         })
         .catch(err => {

@@ -47,9 +47,6 @@ router.get('/', (req, res, next) => {
   const sessionCookie = req.session.sessionCookie || ''
   if (sessionCookie) {
     checkCookieSession(req, sessionCookie)
-      .then(() => {
-        next()
-      })
       .catch(() => {
         console.log('expired')
         clearCookie(res)
@@ -102,7 +99,7 @@ router.post('/sessionToken', (req, res) => {
 
 router.post('/sessionLogout', (req, res) => {
   clearCookie(res)
-  res.redirect('/login')
+  res.status(200).send('loggout!')
 })
 
 router.post('/profile', checkSession, (req, res) => {
@@ -119,9 +116,17 @@ router.get('/getorders', checkSession, (req, res) => {
       snapshot.forEach(function(childSnapshot) {
         const copyChild = childSnapshot.exportVal()
         if (copyChild && copyChild.order) {
-          if (copyChild.order.status != 'removed') {
+          const order = copyChild.order
+          /*if (copyChild.order.status != 'removed') {
             orders.push(copyChild.order)
-          }
+          }*/
+          const time = DateTime.fromMillis(order.time, {
+            zone: 'Europe/Paris'
+          })
+          const hour = time.get('hour')
+          const minute = time.get('minute') == 30 ? 0.5 : 0
+          order.price = hour * price + minute * price
+          orders.push(order)
         }
       })
       orders.sort(function(a, b) {
@@ -133,6 +138,7 @@ router.get('/getorders', checkSession, (req, res) => {
       res.status(200).send(orders)
     })
     .catch(err => {
+      console.log(err)
       console.log('The read failed: ' + err.code)
       res.status(401).send('UNAUTHORIZED REQUEST!')
     })
@@ -202,13 +208,23 @@ router.post('/processpayment', checkSession, (req, res) => {
     .once('value')
     .then(function(dataSnapshot) {
       const userData = dataSnapshot.val()
-      if (userData && userData.customer) {
-        const customerId = userData.customer.id
-        if (userData.customer.id) {
-          return stripe.customers.retrieve(customerId).then(() => {
+      order.idStoken = order.token.card.id
+      if (userData && userData.customerId) {
+        const customerId = userData.customerId
+        if (customerId) {
+          return stripe.customers.retrieve(customerId).then(customer => {
+            const newCard = !customer.sources.data
+              .map(data => data.id)
+              .includes(order.token.card.id)
+            if (newCard) {
+              stripe.customers.createSource(customerId, {
+                source: order.token.id
+              })
+            }
             var refObj = usersRef.push()
             var postId = refObj.key
             order.idOrder = postId
+            order.token = null
             return refObj.set({
               order
             })
@@ -223,9 +239,10 @@ router.post('/processpayment', checkSession, (req, res) => {
           .then(customer => {
             usersRef
               .set({
-                customer
+                customerId: customer.id
               })
               .then(() => {
+                order.token = null
                 var refObj = usersRef.push()
                 var postId = refObj.key
                 order.idOrder = postId
@@ -237,13 +254,103 @@ router.post('/processpayment', checkSession, (req, res) => {
       }
     })
     .then(() => {
-      res
-        .status(200)
-        .send(
-          'Paiement enregistré. Vous serez débité après que nous vous ayons rendu visite! Nous vous contacterons quand nous auront trouvé une femme de ménage.'
-        )
+      res.status(200).send('Paiement enregistré.')
     })
     .catch(err => {
+      console.log(err)
+      if (err.code === 'resource_missing') {
+        res.status(500).send('Internal error!')
+        return
+      }
+      res.status(401).send('UNAUTHORIZED REQUEST!')
+    })
+})
+
+router.post('/processpayment2', checkSession, (req, res) => {
+  const order = req.body.order
+  const time = DateTime.fromMillis(order.time)
+  const date = DateTime.fromMillis(order.date)
+  const hour = time.hour
+  const minute = time.minute == 30 ? 0.5 : 0
+
+  if (hour + minute < 1) {
+    res.status(400).send('UNAUTHORIZED REQUEST!')
+    return
+  }
+  const usersRef = ref.child(req.session.decodedClaims.uid)
+  usersRef
+    .once('value')
+    .then(function(dataSnapshot) {
+      const userData = dataSnapshot.val()
+      order.idStoken = order.token.card.id
+      if (userData && userData.customerId) {
+        const customerId = userData.customerId
+        if (customerId) {
+          return stripe.customers
+            .retrieve(customerId)
+            .then(customer => {
+              const newCard = !customer.sources.data
+                .map(data => data.id)
+                .includes(order.token.card.id)
+              if (newCard) {
+                stripe.customers
+                  .createSource(customerId, {
+                    source: order.token.id
+                  })
+                  .then(source => {
+                    console.log(source)
+                    return stripe.charges.create({
+                      amount: hour * price + minute * price,
+                      currency: 'eur',
+                      description: 'Example charge',
+                      customer: customerId,
+                      source: order.token.card.id
+                    })
+                  })
+              } else {
+                return stripe.charges.create({
+                  amount: hour * price + minute * price,
+                  currency: 'eur',
+                  description: 'Example charge',
+                  customer: customerId,
+                  source: order.token.card.id
+                })
+              }
+            })
+            .then(() => {
+              return db
+                .ref(
+                  '/users/' +
+                    req.session.decodedClaims.uid +
+                    '/' +
+                    order.idOrder +
+                    '/order'
+                )
+                .update({
+                  status: 'executed'
+                })
+            })
+        }
+        Promise.reject('paiement ko0')
+      }
+      Promise.reject('paiement ko')
+    })
+    .then(() => {
+      const orders = []
+      db.ref('/users/' + req.session.decodedClaims.uid)
+        .once('value')
+        .then(snapshot => {
+          snapshot.forEach(function (childSnapshot) {
+            const copyChild = childSnapshot.exportVal()
+            if (copyChild && copyChild.order) {
+              const order = copyChild.order              
+              orders.push(order)
+            }
+          })          
+          res.status(200).send(orders)
+    })
+    .catch(err => {
+      console.log(err)
       if (err.code === 'resource_missing') {
         res.status(500).send('Internal error!')
         return

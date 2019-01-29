@@ -19,10 +19,16 @@
           à {{ date.get('hour') == '0' ? '00' : date.get('hour') }}h{{ date.get('minute')=='0' ? '00' : date.get('minute') }}
         </b-col>
         <b-col
-          :class="{ statussuccess: status === 'confirmed', statuswaiting: status === 'waiting' , statuscanceled: status === 'canceled' }"
+          :class="{ statussuccess: status === 'confirmed', statuswaiting: status === 'waiting' , statuscanceled: status === 'removed' || status === 'paidProblem' }"
           offset-lg="2"
           lg="4"
-        >{{ getStatus() }}</b-col>
+        >
+          {{ getStatus() }}
+          <b-button v-if="status === 'paidProblem'" @click="pay">
+            Payer {{ order.price / 100 }}
+            <font-awesome-icon :icon="['fas', 'euro-sign']"/>
+          </b-button>
+        </b-col>
       </b-row>
       <b-row>
         <b-col lg="6" md="8" cols="12">
@@ -31,7 +37,7 @@
         </b-col>
       </b-row>
       <b-row>
-        <b-col v-if="order.status=='waiting' || order.status=='confirmed'" cols="12" align="center">
+        <b-col v-if="status=='waiting' || status=='confirmed'" cols="12" align="center">
           <button class="orderButton" @click="cancel">Annuler la commande</button>
         </b-col>
       </b-row>
@@ -47,7 +53,9 @@ function statusMap() {
   const map = new Map()
   map.set('waiting', "Recherche d'aide ménagère en cours.")
   map.set('confirmed', 'Confirmé')
-  map.set('canceled', 'Annulé')
+  map.set('executed', '')
+  map.set('paidProblem', 'Non payée')
+  map.set('removed', 'Annulé')
   return map
 }
 
@@ -122,6 +130,9 @@ export default {
     },
     rate() {
       this.$emit('rateOrder', this.order)
+    },
+    pay() {
+      this.$emit('paidOld', this.order)
     }
   }
 }

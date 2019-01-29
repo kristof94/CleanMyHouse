@@ -83,6 +83,19 @@ const getters = {
 }
 
 const actions = {
+  /*nuxtServerInit({ commit }, { req }) {
+    console.log(commit)
+    console.log(req)
+    console.log(req)
+
+    if (!this.$axios.defaults.headers.common['XSRF-TOKEN']) {
+      this.$axios.get('/api/getcsrftoken').then(response => {
+        this.$axios.defaults.headers.common['XSRF-TOKEN'] =
+          response.data.csrfToken
+        this.$axios.setHeader('XSRF-TOKEN', response.data.csrfToken)
+      })
+    }
+  },*/
   isSigned() {
     return true
   },

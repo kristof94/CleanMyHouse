@@ -11,12 +11,10 @@ export default function({ $axios, redirect }) {
     }
   })
 
-  if (process.client) {
-    if (!$axios.defaults.headers.common['XSRF-TOKEN']) {
-      $axios.get('/api/getcsrftoken').then(response => {
-        // $axios.defaults.headers.common['XSRF-TOKEN'] = response.data.csrfToken
-        $axios.setHeader('XSRF-TOKEN', response.data.csrfToken)
-      })
-    }
+  if (!$axios.defaults.headers.common['XSRF-TOKEN']) {
+    $axios.get('/api/getcsrftoken').then(response => {
+      $axios.defaults.headers.common['XSRF-TOKEN'] = response.data.csrfToken
+      $axios.setHeader('XSRF-TOKEN', response.data.csrfToken)
+    })
   }
 }

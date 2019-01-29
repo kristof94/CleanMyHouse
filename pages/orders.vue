@@ -12,6 +12,7 @@
           v-for="(order) in orders"
           :key="order.sinceDate"
           :order="order"
+          @paidOld="open"
           @rateOrder="rateOrder_"
           @cancelOrder="cancel"
         />
@@ -39,6 +40,20 @@
         <button class="modal-default-button" @click="showModalRate = false">Annuler</button>
       </div>
     </modal-info>
+    <no-ssr>
+      <vue-stripe-checkout
+        ref="checkoutRef2"
+        :name="title"
+        :email="email"
+        :currency="currency"
+        :amount="price"
+        :allow-remember-me="true"
+        @done="done"
+        @opened="opened"
+        @closed="closed"
+        @canceled="canceled"
+      />
+    </no-ssr>
   </div>
 </template>
 
@@ -67,20 +82,24 @@ export default {
       showModalInfo: false,
       showModalRate: false,
       rateOrder: null,
-      canceledOrder: null
+      canceledOrder: null,
+      oldOrder: null,
+      title: 'Clean my house',
+      price: null,
+      email:
+        this.$store.getters.getUser == null
+          ? null
+          : this.$store.getters.getUser.email,
+      rememberMe: false,
+      currency: 'EUR'
     }
   },
   asyncData({ $axios, store }) {
+    console.log($axios.defaults.headers.common['XSRF-TOKEN'])
     return $axios
       .get('/getorders')
       .then(res => {
         const orders = res.data
-        /*orders.sort(function(a, b) {
-          if (b) {
-            return b.sinceDate - a.sinceDate
-          }
-          return 1
-        })*/
         return { orders }
       })
       .catch(err => {
@@ -117,7 +136,84 @@ export default {
         this.$store.dispatch('clearMessage')
         this.$router.push('/login')
         return
+      } else if (this.$store.getters.getError.code === 404) {
+        this.$store.commit('setError', null)
+        return
+      } else {
+        this.$store.dispatch('clearMessage')
+        this.$router.push('/login')
+        return
       }
+    },
+    async open(order) {
+      this.$nuxt.$loading.start()
+      this.oldOrder = order
+      this.price = order.price
+      await this.$refs.checkoutRef2.open()
+    },
+    done({ token }) {
+      const order = this.oldOrder
+      order.token = token
+      this.$axios
+        .post('/processpayment2', {
+          order
+        })
+        .then(res => {
+          const orders = res.data
+          this.orders = orders
+        })
+        .catch(err => {
+          if (!err.response.status) {
+            this.$store.commit('setError', {
+              code: err.response.status,
+              header: 'Erreur interne',
+              message: 'Vous allez être redirigé vers une page de reconnexion.'
+            })
+          }
+          if (err.response.status == 401) {
+            this.$store.commit('setError', {
+              code: err.response.status,
+              header: 'Votre session a expiré.',
+              message: 'Vous allez être redirigé vers une page de reconnexion.'
+            })
+          }
+          if (err.response.status == 403) {
+            this.$store.commit('setError', {
+              code: err.response.status,
+              header: 'Vous devez être connecté pour accéder à cette page.',
+              message: 'Vous allez être redirigé vers une page de reconnexion.'
+            })
+          }
+          if (err.response.status == 404) {
+            this.$store.commit('setError', {
+              code: err.response.status,
+              header: 'Erreur Interne',
+              message: 'Veuillez réessayer plus tard.'
+            })
+          }
+          if (err.response.status == 500) {
+            this.$store.commit('setError', {
+              code: err.response.status,
+              header: 'Erreur interne',
+              message:
+                "Votre paiement n'a pas été enregistré. Veuillez réessayer."
+            })
+          }
+        })
+        .finally(() => {
+          this.oldOrder = null
+          this.$nuxt.$loading.finish()
+        })
+    },
+    opened() {
+      // do stuff
+    },
+    closed() {
+      // do stuff
+    },
+    canceled() {
+      // do stuff
+      this.$nuxt.$loading.finish()
     },
     noCancel() {
       this.showModalInfo = false
@@ -137,6 +233,7 @@ export default {
       this.$store
         .dispatch('cancelOrder', { order: this.canceledOrder })
         .finally(() => {
+          this.canceledOrder = null
           window.location.reload(true)
         })
     }

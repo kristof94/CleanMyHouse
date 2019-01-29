@@ -89,8 +89,6 @@ export default {
     MyFooter
   },
   transition: 'fadeOpacity',
-
-  props: {},
   methods: {
     googleSignUpPopup() {
       this.$nuxt.$loading.start()
