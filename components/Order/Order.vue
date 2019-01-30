@@ -85,7 +85,7 @@ export default {
   },
   methods: {
     getStatus() {
-      return map.get(this.status)
+      return map.get(this.order.status)
     },
     since: function() {
       const nowDate = DateTime.local().setZone('Europe/Paris')
