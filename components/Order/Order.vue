@@ -24,7 +24,7 @@
           lg="4"
         >
           {{ getStatus() }}
-          <b-button v-if="status === 'paidProblem'" @click="pay">
+          <b-button v-if="status === 'paidProblem'" class="payButton" @click="pay">
             Payer {{ order.price / 100 }}
             <font-awesome-icon :icon="['fas', 'euro-sign']"/>
           </b-button>
@@ -187,5 +187,14 @@ export default {
 
 .timeSince {
   color: gray;
+}
+
+.payButton,
+.payButton:hover,
+.payButton:active {
+  background-color: red;
+  color: white;
+  border-color: unset;
+  box-shadow: unset;
 }
 </style>
