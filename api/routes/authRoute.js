@@ -11,6 +11,7 @@ Settings.defaultLocale = 'fr'
 Settings.defaultZoneName = 'Europe/Paris'
 const expiresIn = 60 * 1000 * 20 // 10 min
 const price = 2000
+const { formatDescriptionFromOrder } = require('../utils/formatter')
 
 const checkCookieSession = function(req, sessionCookie) {
   return admin
@@ -125,7 +126,6 @@ router.get('/getorders', checkSession, (req, res) => {
           })
           const hour = time.get('hour')
           const minute = time.get('minute') == 30 ? 0.5 : 0
-          order.price = hour * price + minute * price
           orders.push(order)
         }
       })
@@ -203,6 +203,7 @@ router.post('/processpayment', checkSession, (req, res) => {
   order.time = time.toMillis()
   order.date = date.toMillis()
   order.status = 'waiting'
+  order.price = hour * price + minute * price
   const usersRef = ref.child(req.session.decodedClaims.uid)
   usersRef
     .once('value')
@@ -269,7 +270,7 @@ router.post('/processpayment', checkSession, (req, res) => {
 router.post('/processpayment2', checkSession, (req, res) => {
   const order = req.body.order
   const time = DateTime.fromMillis(order.time)
-  const date = DateTime.fromMillis(order.date)
+  // const date = DateTime.fromMillis(order.date)
   const hour = time.hour
   const minute = time.minute == 30 ? 0.5 : 0
 
@@ -277,6 +278,7 @@ router.post('/processpayment2', checkSession, (req, res) => {
     res.status(400).send('UNAUTHORIZED REQUEST!')
     return
   }
+
   const usersRef = ref.child(req.session.decodedClaims.uid)
   usersRef
     .once('value')
@@ -297,12 +299,11 @@ router.post('/processpayment2', checkSession, (req, res) => {
                   .createSource(customerId, {
                     source: order.token.id
                   })
-                  .then(source => {
-                    console.log(source)
+                  .then(() => {
                     return stripe.charges.create({
                       amount: hour * price + minute * price,
                       currency: 'eur',
-                      description: 'Example charge',
+                      description: formatDescriptionFromOrder(order),
                       customer: customerId,
                       source: order.token.card.id
                     })
@@ -311,7 +312,7 @@ router.post('/processpayment2', checkSession, (req, res) => {
                 return stripe.charges.create({
                   amount: hour * price + minute * price,
                   currency: 'eur',
-                  description: 'Example charge',
+                  description: formatDescriptionFromOrder(order),
                   customer: customerId,
                   source: order.token.card.id
                 })
@@ -336,18 +337,18 @@ router.post('/processpayment2', checkSession, (req, res) => {
       Promise.reject('paiement ko')
     })
     .then(() => {
+      return db.ref('/users/' + req.session.decodedClaims.uid).once('value')
+    })
+    .then(snapshot => {
       const orders = []
-      db.ref('/users/' + req.session.decodedClaims.uid)
-        .once('value')
-        .then(snapshot => {
-          snapshot.forEach(function (childSnapshot) {
-            const copyChild = childSnapshot.exportVal()
-            if (copyChild && copyChild.order) {
-              const order = copyChild.order              
-              orders.push(order)
-            }
-          })          
-          res.status(200).send(orders)
+      snapshot.forEach(function(childSnapshot) {
+        const copyChild = childSnapshot.exportVal()
+        if (copyChild && copyChild.order) {
+          const order = copyChild.order
+          orders.push(order)
+        }
+      })
+      res.status(200).send(orders)
     })
     .catch(err => {
       console.log(err)

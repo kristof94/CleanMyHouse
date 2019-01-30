@@ -94,13 +94,17 @@ export default {
       currency: 'EUR'
     }
   },
-  asyncData({ $axios, store }) {
-    console.log($axios.defaults.headers.common['XSRF-TOKEN'])
+  computed: {
+    orders() {
+      return this.$store.getters.getOrders
+    }
+  },
+  fetch({ store, $axios }) {
     return $axios
       .get('/getorders')
       .then(res => {
         const orders = res.data
-        return { orders }
+        store.commit('setOrders', orders)
       })
       .catch(err => {
         if (err.response == null || err.response.status == null) {
@@ -122,8 +126,15 @@ export default {
             message: 'Vous allez être redirigé vers une page de reconnexion.'
           })
         }
-        return { orders: null }
       })
+  },
+  mounted() {
+    if (!this.$axios.defaults.headers.common['XSRF-TOKEN']) {
+      this.$axios.get('/api/getcsrftoken').then(response => {
+        this.$axios.defaults.headers.common['XSRF-TOKEN'] =
+          response.data.csrfToken
+      })
+    }
   },
   methods: {
     rate() {},
@@ -160,7 +171,7 @@ export default {
         })
         .then(res => {
           const orders = res.data
-          this.orders = orders
+          this.$store.commit('setOrders', orders)
         })
         .catch(err => {
           if (!err.response.status) {

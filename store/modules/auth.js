@@ -24,8 +24,12 @@ function manageAuth(promise, commit, dispatch, axios, root) {
     .then(idToken => {
       if (idToken) {
         return axios
-          .post('/sessionToken', {
-            idToken
+          .get('/api/getcsrftoken')
+          .then(response => {
+            return axios.post('/sessionToken', {
+              idToken,
+              _csrf: response.data.csrfToken
+            })
           })
           .then(() => {
             commit('setUser', Auth.currentUser)

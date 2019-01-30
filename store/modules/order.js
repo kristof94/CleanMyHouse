@@ -3,7 +3,8 @@ const state = () => ({
   address: null,
   time: null,
   date: null,
-  choice: null
+  choice: null,
+  orders: null
 })
 
 const mutations = {
@@ -18,6 +19,9 @@ const mutations = {
   },
   setChoice(state, payload) {
     state.choice = payload
+  },
+  setOrders(state, payload) {
+    state.orders = payload
   }
 }
 
@@ -33,6 +37,9 @@ const getters = {
   },
   getChoice: state => {
     return state.choice
+  },
+  getOrders: state => {
+    return state.orders
   }
 }
 

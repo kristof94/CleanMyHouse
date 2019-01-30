@@ -75,8 +75,12 @@ export default {
     return {
       date: DateTime.fromMillis(this.order.date, {
         zone: 'Europe/Paris'
-      }),
-      status: this.order.status
+      })
+    }
+  },
+  computed: {
+    status() {
+      return this.order.status
     }
   },
   methods: {

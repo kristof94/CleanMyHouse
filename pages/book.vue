@@ -271,6 +271,14 @@ export default {
       )
     }
   },
+  mounted() {
+    if (!this.$axios.defaults.headers.common['XSRF-TOKEN']) {
+      this.$axios.get('/api/getcsrftoken').then(response => {
+        this.$axios.defaults.headers.common['XSRF-TOKEN'] =
+          response.data.csrfToken
+      })
+    }
+  },
   methods: {
     closeTimePicker() {
       this.displayConfirmButton = this.date && this.address && this.time
@@ -326,9 +334,10 @@ export default {
         time: this.$store.getters.getTime,
         task: this.$store.getters.getChoice
       }
-
       this.$axios
-        .post('/processpayment', { order })
+        .post('/processpayment', {
+          order
+        })
         .then(() => {
           this.infoPaymentHeader = 'Paiement réussi.'
           this.infoPaymentMessage = 'Le paiement a été accepté.'
@@ -400,7 +409,9 @@ export default {
         time: this.time
       }
       this.$axios
-        .post('/preparepaiement', { order })
+        .post('/preparepaiement', {
+          order
+        })
         .then(response => {
           this.price = response.data.price
           this.displayPrice = true
