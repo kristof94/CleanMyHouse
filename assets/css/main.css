@@ -224,17 +224,18 @@ h4 {
 }
 
 .submitButton:hover,
-.submitButton:focus {
-  color: rgb(87, 145, 158) !important;
-  background-color: #f6f9fc !important;
-  border-color: unset !important;
-  box-shadow: unset !important;
+ {
+  color: rgb(87, 145, 158);
+  background-color: #f6f9fc ;
+  border-color: unset ;
+  box-shadow: unset ;
 }
 
-.submitButton:active {
+.submitButton:focus {
   color: #f6f9fc;
   background-color: rgb(123, 191, 207);
   border-color: unset;
+  box-shadow: unset
 }
 
 .flexsignin {

@@ -3,7 +3,7 @@
     <b-form id="phoneForm">
       <b-form-group
         id="phoneInputGroup"
-        label="Votre compte a été créé. Pour finaliser votre inscription, entrez votre numéro de téléphone"
+        :label="label"
         label-for="phoneInput"
       >
         <b-input-group>
@@ -77,9 +77,10 @@ export default {
   components: {},
   mixins: [validationMixin],
   props: {
-    recaptcha: {
+    label: {
       type: String,
-      default: process.env.recaptcha_key
+      default:
+        'Votre compte a été créé. Pour finaliser votre inscription, entrez votre numéro de téléphone'
     }
   },
   data: () => {

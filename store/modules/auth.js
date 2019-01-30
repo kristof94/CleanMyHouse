@@ -29,12 +29,12 @@ function manageAuth(promise, commit, dispatch, axios, root) {
           })
           .then(() => {
             commit('setUser', Auth.currentUser)
+            commit('setPhoneNumber', Auth.currentUser.phoneNumber)
             return { success: true }
           })
       }
     })
     .catch(error => {
-      console.log(error)
       if (error.message) {
         commit('setError', {
           code: 'auth/wrong-password',
@@ -91,6 +91,20 @@ const actions = {
         this.$axios.setHeader('XSRF-TOKEN', response.data.csrfToken)
       })
     }
+  },
+  updatePhoneNumber({ commit }, { form }) {
+    return this.$axios
+      .post('/updatePhoneNumber', { form })
+      .then(() => {
+        commit('setPhoneNumber', form.phone)
+      })
+      .catch(() => {
+        commit('setError', {
+          code: '400',
+          header: 'Erreur interne.',
+          message: 'Erreur interne.'
+        })
+      })
   },
   isSigned() {
     return true
@@ -179,6 +193,29 @@ const actions = {
       window.recaptchaWidgetId = widgetId
     })
   },
+  prepareCatchaResetPhone({ dispatch, commit }, { loading }) {
+    window.recaptchaVerifierReset = new firebase.auth.RecaptchaVerifier(
+      'get-codeReset',
+      {
+        size: 'invisible',
+        callback: function() {
+          dispatch('sendSMSResetPhone', { loading })
+        },
+        'expired-callback': function() {
+          commit('couldSignInWithPhoneNumber', false)
+        }
+      }
+    )
+    window.recaptchaVerifierReset.render().then(widgetId => {
+      window.recaptchaResetWidgetId = widgetId
+    })
+  },
+  /* sendSMSResetPhone({ dispatch, commit }, { loading }) {
+    loading.start()
+    dispatch('clearMessage')
+    const phone = this.getters.getPhoneNumber //'+1 650-555-3434'
+    var appVerifier = window.recaptchaVerifierReset
+  },*/
   sendSMS({ dispatch, commit }, { loading }) {
     loading.start()
     dispatch('clearMessage')

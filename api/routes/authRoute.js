@@ -109,6 +109,21 @@ router.post('/profile', checkSession, (req, res) => {
   res.status(200).send('ok')
 })
 
+router.post('/updatePhoneNumber', checkSession, (req, res) => {
+  const phone = req.body.form.phone
+  admin
+    .auth()
+    .updateUser(req.session.decodedClaims.uid, {
+      phoneNumber: phone
+    })
+    .then(function(userRecord) {
+      res.status(200).send('ok')
+    })
+    .catch(function(error) {
+      res.status(400).send('BAD REQUEST!')
+    })
+})
+
 router.get('/getorders', checkSession, (req, res) => {
   const orders = []
   db.ref('/users/' + req.session.decodedClaims.uid)
