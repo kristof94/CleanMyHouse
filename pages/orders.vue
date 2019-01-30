@@ -94,17 +94,12 @@ export default {
       currency: 'EUR'
     }
   },
-  computed: {
-    orders() {
-      return this.$store.getters.getOrders
-    }
-  },
-  fetch({ store, $axios }) {
+  asyncData({ store, $axios }) {
     return $axios
       .get('/getorders')
       .then(res => {
         const orders = res.data
-        store.commit('setOrders', orders)
+        return { orders }
       })
       .catch(err => {
         if (err.response == null || err.response.status == null) {
@@ -128,15 +123,17 @@ export default {
         }
       })
   },
-  mounted() {
-    if (!this.$axios.defaults.headers.common['XSRF-TOKEN']) {
-      this.$axios.get('/api/getcsrftoken').then(response => {
-        this.$axios.defaults.headers.common['XSRF-TOKEN'] =
-          response.data.csrfToken
-      })
-    }
-  },
   methods: {
+    test() {
+      this.$axios
+        .post('/hello', { data: true })
+        .then(res => {
+          console.log(res.data)
+        })
+        .catch(err => {
+          console.log(err)
+        })
+    },
     rate() {},
     redirectLogin() {
       if (
@@ -171,7 +168,7 @@ export default {
         })
         .then(res => {
           const orders = res.data
-          this.$store.commit('setOrders', orders)
+          this.orders = orders
         })
         .catch(err => {
           if (!err.response.status) {

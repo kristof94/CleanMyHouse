@@ -24,12 +24,8 @@ function manageAuth(promise, commit, dispatch, axios, root) {
     .then(idToken => {
       if (idToken) {
         return axios
-          .get('/api/getcsrftoken')
-          .then(response => {
-            return axios.post('/sessionToken', {
-              idToken,
-              _csrf: response.data.csrfToken
-            })
+          .post('/sessionToken', {
+            idToken
           })
           .then(() => {
             commit('setUser', Auth.currentUser)
@@ -87,11 +83,7 @@ const getters = {
 }
 
 const actions = {
-  /*nuxtServerInit({ commit }, { req }) {
-    console.log(commit)
-    console.log(req)
-    console.log(req)
-
+  nuxtServerInit() {
     if (!this.$axios.defaults.headers.common['XSRF-TOKEN']) {
       this.$axios.get('/api/getcsrftoken').then(response => {
         this.$axios.defaults.headers.common['XSRF-TOKEN'] =
@@ -99,7 +91,7 @@ const actions = {
         this.$axios.setHeader('XSRF-TOKEN', response.data.csrfToken)
       })
     }
-  },*/
+  },
   isSigned() {
     return true
   },

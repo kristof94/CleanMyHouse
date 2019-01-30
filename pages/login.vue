@@ -89,14 +89,14 @@ export default {
     MyFooter
   },
   transition: 'fadeOpacity',
-  mounted() {
+  /*mounted() {
     if (!this.$axios.defaults.headers.common['XSRF-TOKEN']) {
       this.$axios.get('/api/getcsrftoken').then(response => {
         this.$axios.defaults.headers.common['XSRF-TOKEN'] =
           response.data.csrfToken
       })
     }
-  },
+  },*/
   methods: {
     googleSignUpPopup() {
       this.$nuxt.$loading.start()

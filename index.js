@@ -39,7 +39,7 @@ let config = require('./nuxt.config.js')
 config.dev = !(process.env.NODE_ENV === 'production')
 const nuxt = new Nuxt(config)
 
-app.get('/hello', function(req, res) {
+app.post('/hello', function(req, res) {
   res.send('Hello World!')
 })
 
