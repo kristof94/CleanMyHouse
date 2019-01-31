@@ -5,8 +5,9 @@
       <div class="signin">
         <div class="signinTitle">
           Mes informations      
-        </div>    
-        <b-form id="registerForm" @submit.prevent="goToSendCode">    
+        </div>
+        <phone-form v-show="displayPhoneForm" @codeConfirmed="DisplayPhoneForm" />
+        <b-form v-if="!displayPhoneForm" id="registerForm">
           <b-form-group id="phoneInputGroup" label="Mon numéro de téléphone" label-for="phoneInput">
             <b-input-group>
               <b-input-group-text slot="prepend">
@@ -18,32 +19,32 @@
                 <the-mask
                   id="phoneInput"
                   v-model="form.phone"
-                  :state="$v.form.phone.minLength"
-                  placeholder="+33601832011"
+                  :disabled="true"
+                  placeholder="0601832011"
                   type="tel"
                   aria-describedby="phoneInputGroupFeedback"
-                  mask="+33# ## ## ## ##"
+                  mask="## ## ## ## ##"
                 />
-              </no-ssr>
-              <b-form-invalid-feedback
-                v-if="!$v.form.phone.minLength"
-                id="phoneInputGroupFeedback"
-              >Votre numéro de téléphone est invalide.</b-form-invalid-feedback>
+              </no-ssr>              
             </b-input-group>
           </b-form-group>
           <b-button
-            :disabled="$v.form.$invalid"
             class="submitButton"
-            type="submit"
-            style="width:100%"
+            style="width:100%"            
+            @click="updatePhoneNumber"
           >Changer de numéro de téléphone</b-button>
-        </b-form>
+        </b-form>           
       </div>
     </section>
     <modal-error v-if="this.$store.getters.getError" @close="redirectLogin">
+      <!--
+      you can use custom content here to overwrite
+      default content
+			-->
       <div slot="header">{{ this.$store.getters.getError.header }}</div>
-      <div slot="body">{{ this.$store.getters.getError }}</div>
+      <div slot="body">{{ this.$store.getters.getError.message }}</div>
     </modal-error>
+    <my-footer/>    
   </div>
 </template>
 
@@ -51,8 +52,6 @@
 import NavBar from '~/components/Navigation/NavBar'
 import MyFooter from '~/components/Footer/Footer'
 import ModalError from '~/components/Modal/ModalError'
-import { required, minLength } from 'vuelidate/lib/validators'
-import { validationMixin } from 'vuelidate'
 import PhoneForm from '~/components/Forms/PhoneForm'
 
 export default {
@@ -62,52 +61,54 @@ export default {
     PhoneForm,
     MyFooter
   },
-  mixins: [validationMixin],
-  validations: {
-    form: {
-      phone: {
-        required,
-        minLength: minLength(9)
-      }
-    }
-  },
   transition: 'fadeOpacity',
   data() {
     return {
       form: {
         phone: null
-      }
-    }
-  },
-  computed: {
-    phone: {
-      get() {
-        return this.$store.getters.getPhoneNumber
       },
-      set(value) {
-        this.form.phone = value
-        this.$store.commit('setPhoneNumber', '+33'.concat(this.form.phone))
-      }
+      displayPhoneForm: false
     }
   },
   created: function() {
     const phoneNumber = this.$store.getters.getPhoneNumber
-    if (phoneNumber) {
-      this.form.phone = phoneNumber
+    if (phoneNumber && phoneNumber.startsWith('+33')) {
+      this.form.phone = phoneNumber.replace('+33', '0')
     }
   },
   methods: {
-    goToSendCode() {
-      this.form.phone = '+33'.concat(this.form.phone)
+    updatePhoneNumber() {
       this.$nuxt.$loading.start()
       this.$store
-        .dispatch('updatePhoneNumber', { form: this.form })
+        .dispatch('prepareCatchaReset', { loading: this.$nuxt.$loading })
+        .then(() => {
+          this.displayPhoneForm = true
+        })
         .finally(() => {
+          this.$store.commit('setError', null)
           this.$nuxt.$loading.finish()
         })
     },
     redirectLogin() {
-      this.$store.commit('setError', null)
+      if (
+        this.$store.getters.getError.code === 403 ||
+        this.$store.getters.getError.code === 401
+      ) {
+        this.$store.dispatch('clearMessage')
+        this.$store.dispatch('displayLoginForm')
+        this.$store.commit('setError', null)
+        this.$router.push('/login')
+        return
+      }
+      if (this.$store.getters.getError.code === 500) {
+        this.$store.dispatch('clearMessage')
+        this.$store.commit('setError', null)
+        location.reload()
+        return
+      }
+    },
+    DisplayPhoneForm(event) {
+      this.displayPhoneForm = event
     }
   }
 }

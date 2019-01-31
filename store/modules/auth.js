@@ -1,6 +1,7 @@
 import firebase from 'firebase/app'
 import {
   Auth,
+  PhoneAuthProvider,
   GoogleAuthProvider,
   FacebookAuthProvider
 } from '~/plugins/firebase-client-init.js'
@@ -15,9 +16,13 @@ function manageAuth(promise, commit, dispatch, axios, root) {
       const isNewUser = result.additionalUserInfo.isNewUser
       const user = result.user
       if (isNewUser || !user.phoneNumber) {
-        dispatch('displayPhoneForm')
-        commit('setShow', true)
-        return
+        return dispatch('displayPhoneForm')
+          .then(() => {
+            return dispatch('prepareCatchaReset')
+          })
+          .then(() => {
+            commit('setShow', true)
+          })
       }
       return Auth.currentUser.getIdToken()
     })
@@ -28,6 +33,7 @@ function manageAuth(promise, commit, dispatch, axios, root) {
             idToken
           })
           .then(() => {
+            dispatch('clearMessage')
             commit('setUser', Auth.currentUser)
             commit('setPhoneNumber', Auth.currentUser.phoneNumber)
             return { success: true }
@@ -92,19 +98,67 @@ const actions = {
       })
     }
   },
-  updatePhoneNumber({ commit }, { form }) {
-    return this.$axios
-      .post('/updatePhoneNumber', { form })
+  prepareCatchaReset() {
+    window.recaptchaVerifierReset = new firebase.auth.RecaptchaVerifier(
+      'resetPhone',
+      {
+        size: 'invisible'
+      }
+    )
+    return window.recaptchaVerifierReset.render().then(widgetId => {
+      window.recaptchaResetWidgetId = widgetId
+      return Promise.resolve('captcha ok')
+    })
+  },
+  sendSMSReset({ commit }) {
+    return window.recaptchaVerifierReset
+      .verify()
       .then(() => {
-        commit('setPhoneNumber', form.phone)
+        const phone = '+1 650-555-3434' //this.getters.getPhoneNumber //
+        var appVerifier = window.recaptchaVerifierReset
+        return PhoneAuthProvider.verifyPhoneNumber(phone, appVerifier)
       })
-      .catch(() => {
+      .then(function(verificationId) {
+        // SMS sent. Prompt user to type the code from the message, then sign the
+        // user in with confirmationResult.confirm(code).
+        window.verificationId = verificationId
+        return Promise.resolve('captcha ok')
+      })
+      .catch(function(error) {
+        console.log(error)
+        console.log(this)
         commit('setError', {
-          code: '400',
-          header: 'Erreur interne.',
-          message: 'Erreur interne.'
+          code: 500,
+          header: 'Erreur',
+          message: error.message == null ? error : error.message
         })
       })
+  },
+  confirmCodeReset({ commit, dispatch }, { code }) {
+    console.log(commit == null)
+    console.log(dispatch == null)
+    if (code) {
+      const credential = firebase.auth.PhoneAuthProvider.credential(
+        window.verificationId,
+        code
+      )
+      return Auth.currentUser.updatePhoneNumber(credential).then(() => {
+        return manageAuth(
+          Auth.currentUser.reauthenticateAndRetrieveDataWithCredential(
+            credential
+          ),
+          commit,
+          dispatch,
+          this.app.$axios,
+          this
+        ).then(result => {
+          if (result && result.success) {
+            this.app.router.push('/')
+          }
+        })
+      })
+    }
+    return Promise.reject('code problem')
   },
   isSigned() {
     return true
@@ -191,23 +245,6 @@ const actions = {
     })
     window.recaptchaVerifier.render().then(widgetId => {
       window.recaptchaWidgetId = widgetId
-    })
-  },
-  prepareCatchaResetPhone({ dispatch, commit }, { loading }) {
-    window.recaptchaVerifierReset = new firebase.auth.RecaptchaVerifier(
-      'get-codeReset',
-      {
-        size: 'invisible',
-        callback: function() {
-          dispatch('sendSMSResetPhone', { loading })
-        },
-        'expired-callback': function() {
-          commit('couldSignInWithPhoneNumber', false)
-        }
-      }
-    )
-    window.recaptchaVerifierReset.render().then(widgetId => {
-      window.recaptchaResetWidgetId = widgetId
     })
   },
   /* sendSMSResetPhone({ dispatch, commit }, { loading }) {

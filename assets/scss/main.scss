@@ -195,6 +195,7 @@ h2 {
   padding: 20px 20px 20px 20px;
   height: min-content;
   @include sm {
+    margin: 20px 20px 20px 20px;
   }
 
   @include md {
@@ -205,6 +206,7 @@ h2 {
   }
 
   @include lg {
+    max-width: 60%;
   }
 }
 
@@ -223,6 +225,44 @@ h2 {
   }
 
   @include lg {
+  }
+}
+
+$char-w: 1ch;
+$gap: 0.5 * $char-w;
+$n-char: 6;
+$in-w: $n-char * ($char-w + $gap);
+
+.inputCode {
+  text-align: center;
+  display: block;
+  margin: 1em auto;
+  border: none;
+  padding: 0;
+  width: $in-w;
+  color: rgb(87, 145, 158);
+  background: repeating-linear-gradient(
+      90deg,
+      dimgrey 0,
+      dimgrey $char-w,
+      transparent 0,
+      transparent $char-w + $gap
+    )
+    0 100% / #{$in-w - $gap} 2px no-repeat;
+  letter-spacing: $gap;
+  &:focus {
+    outline: none;
+    color: dodgerblue;
+  }
+  
+  @include sm {
+    font: 2ch droid sans mono, consolas, monospace;
+  }
+  @include md {
+    font: 5ch droid sans mono, consolas, monospace;
+  }
+  @include lg {
+    font: 5ch droid sans mono, consolas, monospace;
   }
 }
 

@@ -27,9 +27,9 @@
             v-show="this.$store.getters.getModal=='lostpassword'"
             ref="infoValid"
           />
-          <phone-form
+          <phone-form          
             v-else-if="this.$store.getters.getModal=='getphone'"
-            v-show="this.$store.getters.getModal=='getphone'"
+            v-show="this.$store.getters.getModal=='getphone'"            
           />
         </transition>
         <div
@@ -89,14 +89,20 @@ export default {
     MyFooter
   },
   transition: 'fadeOpacity',
-  /*mounted() {
-    if (!this.$axios.defaults.headers.common['XSRF-TOKEN']) {
-      this.$axios.get('/api/getcsrftoken').then(response => {
-        this.$axios.defaults.headers.common['XSRF-TOKEN'] =
-          response.data.csrfToken
-      })
+  data() {
+    return {
+      form: {
+        phone: null
+      },
+      displayPhoneForm: false
     }
-  },*/
+  },
+  created: function() {
+    const phoneNumber = this.$store.getters.getPhoneNumber
+    if (phoneNumber && phoneNumber.startsWith('+33')) {
+      this.form.phone = phoneNumber.replace('+33', '0')
+    }
+  },
   methods: {
     googleSignUpPopup() {
       this.$nuxt.$loading.start()
@@ -109,6 +115,24 @@ export default {
       this.$store.dispatch('signInWithFacebookPopup').finally(() => {
         this.$nuxt.$loading.finish()
       })
+    },
+    redirectLogin() {
+      if (
+        this.$store.getters.getError.code === 403 ||
+        this.$store.getters.getError.code === 401
+      ) {
+        this.$store.dispatch('clearMessage')
+        this.$store.dispatch('displayLoginForm')
+        this.$store.commit('setError', null)
+        this.$router.push('/login')
+        return
+      }
+      if (this.$store.getters.getError.code === 500) {
+        this.$store.dispatch('clearMessage')
+        this.$store.commit('setError', null)
+        location.reload()
+        return
+      }
     }
   }
 }

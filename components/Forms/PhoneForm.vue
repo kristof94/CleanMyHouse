@@ -1,152 +1,159 @@
 <template>
   <div>
-    <b-form id="phoneForm">
-      <b-form-group
-        id="phoneInputGroup"
-        :label="label"
-        label-for="phoneInput"
-      >
+    <b-form id="phoneForm" @submit.prevent="preventEnter">
+      
+      <b-form-group id="phoneInputGroup" label="Mon numéro de téléphone" label-for="phoneInput">
         <b-input-group>
           <b-input-group-text slot="prepend">
             <span>
               <font-awesome-icon :icon="['fa', 'phone']"/>
             </span>
           </b-input-group-text>
-          <the-mask
-            id="phoneInput"
-            v-model="phone"
-            :state="$v.form.phone.minLength"
-            style="width:80%;"
-            placeholder="+33601832011"
-            type="tel"
-            mask="+33# ## ## ## ##"
-          />
+          <no-ssr>              
+            <the-mask            
+              id="phoneInput"
+              v-model="phone"
+              :state="$v.form.phone.minLength"
+              placeholder="0601832011"
+              type="tel"
+              aria-describedby="phoneInputGroupFeedback"
+              mask="## ## ## ## ##"
+            />
+          </no-ssr>
           <b-form-invalid-feedback
             v-if="!$v.form.phone.minLength"
-            id="passwordInputGroupFeedback"
-          >Name must have at least {{ $v.form.phone.$params.minLength.min }} num.</b-form-invalid-feedback>
+            id="phoneInputGroupFeedback"
+          >Votre numéro de téléphone est invalide.</b-form-invalid-feedback>
         </b-input-group>
       </b-form-group>
       <b-button
-        id="get-code"
+        id="resetPhone"
         :disabled="$v.form.$invalid"
         class="submitButton"
-        type="submit"
-        variant="primary"
         style="width:100%"
-      >Recevoir son code d'activation</b-button>
+        @click="sendSms"        
+      >Recevoir le code</b-button>
     </b-form>
-    <b-form
-      v-if="this.$store.getters.couldSignInWithPhoneNumber"
-      id="codeForm"
-      style="margin-top : 12px;"
-      @submit.prevent="confirmPhone"
-    >
-      <b-form-group
-        id="codeInputGroup"
-        label="Entrez le code de confirmation que vous avez reçu"
-        label-for="codeInput"
-      >
-        <b-input-group>
-          <the-mask
-            id="codeInput"
-            v-model="codeForm.code"
-            placeholder="111222"
-            type="tel"
-            class="form-control"
-            mask="######"
-          />
-        </b-input-group>
-      </b-form-group>
+    <b-form v-if="displayCodeInput" id="codeForm" @submit.prevent="preventEnterCode">    
+      <input ref="inputCode" v-model="codeForm.code" class="inputCode" maxlength="6">
       <b-button
         :disabled="$v.codeForm.$invalid"
-        class="submitButton"
-        type="submit"
-        variant="primary"
+        class="submitButton"        
         style="width:100%"
-      >Confirmer le code d'activation</b-button>
-    </b-form>
+        @click="confirmCode"
+      >Confirmer le code</b-button>
+    </b-form>           
   </div>
 </template>
 
 <script>
-import { required, minLength } from 'vuelidate/lib/validators'
+import NavBar from '~/components/Navigation/NavBar'
+import MyFooter from '~/components/Footer/Footer'
+import ModalError from '~/components/Modal/ModalError'
+import { required, minLength, maxLength } from 'vuelidate/lib/validators'
 import { validationMixin } from 'vuelidate'
+import PhoneForm from '~/components/Forms/PhoneForm'
 
 export default {
-  components: {},
+  components: {
+    NavBar,
+    ModalError,
+    PhoneForm,
+    MyFooter
+  },
   mixins: [validationMixin],
-  props: {
-    label: {
-      type: String,
-      default:
-        'Votre compte a été créé. Pour finaliser votre inscription, entrez votre numéro de téléphone'
+  validations: {
+    form: {
+      phone: {
+        required,
+        minLength: minLength(10)
+      }
+    },
+    codeForm: {
+      code: {
+        required,
+        minLength: minLength(6),
+        maxLength: maxLength(6)
+      }
     }
   },
-  data: () => {
+  transition: 'fadeOpacity',
+  data() {
     return {
       codeForm: {
         code: null
       },
       form: {
         phone: null
-      }
-    }
-  },
-  computed: {
-    phone: {
-      get() {
-        return this.$store.getters.getPhoneNumber
       },
-      set(value) {
-        this.form.phone = value
-        this.$store.commit('setPhoneNumber', '+33'.concat(this.form.phone))
+      phone: null,
+      displayCodeInput: false
+    }
+  },
+  watch: {
+    phone: function(val) {
+      if (val.length === 10) {
+        this.form.phone = val
+        const phone = '+33'.concat(this.form.phone.substring(1))
+        this.$store.commit('setPhoneNumber', phone)
       }
     }
   },
+  mounted: function() {},
   created: function() {
     const phoneNumber = this.$store.getters.getPhoneNumber
-    if (phoneNumber) {
-      this.form.phone = phoneNumber
+    if (phoneNumber && phoneNumber.startsWith('+33')) {
+      this.form.phone = phoneNumber.replace('+33', '0')
+      this.phone = this.form.phone
     }
   },
-  validations: {
-    form: {
-      phone: {
-        required,
-        minLength: minLength(9)
-      }
-    },
-    codeForm: {
-      code: {
-        required
-      }
-    }
-  },
-  mounted: function() {
-    this.$store.dispatch('prepareCatcha', { loading: this.$nuxt.$loading })
-    if (this.$store.getters.getPhoneNumber) {
-      this.form.phone = this.$store.getters.getPhoneNumber
-    }
-  },
-
   methods: {
-    confirmPhone() {
+    preventEnter() {
+      this.sendSms()
+    },
+    preventEnterCode() {
+      this.confirmCode()
+    },
+    sendSms() {
       this.$nuxt.$loading.start()
       this.$store
-        .dispatch('confirmCode', {
-          code: this.codeForm.code
+        .dispatch('sendSMSReset')
+        .then(() => {
+          this.displayCodeInput = true
+          console.log(this.$refs.inputCode)
+          // .$el.focus()
         })
-        .catch(err => {
-          console.log(err)
+        .catch(function(error) {
+          console.log(error)
+          this.$store.commit('setError', {
+            code: 500,
+            header: 'Erreur',
+            message: error.message
+          })
         })
         .finally(() => {
+          window.grecaptcha.reset(window.recaptchaResetWidgetId)
+          this.$nuxt.$loading.finish()
+        })
+    },
+    confirmCode() {
+      this.$nuxt.$loading.start()
+      const code = this.codeForm.code
+      this.$store
+        .dispatch('confirmCodeReset', { code })
+        .catch(error => {
+          console.log(error)
+          this.$store.commit('setError', {
+            code: 500,
+            header: 'Erreur',
+            message: error.message == null ? error : error.message
+          })
+        })
+        .finally(() => {
+          window.grecaptcha.reset(window.recaptchaResetWidgetId)
           this.$nuxt.$loading.finish()
         })
     }
   }
 }
 </script>
-
-<style>
-</style>
