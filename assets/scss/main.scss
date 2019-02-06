@@ -206,7 +206,8 @@ h2 {
   }
 
   @include lg {
-    max-width: 60%;
+    max-width: 40%;
+    min-width: 40%;
   }
 }
 

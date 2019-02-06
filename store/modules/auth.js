@@ -114,7 +114,7 @@ const actions = {
     return window.recaptchaVerifierReset
       .verify()
       .then(() => {
-        const phone = '+1 650-555-3434' //this.getters.getPhoneNumber //
+        const phone = this.getters.getPhoneNumber //'+1 650-555-3434' //
         var appVerifier = window.recaptchaVerifierReset
         return PhoneAuthProvider.verifyPhoneNumber(phone, appVerifier)
       })
@@ -144,9 +144,7 @@ const actions = {
       )
       return Auth.currentUser.updatePhoneNumber(credential).then(() => {
         return manageAuth(
-          Auth.currentUser.reauthenticateAndRetrieveDataWithCredential(
-            credential
-          ),
+          Auth.currentUser.linkWithCredential(credential),
           commit,
           dispatch,
           this.app.$axios,

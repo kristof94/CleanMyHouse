@@ -102,7 +102,7 @@ export default {
   mounted: function() {},
   created: function() {
     const phoneNumber = this.$store.getters.getPhoneNumber
-    if (phoneNumber && phoneNumber.startsWith('+33')) {
+    if (phoneNumber) {
       this.form.phone = phoneNumber.replace('+33', '0')
       this.phone = this.form.phone
     }
@@ -118,18 +118,10 @@ export default {
       this.$nuxt.$loading.start()
       this.$store
         .dispatch('sendSMSReset')
-        .then(() => {
-          this.displayCodeInput = true
-          console.log(this.$refs.inputCode)
-          // .$el.focus()
-        })
-        .catch(function(error) {
-          console.log(error)
-          this.$store.commit('setError', {
-            code: 500,
-            header: 'Erreur',
-            message: error.message
-          })
+        .then(response => {
+          if (response === 'captcha ok') {
+            this.displayCodeInput = true
+          }
         })
         .finally(() => {
           window.grecaptcha.reset(window.recaptchaResetWidgetId)

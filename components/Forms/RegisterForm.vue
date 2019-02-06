@@ -28,14 +28,14 @@
             <font-awesome-icon :icon="['fa', 'phone']"/>
           </span>
         </b-input-group-text>
-        <the-mask
+        <the-mask            
           id="phoneInput"
           v-model="form.phone"
           :state="$v.form.phone.minLength"
-          placeholder="+33601832011"
+          placeholder="0601832011"
           type="tel"
           aria-describedby="phoneInputGroupFeedback"
-          mask="+33# ## ## ## ##"
+          mask="## ## ## ## ##"
         />
         <b-form-invalid-feedback
           v-if="!$v.form.phone.minLength"
@@ -115,11 +115,12 @@ export default {
   data: () => {
     return {
       form: {
-        email: '',
-        password: '',
-        phone: '',
-        passwordRepeat: ''
-      }
+        email: null,
+        password: null,
+        phone: null,
+        passwordRepeat: null
+      },
+      phone: null
     }
   },
   computed: {
@@ -129,6 +130,15 @@ export default {
       },
       set: function(newValue) {
         this.$store.commit('setShow', newValue)
+      }
+    }
+  },
+  watch: {
+    phone: function(val) {
+      if (val.length === 10) {
+        this.form.phone = val
+        const phone = '+33'.concat(this.form.phone.substring(1))
+        this.$store.commit('setPhoneNumber', phone)
       }
     }
   },
@@ -166,13 +176,14 @@ export default {
       },
       phone: {
         required,
-        minLength: minLength(9)
+        minLength: minLength(10)
       },
       passwordRepeat: {
         sameAsPassword: sameAs('password')
       }
     }
   },
+
   methods: {
     displayLogin() {
       this.$store.dispatch('displayLoginForm')
