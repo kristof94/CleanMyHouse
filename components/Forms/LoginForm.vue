@@ -104,9 +104,6 @@ export default {
         .dispatch('signInWithEmailAndPassword', {
           user: newUser
         })
-        .catch(err => {
-          console.log(err)
-        })
         .finally(() => {
           this.$nuxt.$loading.finish()
         })

@@ -6,6 +6,44 @@ import {
   FacebookAuthProvider
 } from '~/plugins/firebase-client-init.js'
 
+function manageError(commit, error) {
+  if (error.message) {
+    commit('setError', {
+      code: 'auth/wrong-password',
+      header: "Erreur d'identifiants.",
+      message: error.message
+    })
+    console.log(error)
+  } else {
+    commit('setError', {
+      code: '500',
+      header: 'Erreur interne.',
+      message: 'Erreur interne.'
+    })
+  }
+  commit('setShow', true)
+}
+
+function manageIdToken(dispatch, commit, axios) {
+  return Auth.currentUser
+    .getIdToken()
+    .then(idToken => {
+      return axios
+        .post('/sessionToken', {
+          idToken
+        })
+        .then(() => {
+          dispatch('clearMessage')
+          commit('setUser', Auth.currentUser)
+          commit('setPhoneNumber', Auth.currentUser.phoneNumber)
+          return { success: true }
+        })
+    })
+    .catch(error => {
+      manageError(commit, error)
+    })
+}
+
 function manageAuth(promise, commit, dispatch, axios, root) {
   return promise
     .then(result => {
@@ -24,37 +62,10 @@ function manageAuth(promise, commit, dispatch, axios, root) {
             commit('setShow', true)
           })
       }
-      return Auth.currentUser.getIdToken()
-    })
-    .then(idToken => {
-      if (idToken) {
-        return axios
-          .post('/sessionToken', {
-            idToken
-          })
-          .then(() => {
-            dispatch('clearMessage')
-            commit('setUser', Auth.currentUser)
-            commit('setPhoneNumber', Auth.currentUser.phoneNumber)
-            return { success: true }
-          })
-      }
+      return manageIdToken(dispatch, commit, axios)
     })
     .catch(error => {
-      if (error.message) {
-        commit('setError', {
-          code: 'auth/wrong-password',
-          header: "Erreur d'identifiants.",
-          message: error.message
-        })
-      } else {
-        commit('setError', {
-          code: '500',
-          header: 'Erreur interne.',
-          message: 'Erreur interne.'
-        })
-      }
-      commit('setShow', true)
+      manageError(commit, error)
     })
 }
 
@@ -97,6 +108,26 @@ const actions = {
         this.$axios.setHeader('XSRF-TOKEN', response.data.csrfToken)
       })
     }
+  },
+  removeAccount({ commit }) {
+    console.log(commit === 7)
+    var user = Auth.currentUser
+    return user
+      .delete()
+      .then(() => {
+        return this.app.$axios.post('/sessionLogout')
+      })
+      .then(() => {
+        commit('setUser', null)
+        commit('setAddress', null)
+        commit('setDate', null)
+        commit('setTime', null)
+        this.$cookies.remove('vuex')
+        this.app.router.push('/')
+      })
+      .catch(error => {
+        manageError(commit, error)
+      })
   },
   prepareCatchaReset() {
     window.recaptchaVerifierReset = new firebase.auth.RecaptchaVerifier(
@@ -142,19 +173,16 @@ const actions = {
         window.verificationId,
         code
       )
-      return Auth.currentUser.updatePhoneNumber(credential).then(() => {
-        return manageAuth(
-          Auth.currentUser.linkWithCredential(credential),
-          commit,
-          dispatch,
-          this.app.$axios,
-          this
-        ).then(result => {
+      return Auth.currentUser
+        .updatePhoneNumber(credential)
+        .then(() => {
+          return manageIdToken(dispatch, commit, this.app.$axios)
+        })
+        .then(result => {
           if (result && result.success) {
             this.app.router.push('/')
           }
         })
-      })
     }
     return Promise.reject('code problem')
   },

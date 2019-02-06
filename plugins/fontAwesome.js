@@ -15,7 +15,8 @@ import {
   faEuroSign,
   faSignInAlt,
   faUsers,
-  faBriefcase
+  faBriefcase,
+  faUserTimes
 } from '@fortawesome/free-solid-svg-icons'
 import {
   faClock,
@@ -31,6 +32,7 @@ import brands, {
 } from '@fortawesome/fontawesome-free-brands'
 config.autoAddCss = false
 
+library.add(faUserTimes)
 library.add(faBriefcase)
 library.add(faAddressCard)
 library.add(faSignInAlt)

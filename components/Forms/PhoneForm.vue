@@ -1,7 +1,15 @@
 <template>
   <div>
-    <b-form id="phoneForm" @submit.prevent="preventEnter">
-      
+    <b-form v-if="displayCodeInput" id="codeForm" @submit.prevent="preventEnterCode">    
+      <input ref="inputCode" v-model="codeForm.code" class="inputCode" maxlength="6">
+      <b-button
+        :disabled="$v.codeForm.$invalid"
+        class="submitButton"        
+        style="width:100%"
+        @click="confirmCode"
+      >Confirmer le code</b-button>
+    </b-form>
+    <b-form id="phoneForm" style="margin-top:1em;" @submit.prevent="preventEnter">            
       <b-form-group id="phoneInputGroup" label="Mon numéro de téléphone" label-for="phoneInput">
         <b-input-group>
           <b-input-group-text slot="prepend">
@@ -32,17 +40,8 @@
         class="submitButton"
         style="width:100%"
         @click="sendSms"        
-      >Recevoir le code</b-button>
-    </b-form>
-    <b-form v-if="displayCodeInput" id="codeForm" @submit.prevent="preventEnterCode">    
-      <input ref="inputCode" v-model="codeForm.code" class="inputCode" maxlength="6">
-      <b-button
-        :disabled="$v.codeForm.$invalid"
-        class="submitButton"        
-        style="width:100%"
-        @click="confirmCode"
-      >Confirmer le code</b-button>
-    </b-form>           
+      >{{ displayCodeInput ? 'Recevoir un nouveau code' : 'Recevoir le code' }}</b-button>
+    </b-form>               
   </div>
 </template>
 
