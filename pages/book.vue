@@ -251,15 +251,11 @@ export default {
       date:
         this.$store.getters.getDate == null
           ? null
-          : DateTime.fromISO(this.$store.getters.getDate, {
-              zone: 'Europe/Paris'
-            }),
+          : DateTime.fromISO(this.$store.getters.getDate),
       time:
         this.$store.getters.getTime == null
           ? null
-          : DateTime.fromISO(this.$store.getters.getTime, {
-              zone: 'Europe/Paris'
-            }),
+          : DateTime.fromISO(this.$store.getters.getTime),
       address:
         this.$store.getters.getAddress == null
           ? null

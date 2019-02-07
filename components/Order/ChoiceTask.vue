@@ -29,6 +29,9 @@
                     </div>
                   </b-col>
                 </b-row>
+                <b-row>
+                  <b-col cols="12">*Libre à vous de communiquer à votre aide ménagère la répartition des heures de repassage et de ménage.</b-col>
+                </b-row>
               </b-container>
             </slot>
           </div>
@@ -54,17 +57,21 @@ export default {
   },
   methods: {
     chooseIron() {
-      this.menage_checked = false
+      // this.menage_checked = false
       this.repassage_checked = true
     },
     chooseClean() {
       this.menage_checked = true
-      this.repassage_checked = false
+      // this.repassage_checked = false
     },
     close() {
       this.$emit('closeChoiceModal')
     },
     confirm() {
+      if (this.menage_checked && this.repassage_checked) {
+        this.$emit('closeChoiceModal', 3)
+        return
+      }
       if (this.menage_checked) {
         this.$emit('closeChoiceModal', 1)
         return

@@ -27,10 +27,10 @@ export default {
   methods: {
     choiceRepassage() {
       this.repassage_checked = true
-      this.menage_checked = false
+      // this.menage_checked = false
     },
     choiceMenage() {
-      this.menage_checked = true
+      // this.menage_checked = true
       this.repassage_checked = false
     }
   }

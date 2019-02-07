@@ -47,7 +47,6 @@
 
 <script>
 import { DateTime } from 'luxon'
-import StarRating from 'vue-star-rating'
 
 function statusMap() {
   const map = new Map()
@@ -62,9 +61,6 @@ function statusMap() {
 const map = statusMap()
 
 export default {
-  components: {
-    StarRating
-  },
   props: {
     order: {
       type: Object,
@@ -73,9 +69,7 @@ export default {
   },
   data() {
     return {
-      date: DateTime.fromMillis(this.order.date, {
-        zone: 'Europe/Paris'
-      })
+      date: DateTime.fromMillis(this.order.date)
     }
   },
   computed: {
@@ -88,14 +82,10 @@ export default {
       return map.get(this.order.status)
     },
     since: function() {
-      const nowDate = DateTime.local().setZone('Europe/Paris')
+      const nowDate = DateTime.local()
       const now = nowDate.toMillis()
-      const sinceDate = DateTime.fromMillis(this.order.sinceDate, {
-        zone: 'Europe/Paris'
-      })
-      const delta = DateTime.fromMillis(now - this.order.sinceDate, {
-        zone: 'Europe/Paris'
-      })
+      const sinceDate = DateTime.fromMillis(this.order.sinceDate)
+      const delta = DateTime.fromMillis(now - this.order.sinceDate)
       if (
         delta.get('hour') >= 12 ||
         sinceDate.get('weekdayLong') > nowDate.get('weekdayLong')
@@ -117,7 +107,7 @@ export default {
       const time = DateTime.fromMillis(this.order.time)
       const hours = time.get('hour')
       const minute = time.get('minute')
-      return hours + 'h' + (minute == 0 ? '00' : '30')
+      return `Il y a ${hours}h${minute == 0 ? '00' : '30'}`
     },
     task: function() {
       var taskMap = new Map()
