@@ -273,8 +273,8 @@ router.post('/processpayment', checkSession, (req, res) => {
       res.status(200).send('Paiement enregistré.')
     })
     .catch(err => {
-      console.log(err)
-      if (err.code === 'resource_missing') {
+      // console.log(err)
+      if (err.code === 'resource_missing' || err.code === 'PERMISSION_DENIED') {
         res.status(500).send('Internal error!')
         return
       }
