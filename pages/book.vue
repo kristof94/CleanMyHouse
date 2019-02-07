@@ -154,6 +154,7 @@
         :minute-step="30"
         :week-start="7"
         :min-datetime="minDatetime"
+        :max-datetime="maxDatetime"
         type="datetime"
         auto
         class="theme-blue"
@@ -268,6 +269,9 @@ export default {
       ),
       minDatetime: DateTime.local()
         .plus({ hours: 2 })
+        .toISO(),
+      maxDatetime: DateTime.local()
+        .plus({ months: 3 })
         .toISO()
     }
   },
