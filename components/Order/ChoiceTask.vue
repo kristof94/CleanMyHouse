@@ -14,7 +14,7 @@
                     <div class="text-center">
                       <label class="checkbox_container">
                         Ménage
-                        <input v-model="menage_checked" type="checkbox" @change="chooseClean">
+                        <input v-model="menage_checked" type="checkbox">
                         <span class="checkmark"/>
                       </label>
                     </div>
@@ -23,7 +23,7 @@
                     <div class="text-center">
                       <label class="checkbox_container">
                         Repassage
-                        <input v-model="repassage_checked" type="checkbox" @change="chooseIron">
+                        <input v-model="repassage_checked" type="checkbox">
                         <span class="checkmark"/>
                       </label>
                     </div>
@@ -56,14 +56,6 @@ export default {
     }
   },
   methods: {
-    chooseIron() {
-      // this.menage_checked = false
-      this.repassage_checked = true
-    },
-    chooseClean() {
-      this.menage_checked = true
-      // this.repassage_checked = false
-    },
     close() {
       this.$emit('closeChoiceModal')
     },

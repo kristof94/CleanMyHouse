@@ -86,9 +86,9 @@ export default {
       const now = nowDate.toMillis()
       const sinceDate = DateTime.fromMillis(this.order.sinceDate)
       const delta = DateTime.fromMillis(now - this.order.sinceDate)
-      console.log(now)
+      /*console.log(now)
       console.log(sinceDate)
-      console.log(delta)
+      console.log(delta)*/
 
       if (
         delta.get('hour') >= 12 ||

@@ -27,16 +27,6 @@ export default {
     }
   },
   methods: {
-    test() {
-      this.$axios
-        .get('/getorders')
-        .then(res => {
-          console.log(res.data)
-        })
-        .catch(err => {
-          console.log(err)
-        })
-    },
     book() {
       if (this.$store.getters.getUser) {
         this.$router.push('/book')

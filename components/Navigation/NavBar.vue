@@ -31,10 +31,7 @@
           </div>
         </div>
         <div v-else>
-          <div v-if="$store.getters.getUser">
-            <b-nav-item class="link" to="/cleaners" style="display: inline-block;">Nos aides ménagères
-              <font-awesome-icon :icon="['fas', 'users']"/>
-            </b-nav-item>
+          <div v-if="$store.getters.getUser">            
             <b-nav-item-dropdown
               text="Mon compte"
               class="link accountmenu"
@@ -53,9 +50,6 @@
             </b-nav-item-dropdown>
           </div>
           <div v-else>
-            <b-nav-item class="link" to="/cleaners" style="display: inline-block;">Nos aides ménagères
-              <font-awesome-icon :icon="['fas', 'users']"/>
-            </b-nav-item>
             <b-nav-item class="link" style="display: inline-block;" @click="showLoginModal">Se connecter
               <font-awesome-icon :icon="['fas', 'sign-in-alt']" :rotation="180"/>
             </b-nav-item>

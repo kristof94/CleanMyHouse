@@ -29,10 +29,10 @@
     >Modifier le mot de passe</b-button>
     <b-container class="bv-example-row text-center">
       <b-row>
-        <b-col lg="5" sm="3" cols="12" offset-md="0">
+        <b-col lg="6" sm="6" cols="12" offset-md="0">
           <b-button variant="link" class="btn-link" @click="displayLogin">Se connecter</b-button>
         </b-col>
-        <b-col lg="5" sm="3" cols="12" offset-md="1">
+        <b-col lg="6" sm="6" cols="12" offset-md="0">
           <b-button variant="link" class="btn-link" @click="displayRegister">Pas de compte ?</b-button>
         </b-col>
       </b-row>

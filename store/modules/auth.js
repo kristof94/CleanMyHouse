@@ -109,6 +109,25 @@ const actions = {
       })
     }
   },
+  getApi({ commit }) {
+    console.log(commit === 5)
+    Auth.currentUser
+      .getIdToken()
+      .then(idToken => {
+        return this.app.$axios.get(
+          'https://us-central1-cleanmyhouse-221915.cloudfunctions.net/app/hello',
+          {
+            headers: { Authorization: 'Bearer ' + idToken }
+          }
+        )
+      })
+      .then(res => {
+        console.log(res.data)
+      })
+      .catch(err => {
+        console.log(err)
+      })
+  },
   removeAccount({ commit }) {
     console.log(commit === 7)
     var user = Auth.currentUser

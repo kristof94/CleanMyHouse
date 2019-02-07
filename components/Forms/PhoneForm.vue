@@ -95,6 +95,9 @@ export default {
         this.form.phone = val
         const phone = '+33'.concat(this.form.phone.substring(1))
         this.$store.commit('setPhoneNumber', phone)
+      } else {
+        this.form.phone = null
+        this.$store.commit('setPhoneNumber', null)
       }
     }
   },
