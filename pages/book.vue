@@ -164,10 +164,10 @@
         :format="{hour: 'numeric', minute: '2-digit'}"
         :phrases="{ok: 'Continuer', cancel: 'Fermer'}"
         :hour-step="1"
-        :minute-step="30"
+        :minute-step="30"        
         type="time"
         max-datetime="05:00"
-        min-datetime="0:30"
+        min-datetime="01:00"
         emit-name="openTime"
         auto
         class="theme-blue"
