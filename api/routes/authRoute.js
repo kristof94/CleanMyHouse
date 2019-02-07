@@ -13,6 +13,32 @@ const expiresIn = 60 * 1000 * 20 // 10 min
 const price = 2000
 const { formatDescriptionFromOrder } = require('../utils/formatter')
 
+const createStripeCustomer = (usersRef, order) => {
+  return stripe.customers
+    .create({
+      email: order.email,
+      source: order.token.id
+    })
+    .then(customer => {
+      return usersRef.set({
+        customerId: customer.id
+      })
+    })
+}
+
+const retrieveCustomer = (customerId, order) => {
+  return stripe.customers.retrieve(customerId).then(customer => {
+    const newCard = !customer.sources.data
+      .map(data => data.id)
+      .includes(order.token.card.id)
+    if (newCard) {
+      return stripe.customers.createSource(customerId, {
+        source: order.token.id
+      })
+    }
+  })
+}
+
 const checkCookieSession = function(req, sessionCookie) {
   return admin
     .auth()
@@ -228,46 +254,20 @@ router.post('/processpayment', checkSession, (req, res) => {
       if (userData && userData.customerId) {
         const customerId = userData.customerId
         if (customerId) {
-          return stripe.customers.retrieve(customerId).then(customer => {
-            const newCard = !customer.sources.data
-              .map(data => data.id)
-              .includes(order.token.card.id)
-            if (newCard) {
-              stripe.customers.createSource(customerId, {
-                source: order.token.id
-              })
-            }
-            var refObj = usersRef.push()
-            var postId = refObj.key
-            order.idOrder = postId
-            order.token = null
-            return refObj.set({
-              order
-            })
-          })
+          return retrieveCustomer(customerId, order)
         }
       } else {
-        return stripe.customers
-          .create({
-            email: order.email,
-            source: order.token.id
-          })
-          .then(customer => {
-            usersRef
-              .set({
-                customerId: customer.id
-              })
-              .then(() => {
-                order.token = null
-                var refObj = usersRef.push()
-                var postId = refObj.key
-                order.idOrder = postId
-                return refObj.set({
-                  order
-                })
-              })
-          })
+        return createStripeCustomer(usersRef, order)
       }
+    })
+    .then(() => {
+      order.token = null
+      var refObj = usersRef.push()
+      var postId = refObj.key
+      order.idOrder = postId
+      return refObj.set({
+        order
+      })
     })
     .then(() => {
       res.status(200).send('Paiement enregistré.')

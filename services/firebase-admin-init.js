@@ -16,7 +16,10 @@ if (admin.apps.length === 0) {
       auth_provider_x509_cert_url: process.env.auth_provider_x509_cert_url,
       client_x509_cert_url: process.env.client_x509_cert_url
     }),
-    databaseURL: process.env.DB_URL
+    databaseURL: process.env.DB_URL,
+    databaseAuthVariableOverride: {
+      uid: process.env.uid
+    }
   })
 }
 
