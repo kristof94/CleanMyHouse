@@ -153,6 +153,7 @@
         :hour-step="1"
         :minute-step="30"
         :week-start="7"
+        :min-datetime="minDatetime"
         type="datetime"
         auto
         class="theme-blue"
@@ -264,7 +265,10 @@ export default {
         this.$store.getters.getDate,
         this.$store.getters.getTime,
         this.$store.getters.getAddress
-      )
+      ),
+      minDatetime: DateTime.local()
+        .plus({ hours: 2 })
+        .toISO()
     }
   },
   /* mounted() {
