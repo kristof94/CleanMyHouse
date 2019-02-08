@@ -162,9 +162,7 @@ router.get('/getorders', checkSession, (req, res) => {
           /*if (copyChild.order.status != 'removed') {
             orders.push(copyChild.order)
           }*/
-          const time = DateTime.fromMillis(order.time, {
-            zone: 'Europe/Paris'
-          })
+          const time = DateTime.fromMillis(order.time)
           const hour = time.get('hour')
           const minute = time.get('minute') == 30 ? 0.5 : 0
           orders.push(order)
@@ -192,9 +190,9 @@ router.post('/preparepaiement', checkSession, (req, res) => {
     res.status(400).send('UNAUTHORIZED REQUEST!')
     return
   }
-  const time = DateTime.fromISO(order.time, { zone: 'Europe/Paris' })
-  const date = DateTime.fromISO(order.date, { zone: 'Europe/Paris' })
-  const now = DateTime.local().setZone('Europe/Paris')
+  const time = DateTime.fromISO(order.time)
+  const date = DateTime.fromISO(order.date)
+  const now = DateTime.local()
   const hour = time.hour
   const minute = time.minute == 30 ? 0.5 : 0
   if (hour + minute < 1 && date.isBefore(now)) {
@@ -231,8 +229,8 @@ router.post('/processpayment', checkSession, (req, res) => {
     res.status(400).send('UNAUTHORIZED REQUEST!')
     return
   }
-  const time = DateTime.fromISO(order.time, { zone: 'Europe/Paris' })
-  const date = DateTime.fromISO(order.date, { zone: 'Europe/Paris' })
+  const time = DateTime.fromISO(order.time)
+  const date = DateTime.fromISO(order.date)
   const now = DateTime.local()
   const hour = time.hour
   const minute = time.minute == 30 ? 0.5 : 0

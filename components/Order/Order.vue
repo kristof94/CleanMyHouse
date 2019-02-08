@@ -19,7 +19,7 @@
           à {{ date.get('hour') == '0' ? '00' : date.get('hour') }}h{{ date.get('minute')=='0' ? '00' : date.get('minute') }}
         </b-col>
         <b-col
-          :class="{ statussuccess: status === 'confirmed', statuswaiting: status === 'waiting' , statuscanceled: status === 'removed' || status === 'paidProblem' }"
+          :class="{ statussuccess: status === 'accepted', statuswaiting: status === 'waiting' , statuscanceled: status === 'removed' || status === 'paidProblem' }"
           offset-lg="2"
           lg="4"
         >
@@ -37,7 +37,7 @@
         </b-col>
       </b-row>
       <b-row>
-        <b-col v-if="status=='waiting' || status=='confirmed'" cols="12" align="center">
+        <b-col v-if="status=='waiting' || status=='accepted'" cols="12" align="center">
           <button class="orderButton" @click="cancel">Annuler la commande</button>
         </b-col>
       </b-row>
@@ -51,7 +51,10 @@ import { DateTime } from 'luxon'
 function statusMap() {
   const map = new Map()
   map.set('waiting', "Recherche d'aide ménagère en cours.")
-  map.set('confirmed', 'Confirmé')
+  map.set(
+    'accepted',
+    'Acceptée, une aide ménagère vous contactera dans quelques instants.'
+  )
   map.set('executed', '')
   map.set('paidProblem', 'Non payée')
   map.set('removed', 'Annulé')
