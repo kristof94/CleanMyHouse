@@ -100,7 +100,7 @@ const getters = {
 }
 
 const actions = {
-  nuxtServerInit() {
+  nuxtServerInit({ commit }) {
     if (!this.$axios.defaults.headers.common['XSRF-TOKEN']) {
       this.$axios.get('/api/getcsrftoken').then(response => {
         this.$axios.defaults.headers.common['XSRF-TOKEN'] =
@@ -108,6 +108,9 @@ const actions = {
         this.$axios.setHeader('XSRF-TOKEN', response.data.csrfToken)
       })
     }
+    this.$axios.get('/verifySession').catch(() => {
+      commit('setUser', null)
+    })
   },
   getApi({ commit }) {
     console.log(commit === 5)
@@ -161,6 +164,7 @@ const actions = {
     })
   },
   sendSMSReset({ commit }) {
+    window.recaptchaVerifierReset.reset()
     return window.recaptchaVerifierReset
       .verify()
       .then(() => {
@@ -175,8 +179,9 @@ const actions = {
         return Promise.resolve('captcha ok')
       })
       .catch(function(error) {
+        // eslint-disable-next-line no-undef
+        grecaptcha.reset(window.recaptchaResetWidgetId)
         console.log(error)
-        console.log(this)
         commit('setError', {
           code: 500,
           header: 'Erreur',
@@ -285,6 +290,7 @@ const actions = {
         dispatch('sendSMS', { loading })
       },
       'expired-callback': function() {
+        // eslint-disable-next-line no-undef
         commit('couldSignInWithPhoneNumber', false)
       }
     })

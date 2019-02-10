@@ -9,7 +9,7 @@
         @click="confirmCode"
       >Confirmer le code</b-button>
     </b-form>
-    <b-form id="phoneForm" style="margin-top:1em;" @submit.prevent="preventEnter">            
+    <b-form id="phoneForm" style="margin-top:1em;" @submit.prevent="sendSms">            
       <b-form-group id="phoneInputGroup" label="Mon numéro de téléphone" label-for="phoneInput">
         <b-input-group>
           <b-input-group-text slot="prepend">
@@ -34,14 +34,14 @@
           >Votre numéro de téléphone est invalide.</b-form-invalid-feedback>
         </b-input-group>
       </b-form-group>
-      <b-button
-        id="resetPhone"
+      <b-button        
         :disabled="$v.form.$invalid"
         class="submitButton"
         style="width:100%"
-        @click="sendSms"        
+        type="submit"
       >{{ displayCodeInput ? 'Recevoir un nouveau code' : 'Recevoir le code' }}</b-button>
-    </b-form>               
+      <div id="resetPhone"/>
+    </b-form>       
   </div>
 </template>
 
@@ -110,9 +110,6 @@ export default {
     }
   },
   methods: {
-    preventEnter() {
-      this.sendSms()
-    },
     preventEnterCode() {
       this.confirmCode()
     },
@@ -126,7 +123,8 @@ export default {
           }
         })
         .finally(() => {
-          window.grecaptcha.reset(window.recaptchaResetWidgetId)
+          // eslint-disable-next-line no-undef
+          grecaptcha.reset(window.recaptchaResetWidgetId)
           this.$nuxt.$loading.finish()
         })
     },

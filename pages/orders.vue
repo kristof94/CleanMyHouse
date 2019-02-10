@@ -96,7 +96,7 @@ export default {
   },
   asyncData({ store, $axios }) {
     return $axios
-      .get('/getorders')
+      .get('/order/getorders')
       .then(res => {
         const orders = res.data
         return { orders }
@@ -121,6 +121,7 @@ export default {
             message: 'Vous allez être redirigé vers une page de reconnexion.'
           })
         }
+        return { orders: null }
       })
   },
   methods: {
@@ -163,7 +164,7 @@ export default {
       const order = this.oldOrder
       order.token = token
       this.$axios
-        .post('/processpayment2', {
+        .post('/order/processoldpayment', {
           order
         })
         .then(res => {
@@ -238,11 +239,37 @@ export default {
     cancelOrder() {
       this.showModalInfo = false
       this.$nuxt.$loading.start()
-      this.$store
-        .dispatch('cancelOrder', { order: this.canceledOrder })
+
+      this.$axios
+        .post('/order/cancelorder', { order: this.canceledOrder })
+        .then(() => {
+          this.$router.go({ path: '/orders', force: true })
+        })
+        .catch(err => {
+          console.log(err)
+          if (err.response == null || err.response.status == null) {
+            this.store.commit('setError', {
+              code: 500,
+              header: 'Vous devez être connecté pour accéder à cette page.',
+              message: 'Vous allez être redirigé vers une page de reconnexion.'
+            })
+          } else if (err.response.status == 401) {
+            this.store.commit('setError', {
+              code: err.response.status,
+              header: 'Votre session a expiré.',
+              message: 'Vous allez être redirigé vers une page de reconnexion.'
+            })
+          } else if (err.response.status == 403) {
+            this.store.commit('setError', {
+              code: err.response.status,
+              header: 'Vous devez être connecté pour accéder à cette page.',
+              message: 'Vous allez être redirigé vers une page de reconnexion.'
+            })
+          }
+        })
         .finally(() => {
+          this.$nuxt.$loading.finish()
           this.canceledOrder = null
-          window.location.reload(true)
         })
     }
   }

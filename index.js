@@ -1,19 +1,21 @@
 const express = require('express')
-const { Nuxt, Builder } = require('nuxt')
 const app = express()
 const https = require('https')
 const fs = require('fs-extra')
 const dotenv = require('dotenv')
 const bodyParser = require('body-parser')
 const cookieParser = require('cookie-parser')
+const session = require('cookie-session')
+const helmet = require('helmet')
 const csrf = require('csurf')
-const securityMiddleWare = require('./api/middle/security')
-const authRoute = require('./api/routes/authRoute')
+const admin = require('./services/firebase-admin-init.js')
+const router = require('./api/routes/authRoute')(admin)
+const orderRouter = require('./api/routes/order')(admin)
+const { Nuxt, Builder } = require('nuxt')
 dotenv.config()
 
 const host = process.env.HOST || '127.0.0.1'
 const port = process.env.PORT || 3000
-
 // Create express instnace
 // Import API Routes
 var parseForm = bodyParser.urlencoded({ extended: false })
@@ -29,8 +31,46 @@ app.use(
     }
   })
 )
-app.use(securityMiddleWare)
-app.use(authRoute)
+
+// router.use(helmet())
+// router.use(helmet.noCache())
+app.use(helmet.xssFilter())
+const sixtyDaysInSeconds = 5184000
+router.use(
+  helmet.hsts({
+    maxAge: sixtyDaysInSeconds
+  })
+)
+app.use(helmet.noSniff())
+app.use(helmet.frameguard({ action: 'sameorigin' }))
+
+app.use(function(err, req, res, next) {
+  console.log(req)
+  console.log('ici')
+  if (err.code !== 'EBADCSRFTOKEN') {
+    return next(err)
+  }
+  res.status(403)
+  res.send(err)
+})
+
+app.get('/api/getcsrftoken', function(req, res) {
+  return res.json({ csrfToken: req.csrfToken() })
+})
+
+app.use(
+  session({
+    secret: process.env.secretession,
+    cookie: {
+      secure: true,
+      httpOnly: true,
+      sameSite: true
+    }
+  })
+)
+
+app.use(router)
+app.use('/order', orderRouter)
 app.set('port', port)
 
 let server
@@ -54,7 +94,7 @@ async function start() {
     const httpsOptions = {
       key: fs.readFileSync('./key.pem'),
       cert: fs.readFileSync('./cert.pem'),
-      passphrase: 'direct11'
+      passphrase: process.env.certpassword
     }
     app.use(nuxt.render)
     server = https.createServer(httpsOptions, app)

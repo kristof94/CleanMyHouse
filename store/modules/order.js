@@ -38,7 +38,8 @@ const getters = {
 
 const actions = {
   cancelOrder({ commit }, { order }) {
-    return this.app.$axios.post('/cancelorder', { order }).catch(err => {
+    return this.app.$axios.post('/order/cancelorder', { order }).catch(err => {
+      console.log(err)
       if (err.response == null || err.response.status == null) {
         commit('setError', {
           code: 500,

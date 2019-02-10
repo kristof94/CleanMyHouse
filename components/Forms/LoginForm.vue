@@ -40,7 +40,7 @@
         />
       </b-input-group>
     </b-form-group>
-    <b-button class="submitButton" type="submit" variant="primary" style="width:100%">Se connecter</b-button>
+    <b-button :disabled="$v.form.$invalid" class="submitButton" type="submit" variant="primary" style="width:100%">Se connecter</b-button>
     <b-container class="bv-example-row text-center">
       <b-row>
         <b-col lg="5" sm="5" cols="12" offset-md="0">

@@ -19,6 +19,12 @@ export default function({ route, $axios, store }) {
           header: 'Vous devez être connecté pour accéder à cette page.',
           message: 'Vous allez être redirigé vers une page de reconnexion.'
         })
+      } else {
+        store.commit('setError', {
+          code: err.response.status,
+          header: 'Erreur interne',
+          message: 'Veuillez réessayer plus tard.'
+        })
       }
     })
   }

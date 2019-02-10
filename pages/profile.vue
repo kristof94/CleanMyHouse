@@ -139,7 +139,7 @@ export default {
       if (this.$store.getters.getError.code === 500) {
         this.$store.dispatch('clearMessage')
         this.$store.commit('setError', null)
-        location.reload()
+        this.$router.go({ path: '/login', force: true })
         return
       }
     },

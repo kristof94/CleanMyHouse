@@ -275,14 +275,14 @@ export default {
         .toISO()
     }
   },
-  /* mounted() {
-    if (!this.$axios.defaults.headers.common['XSRF-TOKEN']) {
+  mounted() {
+    /*if (!this.$axios.defaults.headers.common['XSRF-TOKEN']) {
       this.$axios.get('/api/getcsrftoken').then(response => {
         this.$axios.defaults.headers.common['XSRF-TOKEN'] =
           response.data.csrfToken
       })
-    }
-  },*/
+    }*/
+  },
   methods: {
     closeTimePicker() {
       this.displayConfirmButton = this.date && this.address && this.time
@@ -334,12 +334,12 @@ export default {
         token: token,
         email: this.$store.getters.getUser.email,
         address: this.$store.getters.getAddress,
-        date: this.$store.getters.getDate,
-        time: this.$store.getters.getTime,
+        date: this.$store.getters.getDate.toMillis(),
+        time: this.$store.getters.getTime.toMillis(),
         task: this.$store.getters.getChoice
       }
       this.$axios
-        .post('/processpayment', {
+        .post('/order/processpayment', {
           order
         })
         .then(() => {
@@ -408,16 +408,20 @@ export default {
 
       const order = {
         address: this.address,
-        choice: event,
-        date: this.date,
-        time: this.time
+        task: event,
+        date: this.date.toMillis(),
+        time: this.time.toMillis()
       }
       this.$axios
-        .post('/preparepaiement', {
+        .post('/order/preparepaiement', {
           order
         })
         .then(response => {
-          this.price = response.data.price
+          const time = DateTime.fromMillis(order.time)
+          const hour = time.hour
+          const minute = time.minute == 30 ? 0.5 : 0
+          const price = response.data.price
+          this.price = hour * price + minute * price
           this.displayPrice = true
         })
         .catch(err => {
@@ -433,7 +437,7 @@ export default {
               code: err.response.status,
               header: 'Erreur interne.',
               message:
-                'Il y a eu un problème lors de la création de votre commande. Veuillez recommencer.'
+                'Il y a eu un problème lors de la création de votre commande. Veuillez recommencer plus tard.'
             })
           }
         })
@@ -458,9 +462,7 @@ export default {
     },
     onDateChanged(event) {
       if (event) {
-        const date = DateTime.fromISO(event, {
-          zone: 'Europe/Paris'
-        })
+        const date = DateTime.fromISO(event)
         if (date && !this.time) {
           this.date = date
           this.lg[0] = 6
@@ -472,9 +474,7 @@ export default {
     },
     onTimeChanged(event) {
       if (event) {
-        const time = DateTime.fromISO(event, {
-          zone: 'Europe/Paris'
-        })
+        const time = DateTime.fromISO(event)
         if (time && time.get('hour') != 0) {
           this.time = time
         }
