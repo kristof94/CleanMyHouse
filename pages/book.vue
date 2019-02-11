@@ -1,7 +1,7 @@
 <template>
   <div class="flexparent" style="height: 100vh;">
     <nav-bar/>
-    <section v-if="displayPrice && !hidePage" class="order column">
+    <section v-if="displayPrice" class="order column">
       <b-container fluid class="book">
         <b-row>
           <b-col :lg="12" :md="12" :sm="12" :cols="12">
@@ -29,7 +29,7 @@
             class="text-center"
           >
             <b-button
-              v-if="date && time && address"
+              v-if="date && time && address && !hidePage"
               class="specialbutton longbutton smallbutton whiteShine"
               @click="pay"
             >Payer</b-button>
@@ -48,7 +48,7 @@
             class="text-center"
           >
             <b-button
-              v-if="date && time && address"
+              v-if="date && time && address && !hidePage"
               class="specialbutton longbutton smallbutton whiteShine"
               @click="modify"
             >Modifier ma commande</b-button>
@@ -56,7 +56,7 @@
         </b-row>
       </b-container>
     </section>
-    <section v-else-if="!hidePage" id="order" class="order column">
+    <section v-else id="order" class="order column">
       <b-container class="book">
         <b-row>
           <b-col :lg="lg[0]" :md="lg[0]" :sm="lg[0]" :cols="lg[0]">
@@ -338,7 +338,6 @@ export default {
     redirectOrder() {
       this.hidePage = true
       this.showModalInfo = false
-      this.$nuxt.$loading.start()
       this.$router.push('/orders')
     },
     async pay() {
@@ -401,7 +400,7 @@ export default {
           }
         })
         .finally(() => {
-          this.$nuxt.$loading.finish()
+          // this.$nuxt.$loading.finish()
         })
     },
     opened() {
