@@ -18,7 +18,8 @@ module.exports = {
     STORAGE_BUCKET: 'cleanmyhouse-221915.appspot.com',
     MESSAGING_SENDER_ID: '207720984881',
     NODE_TLS_REJECT_UNAUTHORIZED:
-      process.env.NODE_ENV !== 'production' ? '0' : '1'
+      process.env.NODE_ENV !== 'production' ? '0' : '1',
+    PUBLISHABLE_KEY: 'pk_test_pAIQcJtBPSf6kSAGUBvWJ00t'
   },
   head: {
     title: pkg.name,
