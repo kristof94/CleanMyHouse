@@ -336,6 +336,7 @@ export default {
       }
     },
     redirectOrder() {
+      this.hidePage = true
       this.showModalInfo = false
       this.$nuxt.$loading.start()
       this.$router.push('/orders')
