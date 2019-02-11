@@ -9,7 +9,6 @@ export default () => {
         var changedPost = snapshot.val()
         console.log('The updated post title is ' + changedPost)
       })*/
-      console.log(user)
     }
   })
 }

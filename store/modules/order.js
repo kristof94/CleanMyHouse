@@ -1,4 +1,5 @@
 /* eslint-disable no-unused-vars */
+
 const state = () => ({
   address: null,
   time: null,
@@ -42,7 +43,7 @@ const actions = {
       .post('/order/processpayment', {
         order: order
       })
-      .then(() => {
+      .then(response => {
         this.infoPaymentHeader = 'Paiement réussi.'
         this.infoPaymentMessage = 'Le paiement a été accepté.'
         parent.showSuccessMsg({

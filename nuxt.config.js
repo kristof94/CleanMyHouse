@@ -48,6 +48,7 @@ module.exports = {
     '~/assets/css/animation.css',
     '~/assets/css/navbar.css',
     '~/assets/css/footer.css',
+    '~/assets/css/modal.css',
     '@fortawesome/fontawesome-svg-core/styles.css',
     '~/assets/scss/main.scss',
     'vue-datetime-custom/dist/vue-datetime-custom.css'

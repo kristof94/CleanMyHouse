@@ -181,8 +181,26 @@
       default content
 			-->
       <div slot="header">{{ infoPaymentHeader }}</div>
-      <div slot="body">{{ infoPaymentMessage }}</div>
-    </modal-info>    
+      <div slot="body">
+        <div class="check_mark">
+          <div class="sa-icon sa-success animate">
+            <span class="sa-line sa-tip animateSuccessTip"/>
+            <span class="sa-line sa-long animateSuccessLong"/>
+            <div class="sa-placeholder"/>
+            <div class="sa-fix"/>
+          </div>
+        </div>
+        {{ infoPaymentMessage }}
+      </div>
+    </modal-info>
+    <modal-error v-if="this.$store.getters.getError" @close="redirectLogin">
+      <!--
+      you can use custom content here to overwrite
+      default content
+			-->
+      <div slot="header">{{ this.$store.getters.getError.header }}</div>
+      <div slot="body">{{ this.$store.getters.getError.message }}</div>
+    </modal-error>
   </div>
 </template>
 
@@ -199,7 +217,6 @@ import Adress from '~/components/Order/Address'
 import ChoiceTask from '~/components/Order/ChoiceTask'
 import ModalError from '~/components/Modal/ModalError'
 import ModalInfo from '~/components/Modal/ModalInfo'
-
 const buildColumn = (date, time, address) => {
   if (date && time && address) {
     return [4, 4, 4]
@@ -209,7 +226,6 @@ const buildColumn = (date, time, address) => {
     return [12, 0, 0]
   }
 }
-
 export default {
   components: {
     NavBar,
@@ -275,17 +291,6 @@ export default {
       })
     }*/
   },
-  notifications: {
-    showSuccessMsg: {
-      // eslint-disable-next-line no-undef
-      type: 'success',
-      title: 'Hello there',
-      message: "That's the success!"
-    },
-    showErrorMsg: {
-      type: 'error'
-    }
-  },
   methods: {
     test() {
       this.$router.push('/orders')
@@ -328,8 +333,8 @@ export default {
       }
     },
     redirectOrder() {
-      this.showModalInfo = false
       this.$router.push('/orders')
+      this.showModalInfo = false
     },
     async pay() {
       this.$nuxt.$loading.start()
@@ -351,13 +356,7 @@ export default {
         .then(() => {
           this.infoPaymentHeader = 'Paiement réussi.'
           this.infoPaymentMessage = 'Le paiement a été accepté.'
-          this.showSuccessMsg({
-            title: this.infoPaymentHeader,
-            message: this.infoPaymentMessage,
-            cb: () => {
-              this.$router.push('/orders')
-            }
-          })
+          this.showModalInfo = true
         })
         .catch(err => {
           if (err.response.status == 401) {
@@ -386,32 +385,9 @@ export default {
               message: 'Veuillez réessayer plus tard.'
             })
           }
-          this.showErrorMsg({
-            title: this.$store.getters.getError.header,
-            message: this.$store.getters.getError.message,
-            cb: () => {
-              if (
-                this.$store.getters.getError.code === 403 ||
-                this.$store.getters.getError.code === 401 ||
-                this.$store.getters.getError.code === 500
-              ) {
-                this.$store.dispatch('clearMessage')
-                this.$router.push('/login')
-                return
-              } else if (this.$store.getters.getError.code === 404) {
-                this.$store.commit('setError', null)
-                return
-              } else {
-                this.$store.dispatch('clearMessage')
-                this.$router.push('/')
-                return
-              }
-            }
-          })
-        })
-        .finally(() => {
           this.$nuxt.$loading.finish()
         })
+        .finally(() => {})
     },
     opened() {
       // do stuff
@@ -436,7 +412,6 @@ export default {
       this.$store.commit('setChoice', event)
       this.$store.commit('setDate', this.date)
       this.$store.commit('setTime', this.time)
-
       const order = {
         address: this.address,
         task: event,
@@ -521,7 +496,6 @@ export default {
 .theme-blue .vdatetime-calendar__month__day--selected:hover > span > span {
   background: rgb(123, 191, 207);
 }
-
 .theme-blue .vdatetime-year-picker__item--selected,
 .theme-blue .vdatetime-time-picker__item--selected,
 .theme-blue .vdatetime-popup__actions__button {
