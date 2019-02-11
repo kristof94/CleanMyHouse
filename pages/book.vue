@@ -115,7 +115,6 @@
         </b-row>
       </b-container>
     </section>
-
     <my-footer/>
     <adress v-if="showModal" @setPlace="setPlace" @close="showModal = false">
       <!--
@@ -333,6 +332,7 @@ export default {
         this.date = null
         this.time = null
         this.address = null
+        this.$router.push('/')
       }
     },
     redirectOrder() {
@@ -348,7 +348,11 @@ export default {
       } catch (error) {
         console.log(error)
         this.hidePage = true
-        this.$nuxt.$loading.finish()
+        this.$store.commit('setError', {
+          code: 400,
+          header: 'Erreur interne',
+          message: 'Veuillez réessayer plus tard.'
+        })
       }
     },
     done({ token }) {

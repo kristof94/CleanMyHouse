@@ -73,7 +73,7 @@ module.exports = function(admin) {
   })
 
   router.post('/sessionLogout', (req, res) => {
-    req.session.destroy()
+    // req.session.destroy()
     clearCookie(res)
     res.status(200).send('loggout!')
   })
