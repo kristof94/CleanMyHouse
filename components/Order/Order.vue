@@ -114,7 +114,7 @@ export default {
       const time = DateTime.fromMillis(this.order.time)
       const hours = time.get('hour')
       const minute = time.get('minute')
-      return `Il y a ${hours}h${minute == 0 ? '00' : '30'}`
+      return `${hours}h${minute == 0 ? '00' : '30'}`
     },
     task: function() {
       var taskMap = new Map()
