@@ -30,9 +30,6 @@ module.exports = {
     link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }],
     script: [
       {
-        src: 'https://js.stripe.com/v3/'
-      },
-      {
         src:
           'https://maps.googleapis.com/maps/api/js?key=AIzaSyAWmSTK_5vW944i8kUyotoFxJaTRlr61ns&libraries=places'
       }

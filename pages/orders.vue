@@ -167,7 +167,12 @@ export default {
       this.$nuxt.$loading.start()
       this.oldOrder = order
       this.price = order.price
-      await this.$refs.checkoutRef2.open()
+      try {
+        await this.$refs.checkoutRef2.open()
+      } catch (error) {
+        console.log(error)
+        this.$nuxt.$loading.finish()
+      }
     },
     done({ token }) {
       const order = this.oldOrder

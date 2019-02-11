@@ -1,7 +1,7 @@
 <template>
   <div class="flexparent" style="height: 100vh;">
     <nav-bar/>
-    <section v-if="displayPrice" class="order column">
+    <section v-if="displayPrice && !hidePage" class="order column">
       <b-container fluid class="book">
         <b-row>
           <b-col :lg="12" :md="12" :sm="12" :cols="12">
@@ -56,7 +56,7 @@
         </b-row>
       </b-container>
     </section>
-    <section v-else id="order" class="order column">
+    <section v-else-if="!hidePage" id="order" class="order column">
       <b-container class="book">
         <b-row>
           <b-col :lg="lg[0]" :md="lg[0]" :sm="lg[0]" :cols="lg[0]">
@@ -139,6 +139,8 @@
         :currency="currency"
         :amount="price"
         :allow-remember-me="true"
+        locale="fr"
+        panel-label="Payer"
         @done="done"
         @opened="opened"
         @closed="closed"
@@ -248,6 +250,7 @@ export default {
       infoPaymentMessage: null,
       informations: null,
       price: null,
+      hidePage: false,
       email:
         this.$store.getters.getUser == null
           ? null
@@ -333,12 +336,20 @@ export default {
       }
     },
     redirectOrder() {
-      this.$router.push('/orders')
       this.showModalInfo = false
+      this.$nuxt.$loading.start()
+      this.$router.push('/orders')
     },
     async pay() {
       this.$nuxt.$loading.start()
-      await this.$refs.checkoutRef.open()
+      try {
+        this.hidePage = false
+        await this.$refs.checkoutRef.open()
+      } catch (error) {
+        console.log(error)
+        this.hidePage = true
+        this.$nuxt.$loading.finish()
+      }
     },
     done({ token }) {
       const order = {
@@ -359,6 +370,8 @@ export default {
           this.showModalInfo = true
         })
         .catch(err => {
+          console.log(err)
+          this.hidePage = false
           if (err.response.status == 401) {
             this.$store.commit('setError', {
               code: err.response.status,
@@ -385,9 +398,10 @@ export default {
               message: 'Veuillez réessayer plus tard.'
             })
           }
+        })
+        .finally(() => {
           this.$nuxt.$loading.finish()
         })
-        .finally(() => {})
     },
     opened() {
       // do stuff
@@ -431,6 +445,7 @@ export default {
           this.displayPrice = true
         })
         .catch(err => {
+          console.log(err)
           if (err.response.status == 401) {
             this.$store.commit('setError', {
               code: err.response.status,
