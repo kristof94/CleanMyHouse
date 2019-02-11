@@ -63,7 +63,7 @@ export default {
   border-radius: 40px;
   border-radius: 50%;
   position: absolute;
-  width: 60px;
+  width: 0px;
   height: 120px;
   background: white;
   -webkit-transform: rotate(45deg);
@@ -113,7 +113,7 @@ export default {
   position: absolute;
   left: 28px;
   top: 8px;
-  z-index: 1;
+  z-index: -1;
   -webkit-transform: rotate(-45deg);
   transform: rotate(-45deg);
 }

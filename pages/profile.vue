@@ -106,6 +106,7 @@ export default {
       this.$store
         .dispatch('removeAccount')
         .then(() => {
+          this.$router.push('/')
           this.showModalRemove = false
         })
         .finally(() => {

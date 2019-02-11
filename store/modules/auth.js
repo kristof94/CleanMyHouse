@@ -145,10 +145,16 @@ const actions = {
         commit('setDate', null)
         commit('setTime', null)
         this.$cookies.remove('vuex')
-        this.app.router.push('/')
       })
       .catch(error => {
-        manageError(commit, error)
+        console.log(error)
+        commit('setError', {
+          code: 500,
+          header: 'Veuillez vous reconnecter.',
+          message:
+            'Une connexion récente est nécessaire pour effectuer cette opération.'
+        })
+        // manageError(commit, error)
       })
   },
   prepareCatchaReset() {
