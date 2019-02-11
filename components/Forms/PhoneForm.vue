@@ -48,7 +48,6 @@
 <script>
 import NavBar from '~/components/Navigation/NavBar'
 import MyFooter from '~/components/Footer/Footer'
-import ModalError from '~/components/Modal/ModalError'
 import { required, minLength, maxLength } from 'vuelidate/lib/validators'
 import { validationMixin } from 'vuelidate'
 import PhoneForm from '~/components/Forms/PhoneForm'
@@ -56,7 +55,6 @@ import PhoneForm from '~/components/Forms/PhoneForm'
 export default {
   components: {
     NavBar,
-    ModalError,
     PhoneForm,
     MyFooter
   },

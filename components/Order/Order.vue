@@ -31,7 +31,7 @@
         </b-col>
       </b-row>
       <b-row>
-        <b-col lg="6" md="8" cols="12">
+        <b-col lg="12" md="12" cols="12">
           <font-awesome-icon :icon="['fas', 'map-marker-alt']"/>
           {{ order.address.description }}
         </b-col>
