@@ -59,6 +59,7 @@ module.exports = {
   */
   plugins: [
     { src: '~/plugins/axios' },
+    { src: '~plugins/vue-notifications', ssr: false },
     { src: '~/plugins/vuex-persist', ssr: false },
     { src: '~/plugins/stripe', ssr: false },
     { src: '~/plugins/googleMaps', ssr: false },

@@ -1,12 +1,8 @@
 <template>
   <div class="flexsignin">
     <nav-bar/>
-    <section id="home" class="homepage">
-      <modal-error v-if="this.$store.getters.getError" @close="redirectLogin">
-        <div slot="header">{{ this.$store.getters.getError.header }}</div>
-        <div slot="body">{{ this.$store.getters.getError.message }}</div>
-      </modal-error>
-      <div v-else class="orders style-2">
+    <section id="home" class="homepage">      
+      <div class="orders style-2">
         <div class="signinTitle">Mes commandes</div>
         <order
           v-for="(order) in orders"
@@ -123,6 +119,15 @@ export default {
         }
         return { orders: null }
       })
+  },
+  notifications: {
+    showSuccessMsg: {
+      // eslint-disable-next-line no-undef
+      type: 'success'
+    },
+    showErrorMsg: {
+      type: 'error'
+    }
   },
   methods: {
     test() {
@@ -243,10 +248,15 @@ export default {
       this.$axios
         .post('/order/cancelorder', { order: this.canceledOrder })
         .then(() => {
-          this.$router.go({ path: '/orders', force: true })
+          this.showSuccessMsg({
+            title: 'Votre commande a été annulée',
+            message: ':)',
+            cb: () => {
+              this.$router.go({ path: '/orders', force: true })
+            }
+          })
         })
         .catch(err => {
-          console.log(err)
           if (err.response == null || err.response.status == null) {
             this.store.commit('setError', {
               code: 500,
@@ -266,6 +276,28 @@ export default {
               message: 'Vous allez être redirigé vers une page de reconnexion.'
             })
           }
+          this.showErrorMsg({
+            title: this.$store.getters.getError.header,
+            message: this.$store.getters.getError.message,
+            cb: () => {
+              if (
+                this.$store.getters.getError.code === 403 ||
+                this.$store.getters.getError.code === 401 ||
+                this.$store.getters.getError.code === 500
+              ) {
+                this.$store.dispatch('clearMessage')
+                this.$router.push('/login')
+                return
+              } else if (this.$store.getters.getError.code === 404) {
+                this.$store.commit('setError', null)
+                return
+              } else {
+                this.$store.dispatch('clearMessage')
+                this.$router.push('/login')
+                return
+              }
+            }
+          })
         })
         .finally(() => {
           this.$nuxt.$loading.finish()

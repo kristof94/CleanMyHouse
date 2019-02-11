@@ -49,11 +49,11 @@ module.exports = function(admin) {
     }
   }
 
+  const db = admin.database()
+  const ref = db.ref('users')
   router.use(checkSession)
-
-  var db = admin.database()
-  var ref = db.ref('users')
-
+  /*
+  
   const createStripeCustomer = (usersRef, order) => {
     if (!order || !usersRef) {
       throw new Error('an argument is null')
@@ -69,8 +69,7 @@ module.exports = function(admin) {
         })
       })
   }
-
-  /*const retrieveCustomer = (customerId, order) => {
+  const retrieveCustomer = (customerId, order) => {
     if (!order || !customerId) {
       throw new Error('an argument is null')
     }
@@ -134,6 +133,11 @@ module.exports = function(admin) {
         order.idOrder = postId
         order.price = hour * price + minute * price
         order.status = 'waiting'
+        const refOrder = usersRef.child(postId + '/order')
+        refOrder.on('child_changed', function(snapshot) {
+          var changedPost = snapshot.val()
+          console.log('The updated post title is ' + changedPost)
+        })
         return refObj.set({
           order
         })

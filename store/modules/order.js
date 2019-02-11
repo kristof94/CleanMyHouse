@@ -37,6 +37,33 @@ const getters = {
 }
 
 const actions = {
+  processOrder({ commit }, { order, parent }) {
+    return this.$axios
+      .post('/order/processpayment', {
+        order: order
+      })
+      .then(() => {
+        this.infoPaymentHeader = 'Paiement réussi.'
+        this.infoPaymentMessage = 'Le paiement a été accepté.'
+        parent.showSuccessMsg({
+          title: this.infoPaymentHeader,
+          message: this.infoPaymentMessage,
+          cb: () => {
+            this.$router.push('/orders')
+          }
+        })
+      })
+      .catch(err => {
+        console.log(err)
+        parent.showErrorMsg({
+          title: 'this.$store.getters.getError.header',
+          message: 'this.$store.getters.getError.message',
+          cb: () => {
+            this.$router.push('/')
+          }
+        })
+      })
+  },
   cancelOrder({ commit }, { order }) {
     return this.app.$axios.post('/order/cancelorder', { order }).catch(err => {
       console.log(err)

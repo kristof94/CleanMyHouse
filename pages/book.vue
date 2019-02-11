@@ -182,15 +182,7 @@
 			-->
       <div slot="header">{{ infoPaymentHeader }}</div>
       <div slot="body">{{ infoPaymentMessage }}</div>
-    </modal-info>
-    <modal-error v-if="this.$store.getters.getError" @close="redirectLogin">
-      <!--
-      you can use custom content here to overwrite
-      default content
-			-->
-      <div slot="header">{{ this.$store.getters.getError.header }}</div>
-      <div slot="body">{{ this.$store.getters.getError.message }}</div>
-    </modal-error>
+    </modal-info>    
   </div>
 </template>
 
@@ -283,7 +275,21 @@ export default {
       })
     }*/
   },
+  notifications: {
+    showSuccessMsg: {
+      // eslint-disable-next-line no-undef
+      type: 'success',
+      title: 'Hello there',
+      message: "That's the success!"
+    },
+    showErrorMsg: {
+      type: 'error'
+    }
+  },
   methods: {
+    test() {
+      this.$router.push('/orders')
+    },
     closeTimePicker() {
       this.displayConfirmButton = this.date && this.address && this.time
     },
@@ -340,43 +346,68 @@ export default {
       }
       this.$axios
         .post('/order/processpayment', {
-          order
+          order: order
         })
         .then(() => {
           this.infoPaymentHeader = 'Paiement réussi.'
           this.infoPaymentMessage = 'Le paiement a été accepté.'
-          this.showModalInfo = true
+          this.showSuccessMsg({
+            title: this.infoPaymentHeader,
+            message: this.infoPaymentMessage,
+            cb: () => {
+              this.$router.push('/orders')
+            }
+          })
         })
         .catch(err => {
-          if (!err.response.status) {
-            this.$store.commit('setError', {
-              code: err.response.status,
-              header: 'Erreur interne',
-              message: 'Vous allez être redirigé vers une page de reconnexion.'
-            })
-          }
           if (err.response.status == 401) {
             this.$store.commit('setError', {
               code: err.response.status,
               header: 'Votre session a expiré.',
               message: 'Vous allez être redirigé vers une page de reconnexion.'
             })
-          }
-          if (err.response.status == 403) {
+          } else if (err.response.status == 403) {
             this.$store.commit('setError', {
               code: err.response.status,
               header: 'Vous devez être connecté pour accéder à cette page.',
               message: 'Vous allez être redirigé vers une page de reconnexion.'
             })
-          }
-          if (err.response.status == 500) {
+          } else if (err.response.status == 500) {
             this.$store.commit('setError', {
               code: err.response.status,
               header: 'Erreur interne',
               message:
                 "Votre paiement n'a pas été enregistré. Veuillez réessayer."
             })
+          } else {
+            this.$store.commit('setError', {
+              code: 400,
+              header: 'Erreur interne',
+              message: 'Veuillez réessayer plus tard.'
+            })
           }
+          this.showErrorMsg({
+            title: this.$store.getters.getError.header,
+            message: this.$store.getters.getError.message,
+            cb: () => {
+              if (
+                this.$store.getters.getError.code === 403 ||
+                this.$store.getters.getError.code === 401 ||
+                this.$store.getters.getError.code === 500
+              ) {
+                this.$store.dispatch('clearMessage')
+                this.$router.push('/login')
+                return
+              } else if (this.$store.getters.getError.code === 404) {
+                this.$store.commit('setError', null)
+                return
+              } else {
+                this.$store.dispatch('clearMessage')
+                this.$router.push('/')
+                return
+              }
+            }
+          })
         })
         .finally(() => {
           this.$nuxt.$loading.finish()
