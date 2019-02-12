@@ -192,7 +192,7 @@
           </div>
         </div>
         {{ infoPaymentMessage }}
-        <p>☺️</p>
+        <p>🥰</p>
       </div>
     </modal-info>
     <modal-error v-if="this.$store.getters.getError" @close="redirectLogin">

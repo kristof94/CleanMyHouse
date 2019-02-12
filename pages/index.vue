@@ -1,11 +1,9 @@
-/* eslint-disable no-undef */
-/* eslint-disable no-undef */
 <template>
   <div class="flexparent">
     <nav-bar/>
     <section id="home" class="homepage">
       <div style="text-align: center;">
-        <h2>Votre une aide ménagère en quelques clics !</h2>
+        <h2>Votre aide ménagère en quelques clics 😎!</h2>
         <b-button class="specialbutton smallbutton whiteShine" @click="book">Réserver</b-button>
       </div>
     </section>
