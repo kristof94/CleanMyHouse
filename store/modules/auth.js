@@ -196,23 +196,15 @@ const actions = {
       })
   },
   confirmCodeReset({ commit, dispatch }, { code }) {
-    console.log(commit == null)
     console.log(dispatch == null)
     if (code) {
       const credential = firebase.auth.PhoneAuthProvider.credential(
         window.verificationId,
         code
       )
-      return Auth.currentUser
-        .updatePhoneNumber(credential)
-        .then(() => {
-          return manageIdToken(dispatch, commit, this.app.$axios)
-        })
-        .then(result => {
-          if (result && result.success) {
-            this.app.router.push('/')
-          }
-        })
+      return Auth.currentUser.updatePhoneNumber(credential).then(() => {
+        return manageIdToken(dispatch, commit, this.app.$axios)
+      })
     }
     return Promise.reject('code problem')
   },

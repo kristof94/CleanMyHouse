@@ -261,19 +261,19 @@ export default {
         })
         .catch(err => {
           if (err.response == null || err.response.status == null) {
-            this.store.commit('setError', {
+            this.$store.commit('setError', {
               code: 500,
               header: 'Vous devez être connecté pour accéder à cette page.',
               message: 'Vous allez être redirigé vers une page de reconnexion.'
             })
           } else if (err.response.status == 401) {
-            this.store.commit('setError', {
+            this.$store.commit('setError', {
               code: err.response.status,
               header: 'Votre session a expiré.',
               message: 'Vous allez être redirigé vers une page de reconnexion.'
             })
           } else if (err.response.status == 403) {
-            this.store.commit('setError', {
+            this.$store.commit('setError', {
               code: err.response.status,
               header: 'Vous devez être connecté pour accéder à cette page.',
               message: 'Vous allez être redirigé vers une page de reconnexion.'

@@ -27,9 +27,10 @@
             v-show="this.$store.getters.getModal=='lostpassword'"
             ref="infoValid"
           />
-          <phone-form          
+          <phone-form
             v-else-if="this.$store.getters.getModal=='getphone'"
-            v-show="this.$store.getters.getModal=='getphone'"            
+            v-show="this.$store.getters.getModal=='getphone'"     
+            @openInfoModal="openInfoModal"
           />
         </transition>
         <div
@@ -68,6 +69,25 @@
         </div>
       </div>
     </section>
+    <modal-info v-if="displayInfoModal" @close="redirect">
+      <!--
+      you can use custom content here to overwrite
+      default content
+			-->
+      <div slot="header">{{ infoHeader }}</div>
+      <div slot="body">
+        <div class="check_mark">
+          <div class="sa-icon sa-success animate">
+            <span class="sa-line sa-tip animateSuccessTip"/>
+            <span class="sa-line sa-long animateSuccessLong"/>
+            <div class="sa-placeholder"/>
+            <div class="sa-fix"/>
+          </div>
+        </div>
+        {{ infoMessage }}
+        <p>🥰</p>
+      </div>
+    </modal-info>
   </div>
 </template>
 
@@ -78,10 +98,12 @@ import LoginForm from '~/components/Forms/LoginForm'
 import PasswordForm from '~/components/Forms/PasswordForm'
 import PhoneForm from '~/components/Forms/PhoneForm'
 import MyFooter from '~/components/Footer/Footer'
+import ModalInfo from '~/components/Modal/ModalInfo'
 
 export default {
   components: {
     NavBar,
+    ModalInfo,
     RegisterForm,
     LoginForm,
     PasswordForm,
@@ -94,7 +116,10 @@ export default {
       form: {
         phone: null
       },
-      displayPhoneForm: false
+      displayPhoneForm: false,
+      displayInfoModal: false,
+      infoHeader: null,
+      infoMessage: null
     }
   },
   created: function() {
@@ -104,6 +129,15 @@ export default {
     }
   },
   methods: {
+    redirect() {
+      this.$router.push('/book')
+      this.$store.dispatch('displayLoginForm')
+    },
+    openInfoModal(event) {
+      this.infoHeader = event
+      this.infoMessage = event
+      this.displayInfoModal = true
+    },
     googleSignUpPopup() {
       this.$nuxt.$loading.start()
       this.$store.dispatch('signInWithGooglePopup').finally(() => {

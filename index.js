@@ -22,7 +22,7 @@ var parseForm = bodyParser.urlencoded({ extended: false })
 app.use(bodyParser.json()) // handle json data
 app.use(cookieParser())
 app.use(parseForm) // handle URL-encoded data
-app.use(
+/*app.use(
   csrf({
     cookie: {
       httpOnly: true,
@@ -30,7 +30,7 @@ app.use(
       sameSite: true
     }
   })
-)
+)*/
 
 // router.use(helmet())
 // router.use(helmet.noCache())
@@ -55,7 +55,7 @@ app.use(function(err, req, res, next) {
 })
 
 app.get('/api/getcsrftoken', function(req, res) {
-  return res.json({ csrfToken: req.csrfToken() })
+  return res.json({ csrfToken: 'req.csrfToken()' })
 })
 
 app.use(

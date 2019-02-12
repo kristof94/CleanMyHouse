@@ -41,7 +41,7 @@
         type="submit"
       >{{ displayCodeInput ? 'Recevoir un nouveau code' : 'Recevoir le code' }}</b-button>
       <div id="resetPhone"/>
-    </b-form>       
+    </b-form>    
   </div>
 </template>
 
@@ -111,6 +111,9 @@ export default {
     preventEnterCode() {
       this.confirmCode()
     },
+    redirect() {
+      this.$router.push('/')
+    },
     sendSms() {
       this.$nuxt.$loading.start()
       this.$store
@@ -118,6 +121,7 @@ export default {
         .then(response => {
           if (response === 'captcha ok') {
             this.displayCodeInput = true
+            this.$nextTick(() => this.$refs.inputCode.focus())
           }
         })
         .finally(() => {
@@ -131,6 +135,15 @@ export default {
       const code = this.codeForm.code
       this.$store
         .dispatch('confirmCodeReset', { code })
+        .then(result => {
+          if (result && result.success) {
+            this.$emit(
+              'openInfoModal',
+              'Code confirmé !',
+              'Vous pouvez dès maintenant faire une commande !'
+            )
+          }
+        })
         .catch(error => {
           console.log(error)
           this.$store.commit('setError', {
