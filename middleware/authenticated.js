@@ -7,7 +7,7 @@ export default function({ route, $axios, store }) {
           header: 'Vous devez être connecté pour accéder à cette page.',
           message: 'Vous allez être redirigé vers une page de reconnexion.'
         })
-      } else if (err.response.status == 401) {
+      } else if (err.response.status == 401 || err.response.status == 400) {
         store.commit('setError', {
           code: err.response.status,
           header: 'Votre session a expiré.',

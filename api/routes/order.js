@@ -137,6 +137,17 @@ module.exports = function(admin) {
         refOrder.on('child_changed', function(snapshot) {
           var changedPost = snapshot.val()
           console.log('The updated post title is ' + changedPost)
+
+          /*admin
+            .auth()
+            .getUser(req.session.decodedClaims.uid)
+            .then(userRecord => {
+              console.log(userRecord)
+              console.log('The updated post title is ' + changedPost)
+            })
+            .catch(err => {
+              console.log(err)
+            })*/
         })
         return refObj.set({
           order
