@@ -5,7 +5,7 @@ dotenv.config()
 
 console.log('run ', process.env.secretession)
 console.log('run ', process.env.hoclick)
-exec(process.env.npm_run, function(err, stdout) {
+exec(process.env.hoclick, function(err, stdout) {
   if (err) throw err
   else console.log(stdout)
 })
