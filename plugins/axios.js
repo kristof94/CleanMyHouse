@@ -1,8 +1,11 @@
 export default function({ $axios /*, redirect*/ }) {
   // The server-side needs a full url to works
-  $axios.onRequest(config => {
-    console.log('Making request to ' + config.url)
-  })
+
+  if (process.env.NODE_ENV !== 'production') {
+    $axios.onRequest(config => {
+      console.log('Making request to ' + config.url)
+    })
+  }
 
   /*
   $axios.onError(error => {
