@@ -17,8 +17,12 @@
             <font-awesome-icon :icon="['fas', 'users']"/>
           </b-nav-item>
           <div v-if="$store.getters.getUser">
-            <b-nav-item class="link" to="/orders">Mes commandes</b-nav-item>
-            <b-nav-item class="link" to="/profile">Mes informations</b-nav-item>
+            <b-nav-item class="link" to="/orders">Mes commandes
+              <font-awesome-icon :icon="['fas', 'briefcase']"/>
+            </b-nav-item>
+            <b-nav-item class="link" to="/profile">Mes informations
+              <font-awesome-icon :icon="['far', 'address-card']"/>
+            </b-nav-item>
             <b-nav-item class="link" @click="logOut">Se déconnecter
               <font-awesome-icon :icon="['fas', 'sign-in-alt']"/>
             </b-nav-item>
@@ -31,9 +35,9 @@
           </div>
         </div>
         <div v-else>
-          <div v-if="$store.getters.getUser">            
+          <div v-if="$store.getters.getUser">
             <b-nav-item-dropdown
-              text="Mon compte"
+              text="Mon compte 🔒"
               class="link accountmenu"
               style="display: inline-block;"
               right
@@ -50,7 +54,11 @@
             </b-nav-item-dropdown>
           </div>
           <div v-else>
-            <b-nav-item class="link" style="display: inline-block;" @click="showLoginModal">Se connecter
+            <b-nav-item
+              class="link"
+              style="display: inline-block;"
+              @click="showLoginModal"
+            >Se connecter
               <font-awesome-icon :icon="['fas', 'sign-in-alt']" :rotation="180"/>
             </b-nav-item>
           </div>
