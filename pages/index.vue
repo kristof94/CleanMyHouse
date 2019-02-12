@@ -3,7 +3,7 @@
     <nav-bar/>
     <section id="home" class="homepage">
       <div style="text-align: center;">
-        <h2>Votre aide ménagère en quelques clics 😎!</h2>
+        <h2>Votre aide ménagère en 45 secondes 😎!</h2>
         <b-button class="specialbutton smallbutton whiteShine" @click="book">Réserver</b-button>
       </div>
     </section>
