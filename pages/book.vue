@@ -334,7 +334,7 @@ export default {
         this.date = null
         this.time = null
         this.address = null
-        this.$router.push('/')
+        this.$router.push('/login')
       }
     },
     redirectOrder() {
