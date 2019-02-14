@@ -48,7 +48,6 @@ export default {
   mounted() {
     // To demonstrate functionality of exposed component functions
     // Here we make focus on the user input
-    this.$refs.address.focus()
     /*if (
       this.$store.getters.getAddress &&
       this.$store.getters.getAddress.description
@@ -60,6 +59,7 @@ export default {
     const _this = this
     setTimeout(function() {
       _this.ready = true
+      _this.$refs.address.focus()
     }, 1000)
   },
   methods: {
