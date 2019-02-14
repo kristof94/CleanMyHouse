@@ -8,13 +8,13 @@
           </div>
           <div class="modal-body">
             <slot name="body">
-              <vue-google-autocomplete v-if="ready"
-                                       id="map"
-                                       ref="address"
-                                       class="form-control"
-                                       placeholder="Entrer votre addresse"
-                                       country="fr"
-                                       @placechanged="getAddressData"
+              <vue-google-autocomplete 
+                id="map"
+                ref="addr"
+                class="form-control"
+                placeholder="Entrer votre addresse"
+                country="fr"
+                @placechanged="getAddressData"
               />
             </slot>
           </div>
@@ -56,9 +56,12 @@ export default {
         'map'
       ).value = this.$store.getters.getAddress.description
     }*/
-
     const _this = this
-    _this.ready = true
+    this.$nextTick(function() {
+      _this.ready = true
+      console.log(this.$refs.addr.focus())
+    })
+    //setTimeout((), 1000)
   },
   methods: {
     // eslint-disable-next-line no-unused-vars
