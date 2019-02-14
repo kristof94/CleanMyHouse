@@ -34,6 +34,7 @@ app.use(parseForm) // handle URL-encoded data
 
 // router.use(helmet())
 // router.use(helmet.noCache())
+/*
 app.use(helmet.xssFilter())
 const sixtyDaysInSeconds = 5184000
 router.use(
@@ -42,7 +43,7 @@ router.use(
   })
 )
 app.use(helmet.noSniff())
-app.use(helmet.frameguard({ action: 'sameorigin' }))
+app.use(helmet.frameguard({ action: 'sameorigin' }))*/
 
 app.use(function(err, req, res, next) {
   console.log(req)
