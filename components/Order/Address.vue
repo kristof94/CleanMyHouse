@@ -10,7 +10,7 @@
             <slot name="body">
               <vue-google-autocomplete 
                 id="map"
-                ref="addr"
+                ref="address"
                 class="form-control"
                 placeholder="Entrer votre addresse"
                 country="fr"
@@ -59,7 +59,7 @@ export default {
     const _this = this
     this.$nextTick(function() {
       _this.ready = true
-      console.log(this.$refs.addr.focus())
+      console.log(this.$refs.address.focus())
     })
     //setTimeout((), 1000)
   },
