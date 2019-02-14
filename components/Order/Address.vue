@@ -56,11 +56,9 @@ export default {
         'map'
       ).value = this.$store.getters.getAddress.description
     }*/
+
     const _this = this
-    setTimeout(function() {
-      _this.ready = true
-      _this.$refs.address.focus()
-    }, 1000)
+    _this.ready = true
   },
   methods: {
     // eslint-disable-next-line no-unused-vars

@@ -22,6 +22,26 @@
         >Vous n'avez pas de commande.</div>
       </div>
     </section>
+    <modal-info v-if="showModalPaiement" @close="showModalPaiement = false">
+      <!--
+      you can use custom content here to overwrite
+      default content
+			-->
+      <div slot="header">{{ infoPaymentHeader }}</div>
+      <div slot="body">
+        <div class="check_mark">
+          <div class="sa-icon sa-success animate">
+            <span class="sa-line sa-tip animateSuccessTip"/>
+            <span class="sa-line sa-long animateSuccessLong"/>
+            <div class="sa-placeholder"/>
+            <div class="sa-fix"/>
+          </div>
+        </div>
+        {{ infoPaymentMessage }}
+        <br>
+        😍
+      </div>
+    </modal-info>
     <modal-info v-if="showModalInfo">
       <div slot="header">Etes-vous sur ?</div>
       <div slot="body">Cette opération est irréversible</div>
@@ -81,6 +101,9 @@ export default {
     return {
       showModalInfo: false,
       showModalRate: false,
+      showModalPaiement: false,
+      infoPaymentHeader: null,
+      infoPaymentMessage: null,
       rateOrder: null,
       canceledOrder: null,
       oldOrder: null,
@@ -91,7 +114,8 @@ export default {
           ? null
           : this.$store.getters.getUser.email,
       rememberMe: false,
-      currency: 'EUR'
+      currency: 'EUR',
+      orders: null
     }
   },
   asyncData({ store, $axios }) {
@@ -99,6 +123,7 @@ export default {
       .get('/order/getorders')
       .then(res => {
         const orders = res.data
+
         return { orders }
       })
       .catch(err => {
@@ -124,15 +149,7 @@ export default {
         return { orders: null }
       })
   },
-  notifications: {
-    showSuccessMsg: {
-      // eslint-disable-next-line no-undef
-      type: 'success'
-    },
-    showErrorMsg: {
-      type: 'error'
-    }
-  },
+
   methods: {
     test() {
       this.$axios
@@ -182,6 +199,9 @@ export default {
           order
         })
         .then(res => {
+          this.infoPaymentHeader = 'Paiement réussi.'
+          this.infoPaymentMessage = 'Le paiement a été accepté.'
+          this.showModalPaiement = true
           const orders = res.data
           this.orders = orders
         })
