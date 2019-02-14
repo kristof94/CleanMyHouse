@@ -1,6 +1,13 @@
 @import 'mixins';
 @import 'breakpoints';
 
+/*body{
+  @include sm {
+    width: 100%;
+    height: unset; 
+  }  
+}*/
+
 .longbutton {
   @include sm {
     width: 100%;
