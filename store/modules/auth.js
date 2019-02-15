@@ -6,14 +6,12 @@ import {
   FacebookAuthProvider
 } from '~/plugins/firebase-client-init.js'
 
+import { errorMap } from '~/services/map.js'
+
 function manageError(commit, error) {
+  console.log(error)
   if (error.message) {
-    commit('setError', {
-      code: 'auth/wrong-password',
-      header: "Erreur d'identifiants.",
-      message: error.message
-    })
-    console.log(error)
+    commit('setError', errorMap.get(error.code))
   } else {
     commit('setError', {
       code: '500',
@@ -174,7 +172,8 @@ const actions = {
     return window.recaptchaVerifierReset
       .verify()
       .then(() => {
-        const phone = this.getters.getPhoneNumber //'+1 650-555-3434' //
+        // const phone = this.getters.getPhoneNumber //'+1 650-555-3434' //
+        const phone = '+1 650-555-3434'
         var appVerifier = window.recaptchaVerifierReset
         return PhoneAuthProvider.verifyPhoneNumber(phone, appVerifier)
       })
@@ -187,12 +186,7 @@ const actions = {
       .catch(function(error) {
         // eslint-disable-next-line no-undef
         grecaptcha.reset(window.recaptchaResetWidgetId)
-        console.log(error)
-        commit('setError', {
-          code: 500,
-          header: 'Erreur',
-          message: error.message == null ? error : error.message
-        })
+        manageError(commit, error)
       })
   },
   confirmCodeReset({ commit, dispatch }, { code }) {
@@ -202,9 +196,14 @@ const actions = {
         window.verificationId,
         code
       )
-      return Auth.currentUser.updatePhoneNumber(credential).then(() => {
-        return manageIdToken(dispatch, commit, this.app.$axios)
-      })
+      return Auth.currentUser
+        .updatePhoneNumber(credential)
+        .then(() => {
+          return manageIdToken(dispatch, commit, this.app.$axios)
+        })
+        .catch(error => {
+          manageError(commit, error)
+        })
     }
     return Promise.reject('code problem')
   },
@@ -278,7 +277,7 @@ const actions = {
         )
       })
       .catch(error => {
-        commit('setError', error)
+        manageError(commit, error)
       })
   },
   prepareCatcha({ dispatch, commit }, { loading }) {

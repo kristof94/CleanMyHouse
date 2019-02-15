@@ -111,9 +111,6 @@ export default {
     preventEnterCode() {
       this.confirmCode()
     },
-    redirect() {
-      this.$router.push('/')
-    },
     sendSms() {
       this.$nuxt.$loading.start()
       this.$store
@@ -143,14 +140,6 @@ export default {
               'Vous pouvez dès maintenant faire une commande !'
             )
           }
-        })
-        .catch(error => {
-          console.log(error)
-          this.$store.commit('setError', {
-            code: 500,
-            header: 'Erreur',
-            message: error.message == null ? error : error.message
-          })
         })
         .finally(() => {
           window.grecaptcha.reset(window.recaptchaResetWidgetId)

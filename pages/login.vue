@@ -128,10 +128,12 @@ export default {
       this.form.phone = phoneNumber.replace('+33', '0')
     }
   },
+  mounted() {
+    this.$store.dispatch('displayLoginForm')
+  },
   methods: {
     redirect() {
       this.$router.push('/book')
-      this.$store.dispatch('displayLoginForm')
     },
     openInfoModal(event) {
       this.infoHeader = event
