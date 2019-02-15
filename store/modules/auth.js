@@ -172,8 +172,8 @@ const actions = {
     return window.recaptchaVerifierReset
       .verify()
       .then(() => {
-        // const phone = this.getters.getPhoneNumber //'+1 650-555-3434' //
-        const phone = '+1 650-555-3434'
+        const phone = this.getters.getPhoneNumber //'+1 650-555-3434' //
+        //const phone = '+1 650-555-3434'
         var appVerifier = window.recaptchaVerifierReset
         return PhoneAuthProvider.verifyPhoneNumber(phone, appVerifier)
       })
