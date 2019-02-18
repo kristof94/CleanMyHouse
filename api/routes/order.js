@@ -51,6 +51,7 @@ module.exports = function(admin) {
 
   const db = admin.database()
   const ref = db.ref('users')
+  const ordersRef = db.ref('orders')
   router.use(checkSession)
   /*
   
@@ -149,9 +150,15 @@ module.exports = function(admin) {
               console.log(err)
             })*/
         })
-        return refObj.set({
-          order
-        })
+        return refObj
+          .set({
+            order
+          })
+          .then(() => {
+            return ordersRef.child(postId).set({
+              users: req.session.decodedClaims.uid
+            })
+          })
       })
       .then(() => {
         res.status(200).send('Paiement enregistré.')
