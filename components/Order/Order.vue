@@ -19,7 +19,7 @@
           à {{ date.get('hour') == '0' ? '00' : date.get('hour') }}h{{ date.get('minute')=='0' ? '00' : date.get('minute') }}
         </b-col>
         <b-col
-          :class="{ statussuccess: status === 'accepted', statuswaiting: status === 'waiting' , statuscanceled: status === 'removed' || status === 'paidProblem' }"
+          :class="{ statusaccepted: status === 'accepted',statusdone: status === 'done', statuswaiting: status === 'waiting' , statuscanceled: status === 'removed' || status === 'paidProblem' }"
           offset-lg="2"
           lg="4"
         >
@@ -55,7 +55,7 @@ function statusMap() {
     'accepted',
     'Acceptée, une aide ménagère vous contactera dans quelques instants.'
   )
-  map.set('executed', '')
+  map.set('done', 'Effectuée')
   map.set('paidProblem', 'Non payée')
   map.set('removed', 'Annulé')
   return map
@@ -144,12 +144,16 @@ export default {
   color: orange;
 }
 
-.statussuccess {
+.statusdone {
   color: green;
 }
 
 .statuscanceled {
   color: red;
+}
+
+.statusaccepted {
+  color: rgb(0, 0, 255);
 }
 
 .orderButton {
